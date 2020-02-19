@@ -33,3 +33,4 @@ Please delete options that are not relevant.
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] There are no merge conflicts
+- [ ] I have checked that no one else is on staging and deployed this feature branch
