@@ -1,10 +1,10 @@
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  return knex('household').truncate()
+  return knex('households').del()
     .then(() => {
       // Inserts seed entries
-      return knex('household').insert([
+      return knex('households').insert([
         {
           id: 'a12345',
           title: "Test's House",
@@ -18,3 +18,4 @@ exports.seed = function (knex) {
       ]);
     });
 };
+
