@@ -8,8 +8,13 @@
 // Grabbing all todos per user
 // Accepts a variable for user id
 
-// select todos.*  from members
-// inner join todos_members on members.id = todos_members.members_id and members.id = '2'
-// inner join todos on todos_members.todos_id = todos.id
-// GROUP BY todos.id
-// ORDER BY todos.id
+
+
+// Sort all todos per household by member
+// ! Not quite working yet.
+
+
+// select distinct on (todos_members.todos_id) todos.*, todos_members.members_id, todos_members.todos_id  from todos
+// inner join todos_members on todos.household = 'a12345'
+// inner join members on todos_members.members_id = members.id
+// order by todos_members.todos_id asc
