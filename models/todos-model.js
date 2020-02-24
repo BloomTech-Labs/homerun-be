@@ -1,20 +1,38 @@
-// Grabbing all todos per household
-// Accepts a variable for household id
+const db = require('../data/dbConfig.js')
+
+// ? Grabbing all todos per household
+// ? Accepts a variable for household id
 
 // select todos.*  from households
 // inner join households_todos on households.id = households_todos.households_id and households.id = 'a12345'
 // inner join todos on households_todos.todos_id = todos.id
 
-// Grabbing all todos per user
-// Accepts a variable for user id
+const findTodosPerHousehold = (householdId) => {
+	return db('households')
+		.select('todos.*')
+		.innerJoin('households_todos', () => {
+			this.on('households.id', '=', 'households_todos.households_id').andOn('households.id', '=', householdId)
+		})
+}
 
+// ? Grabbing all todos per user
+// ? Accepts a variable for user id and household id
 
+// select * from todos
+// inner join todos_members on todos_members.todos_id = todos.id 
+// and todos_members.members_id = '2'
+// where todos.household = 'a12345'
 
-// Sort all todos per household by member
-// ! Not quite working yet.
+const findTodosByMember = (householdId, memberId) => {
+	return db('todos')
+		.select('*')
+		.innerJoin('todos_members', () => {
+			this.on('todos_members.todos_id', '=', "todos.id")
+				.andOn('todos_members.member_id', '=', memberId)
+		})
+		.where('todos.household', '=', householdId)
+}
 
-
-// select distinct on (todos_members.todos_id) todos.*, todos_members.members_id, todos_members.todos_id  from todos
-// inner join todos_members on todos.household = 'a12345'
-// inner join members on todos_members.members_id = members.id
-// order by todos_members.todos_id asc
+module.exports = {
+	findTodosPerHousehold, findTodosByMember
+}

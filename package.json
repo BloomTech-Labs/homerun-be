@@ -15,7 +15,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "serve": "nodemon index.js"
+    "server": "nodemon index.js"
   },
   "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
   "author": "[Brandon] <desselle.brandon2@gmail.com>",
