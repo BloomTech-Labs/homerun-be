@@ -15,7 +15,11 @@ const findHouseholdMembers = (householdId) => {
 			this.on('households.id', '=', 'household_members.household_id')
 				.andOn('households.id', '=', householdId)
 		})
-		.innerJoin('members', () => {
+		.innerJoin('members', function () {
 			this.on('household_members.member_id', '=', 'members.id')
 		})
+}
+
+module.exports = {
+	findHouseholdMembers
 }
