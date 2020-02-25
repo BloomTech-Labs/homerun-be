@@ -11,6 +11,7 @@ const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
 const authRouter = require("./routes/auth-router.js");
+const todosRouter = require('./routes/todos-router.js')
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use("/", indexRouter);
 app.use("/auth", authRouter);
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -34,5 +35,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send("error");
 });
+app.use("/users", usersRouter);
+app.use("/todos", todosRouter);
 
 module.exports = app;

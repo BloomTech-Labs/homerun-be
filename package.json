@@ -2,7 +2,7 @@
   "name": "homerun-be",
   "private": true,
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -14,8 +14,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+<<<<<<< HEAD
     "start": "node ./bin/www",
     "serve": "nodemon ./bin/www"
+=======
+    "start": "nodemon ./bin/www"
+>>>>>>> 7fad085cf4e7177f1c533a8fe4a4b993f78fa74e
   },
   "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
   "author": "[Brandon] <desselle.brandon2@gmail.com>",
