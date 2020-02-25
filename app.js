@@ -1,7 +1,7 @@
 const envvars = require("dotenv").config();
 if (envvars.error) {
   console.log("Problem loading environment variables.");
-  throw envvars.error;
+  // throw envvars.error;
 }
 
 const express = require("express");
@@ -10,7 +10,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
-const todosRouter = require('./routes/todos-router.js')
+const todosRouter = require("./routes/todos-router.js");
 const authRouter = require("./routes/auth-router.js");
 const membersRouter = require("./routes/members-router.js");
 
@@ -25,10 +25,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/todos", todosRouter);
 app.use("/auth", authRouter);
-app.use('/members', membersRouter);
+app.use("/members", membersRouter);
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
