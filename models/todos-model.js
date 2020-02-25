@@ -8,11 +8,7 @@ const db = require('../data/dbConfig.js')
 // inner join todos on households_todos.todos_id = todos.id
 
 const findTodosPerHousehold = (householdId) => {
-	return db('households')
-		.select('todos.*')
-		.innerJoin('households_todos', () => {
-			this.on('households.id', '=', 'households_todos.households_id').andOn('households.id', '=', householdId)
-		})
+	return db('todos').select('*').where('household', householdId)
 }
 
 // ? Grabbing all todos per user
@@ -26,11 +22,11 @@ const findTodosPerHousehold = (householdId) => {
 const findTodosByMember = (householdId, memberId) => {
 	return db('todos')
 		.select('*')
-		.innerJoin('todos_members', () => {
+		.innerJoin('todos_members', function () {
 			this.on('todos_members.todos_id', '=', "todos.id")
-				.andOn('todos_members.member_id', '=', memberId)
+				.andOn('todos_members.members_id', '=', Number(memberId))
 		})
-		.where('todos.household', '=', householdId)
+		.where('todos.household', householdId)
 }
 
 module.exports = {

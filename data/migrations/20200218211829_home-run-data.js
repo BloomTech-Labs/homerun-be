@@ -69,19 +69,6 @@ exports.up = function (knex) {
 				.onDelete('CASCADE')
 				.onUpdate('CASCADE')
 		})
-		.createTable('household_todos', col => {
-			col.increments()
-			col.integer('todos_id')
-				.unsigned()
-				.references('todos.id')
-				.onDelete('CASCADE')
-				.onUpdate('CASCADE')
-			col.varchar('household_id')
-				.unsigned()
-				.references('households.id')
-				.onDelete('CASCADE')
-				.onUpdate('CASCADE')
-		})
 		.createTable('todos_members', col => {
 			col.increments()
 			col.integer('members_id')
@@ -100,7 +87,6 @@ exports.up = function (knex) {
 exports.down = function (knex) {
 	return knex.schema
 		.dropTableIfExists('todos_members')
-		.dropTableIfExists('household_todos')
 		.dropTableIfExists('household_members')
 		.dropTableIfExists('bills')
 		.dropTableIfExists('inventory')
