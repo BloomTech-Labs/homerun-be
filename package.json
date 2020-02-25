@@ -14,7 +14,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www",
+    "serve": "nodemon ./bin/www"
   },
   "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
   "author": "[Brandon] <desselle.brandon2@gmail.com>",
