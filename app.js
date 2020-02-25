@@ -1,8 +1,8 @@
-const envvars = require("dotenv").config();
-if (envvars.error) {
-  console.log("Problem loading environment variables.");
-  // throw envvars.error;
-}
+require("dotenv").config();
+// if (envvars.error) {
+//   console.log("Problem loading environment variables.");
+//   // throw envvars.error;
+// }
 
 const express = require("express");
 const path = require("path");
