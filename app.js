@@ -12,6 +12,7 @@ const logger = require("morgan");
 const indexRouter = require("./routes/index");
 const todosRouter = require('./routes/todos-router.js')
 const authRouter = require("./routes/auth-router.js");
+const membersRouter = require("./routes/members-router.js");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/todos", todosRouter);
 app.use("/auth", authRouter);
+app.use('/members', membersRouter);
 
 // error handler
 app.use(function (err, req, res, next) {
