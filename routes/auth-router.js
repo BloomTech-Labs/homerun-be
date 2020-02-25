@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const Users = require("../models/user-model.js");
+const Users = require("../models/members-model.js");
 const { generateToken } = require("../middleware/token.js");
 
 router.post("/signup", async (req, res, next) => {
@@ -36,3 +36,5 @@ router.post("/login", (req, res, next) => {
     res.status(400).json({ message: "Invalid credentials" });
   }
 });
+
+module.exports = router;
