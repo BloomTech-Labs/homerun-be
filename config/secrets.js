@@ -1,5 +1,5 @@
-require('dotenv').config()
+require("dotenv").config();
 
 module.exports = {
-	jwtSecret: process.env.JWT_SECRET || "Deep was the water."
-}
+  jwtSecret: process.env.JWT_SECRET || "Deep was the water."
+};
