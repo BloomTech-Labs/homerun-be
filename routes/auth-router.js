@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const Users = require("../models/members-model.js");
+const Members = require("../models/members-model.js");
 const { generateToken } = require("../middleware/token.js");
 
 router.post("/signup", async (req, res, next) => {
