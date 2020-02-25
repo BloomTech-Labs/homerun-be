@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/api/auth", authRouter);
+app.use("/auth", authRouter);
 
 // error handler
 app.use(function(err, req, res, next) {
