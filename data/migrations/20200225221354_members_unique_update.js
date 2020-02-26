@@ -1,5 +1,5 @@
 exports.up = function(knex) {
-  return knex.schema.alterTable("members", tbl => {
+  return knex.schema.table("members", tbl => {
     tbl
       .string("username", 40)
       .notNullable()
@@ -14,7 +14,7 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-  return knex.schema.alterTable("members", tbl => {
+  return knex.schema.table("members", tbl => {
     tbl.string("username", 40).notNullable();
     tbl.string("email", 128).notNullable();
   });
