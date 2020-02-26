@@ -1,21 +1,20 @@
-
-exports.seed = function (knex) {
+exports.seed = function(knex) {
   // Deletes ALL existing entries
-  return knex('households').del()
+  return knex("households")
+    .truncate()
     .then(() => {
       // Inserts seed entries
-      return knex('households').insert([
+      return knex("households").insert([
         {
-          id: 'a12345',
+          id: "a12345",
           title: "Test's House",
           pin: 1234
         },
         {
-          id: 'b12345',
+          id: "b12345",
           title: "Samples' House",
           pin: 1234
-        },
+        }
       ]);
     });
 };
-
