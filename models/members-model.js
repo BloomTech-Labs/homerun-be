@@ -38,12 +38,6 @@ const remove = id => {
 // inner join household_members on households.id = household_members.household_id and households.id = 'a12345'
 // inner join members on household_members.member_id = members.id
 
-const getMembersByHousehold = householdId => {
-  return db("members")
-    .join("household_members")
-    .where("household_members.household_id", houseHoldId);
-};
-
 // ! Looks too complicated, might be able to slim down.
 
 const findHouseholdMembers = householdId => {
