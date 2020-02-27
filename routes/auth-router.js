@@ -5,6 +5,7 @@ const { generateToken } = require("../middleware/token.js");
 
 router.get('/hello', (req, res) => {
   console.log("This is the req", req.session)
+  // todo: Perform auth check if they are in the database. Modify the email string to get a username, add to database if new user.
   res.status(200).json(req.session).end()
 })
 
