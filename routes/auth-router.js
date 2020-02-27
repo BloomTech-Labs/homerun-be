@@ -3,6 +3,11 @@ const bcrypt = require("bcryptjs");
 const Members = require("../models/members-model.js");
 const { generateToken } = require("../middleware/token.js");
 
+router.get('/hello', (req, res) => {
+  console.log("This is the req", req.session)
+  res.status(200).json(req.session).end()
+})
+
 router.post("/signup", async (req, res, next) => {
   const newMember = req.body;
   if (newMember.email && newMember.password) {
