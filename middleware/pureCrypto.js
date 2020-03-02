@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const key = crypto.scryptSync(process.env.CRYPTO_KEY, 'salt', Number(process.env.SALT_VALUE));
 const iv = Buffer.alloc(16, 0)
 
-export const pureCrypto = (method, value) => {
+const pureCrypto = (method, value) => {
 	if (method == "encrypt") {
 		let crypted = ''
 		const cipher = crypto.createCipheriv(process.env.ALGO, key, iv)
@@ -31,6 +31,8 @@ export const pureCrypto = (method, value) => {
 		return decrypted
 	}
 }
+
+module.exports = { pureCrypto }
 
 const encrypted = '96e4af8254c3eec0ef26b4ae86064c0a'
 

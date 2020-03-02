@@ -1,4 +1,4 @@
-exports.seed = async function(knex) {
+exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex.raw("TRUNCATE TABLE members RESTART IDENTITY CASCADE");
   return knex("members").then(() => {
@@ -9,7 +9,9 @@ exports.seed = async function(knex) {
         username: "test",
         email: "test1@test.com",
         password: "test1234",
-        token: "examplegoogletoken",
+        provider: 'email',
+        access_token: '123456',
+        refresh_token: '123456',
         child: false,
         points: 25
       },
@@ -18,7 +20,9 @@ exports.seed = async function(knex) {
         username: "sample",
         email: "test2@test.com",
         password: "test1234",
-        token: "examplegoogletoken",
+        provider: 'email',
+        access_token: '123456',
+        refresh_token: '123456',
         child: true,
         points: 40
       }
