@@ -14,10 +14,9 @@ const getByHash = hash => {
     .first();
 };
 
-const remove = user_id => {
-  console.log(user_id);
+const remove = member_id => {
   return db("confirmations")
-    .where({ user_id })
+    .where({ member_id })
     .del();
 };
 
