@@ -84,6 +84,12 @@ router.post("/login", (req, res, next) => {
         ) {
           const token = generateToken(member);
           res.status(200).json({ message: `Welcome, ${member.email}`, token });
+        } else if (member.active === false) {
+          res.status(400).json({
+            message: "Please confirm your email address before logging in."
+          });
+        } else {
+          res.status(401).json({ message: "Invalid credentials" });
         }
       })
       .catch(err => {
@@ -92,6 +98,29 @@ router.post("/login", (req, res, next) => {
   } else {
     res.status(400).json({ message: "Invalid credentials" });
   }
+});
+
+router.post("/confirm", (req, res, next) => {
+  const hash = req.body.hash;
+  Confirmations.getByHash(hash)
+    .then(confirmation => {
+      const member_id = confirmation.member_id;
+      Members.getById(member_id).then(member => {
+        if (member.active === false) {
+          Members.update(member.id, { active: true }).then(updated => {
+            Confirmations.remove(member.id).then(removed => {
+              res.status(200).json({ message: "User confirmed successfully." });
+            });
+          });
+        } else {
+          res.status(200).json({ message: "User has already been confirmed." });
+        }
+      });
+    })
+    .catch(err => {
+      res.status(404).json({ message: "That link is invalid." });
+      // next(err);
+    });
 });
 
 module.exports = router;
