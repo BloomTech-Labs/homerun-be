@@ -24,6 +24,7 @@ exports.up = function(knex) {
       col.text("refresh_token");
       col.boolean("child");
       col.integer("points");
+      col.boolean("active").defaultsTo(false);
       col
         .varchar("current_household")
         .unsigned()
