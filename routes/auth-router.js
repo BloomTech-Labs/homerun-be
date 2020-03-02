@@ -78,7 +78,10 @@ router.post("/login", (req, res, next) => {
   if (credentials.email && credentials.password) {
     Members.getByEmail(credentials.email)
       .then(member => {
-        if (bcrypt.compareSync(credentials.password, member.password)) {
+        if (
+          member.active &&
+          bcrypt.compareSync(credentials.password, member.password)
+        ) {
           const token = generateToken(member);
           res.status(200).json({ message: `Welcome, ${member.email}`, token });
         }
