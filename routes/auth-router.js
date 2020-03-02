@@ -123,6 +123,32 @@ router.post("/confirm", (req, res, next) => {
     });
 });
 
+router.post("/forgot", (req, res, next) => {
+  const email = req.body.email;
+  Members.getByEmail(email)
+    .then(member => {
+      const newConfirmation = {
+        member_id: member.id,
+        hash: crypto.randomBytes(20).toString("hex")
+      };
+      Confirmations.insert(newConfirmation)
+        .then(hash => {
+          // TODO: change this to member.email once testing is complete
+          sendMail("zbtaylor1@gmail.com", templates.reset(hash));
+        })
+        .then(() => {
+          res.status(200).json({
+            message: `A password reset link has been sent to ${member.email}`
+          });
+        });
+    })
+    .catch(err => {
+      res
+        .status(404)
+        .json({ message: "A User with that email address does not exist." });
+    });
+});
+
 module.exports = router;
 
 /*
