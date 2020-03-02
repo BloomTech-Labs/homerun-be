@@ -149,6 +149,27 @@ router.post("/forgot", (req, res, next) => {
     });
 });
 
+router.post("/reset", (req, res, next) => {
+  const hash = req.body.hash;
+  Confirmations.getByHash(hash)
+    .then(confirmation => {
+      const member_id = confirmation.member_id;
+      const newPassword = bcrypt.hashSync(req.body.password, 14);
+      Members.update(member_id, { password: newPassword })
+        .then(() => {
+          Confirmations.remove(member_id).then(() => {
+            res.status(200).json({ message: "Your password has been reset." });
+          });
+        })
+        .catch(err => {
+          next(err);
+        });
+    })
+    .catch(err => {
+      res.status(404).json({ message: "That link is invalid." });
+    });
+});
+
 module.exports = router;
 
 /*
