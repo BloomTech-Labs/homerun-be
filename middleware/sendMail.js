@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport(credentials);
 
 module.exports = async (to, content) => {
   const contacts = {
-    from: '"Tidy Hive" <no-reply@tidyhive.com>',
+    from: '"Tidy Hive" <no-reply@tidyhive.life>',
     to
   };
 
