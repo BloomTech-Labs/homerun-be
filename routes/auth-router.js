@@ -5,8 +5,8 @@ const Members = require("../models/members-model.js");
 const Confirmations = require("../models/confirmations-model.js");
 const { generateToken } = require("../middleware/token.js");
 const { pureCrypto } = require("../middleware/pureCrypto.js");
-const sendMail = require("../helpers/sendMail.js");
-const templates = require("../helpers/emailTemplates.js");
+const sendMail = require("../middleware/sendMail.js");
+const templates = require("../middleware/emailTemplates.js");
 const axios = require("axios");
 
 router.get("/hello", async (req, res) => {
