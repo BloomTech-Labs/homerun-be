@@ -1,10 +1,10 @@
+require("dotenv").config();
 const router = require("express").Router();
-const crypto = require("crypto");
+const purecrypt = require("purecrypt");
 const bcrypt = require("bcryptjs");
 const Members = require("../models/members-model.js");
 const Confirmations = require("../models/confirmations-model.js");
 const { generateToken } = require("../middleware/token.js");
-const { pureCrypto } = require("../middleware/pureCrypto.js");
 const sendMail = require("../middleware/sendMail.js");
 const templates = require("../middleware/emailTemplates.js");
 const axios = require("axios");
@@ -21,15 +21,13 @@ router.get("/hello", async (req, res) => {
       provider: req.session.grant.provider,
       email: req.session.grant.response.id_token.payload.email,
       username: req.session.grant.response.id_token.payload.email,
-      access_token: pureCrypto(
-        "encrypt",
-        req.session.grant.response.access_token
-      ),
-      refresh_token: pureCrypto(
-        "encrypt",
+      access_token: purecrypt.encrypt(req.session.grant.response.access_token),
+      refresh_token: purecrypt.encrypt(
         req.session.grant.response.refresh_token
-      )
+      ),
+      active: true
     };
+    console.log(user);
     const currentUser = await Members.getByEmail(user.email);
     if (currentUser) {
       res.status(200).json({ message: "Welcome back!" });
