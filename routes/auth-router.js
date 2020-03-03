@@ -36,10 +36,14 @@ router.get("/hello", async (req, res) => {
 
     const currentUser = await Members.getByEmail(user.email);
     if (currentUser) {
-      res.status(200).json({ message: "Welcome back!" });
+      // TODO Login the user. Pass token to query string on res.redirect.
+      // res.redirect('whatever.reactapp.com/google?token=asdlfskahjlfksjhdfklasghldkfh')
     } else {
       const newUser = await Members.insert(user);
-      res.status(200).json(newUser);
+      // TODO Login the user after creating user. Pass token to query string on res.redirect.
+      // TODO Their Redux would be trashed upon refresh of the redirect to Google.
+      // cosnt token = await Something.loginFLow
+      // res.redirect('whatever.reactapp.com/google?token=asdlfskahjlfksjhdfklasghldkfh')
     }
   } catch (e) {
     console.log(e.message);
