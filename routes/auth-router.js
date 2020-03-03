@@ -17,27 +17,22 @@ router.get("/hello", async (req, res) => {
     // 	}
     // })
 
-    // const user = {
-    //   provider: req.session.grant.provider,
-    //   email: req.session.grant.response.id_token.payload.email,
-    //   username: req.session.grant.response.id_token.payload.email,
-    //   access_token: purecrypt.encrypt(req.session.grant.response.access_token),
-    //   refresh_token: purecrypt.encrypt(
-    //     req.session.grant.response.refresh_token
-    //   ),
-    //   active: true
-    // };
+    // TODO: something better here
+    if (!req.session.grant.response.refresh_token) {
+      req.session.grant.response.refresh_token = "";
+    }
 
     const user = {
       provider: req.session.grant.provider,
       email: req.session.grant.response.id_token.payload.email,
       username: req.session.grant.response.id_token.payload.email,
-      access_token: req.session.grant.response.access_token,
-      refresh_token: req.session.grant.response.refresh_token,
+      access_token: purecrypt.encrypt(req.session.grant.response.access_token),
+      refresh_token: purecrypt.encrypt(
+        req.session.grant.response.refresh_token
+      ),
       active: true
     };
 
-    console.log(user);
     const currentUser = await Members.getByEmail(user.email);
     if (currentUser) {
       res.status(200).json({ message: "Welcome back!" });
