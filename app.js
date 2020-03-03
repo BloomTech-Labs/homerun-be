@@ -9,6 +9,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const session = require("express-session");
+const grant = require("grant-express");
 
 const indexRouter = require("./routes/index");
 const todosRouter = require("./routes/todos-router.js");
@@ -23,6 +25,46 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+// OAuth Setup
+app.use(
+  session({
+    secret: process.env.SESSION_KEY,
+    saveUninitialized: true,
+    resave: true
+  })
+);
+app.use(
+  grant({
+    defaults: {
+      protocol: process.env.OAUTH_PROTOCOL,
+      host: process.env.OAUTH_URL,
+      transport: "session",
+      state: true
+    },
+    google: {
+      key: process.env.G_CLIENT_ID,
+      secret: process.env.G_CLIENT_SECRET,
+      scope: [
+        "profile",
+        "email",
+        "openid",
+        "https://www.googleapis.com/auth/calendar"
+      ],
+      nonce: true,
+      custom_params: { access_type: "offline" },
+      callback: "/auth/hello"
+    },
+    facebook: {
+      key: process.env.F_CLIENT_ID,
+      secret: process.env.F_CLIENT_SECRET,
+      scope: ["profile"],
+      nonce: true,
+      custom_params: { access_type: "offline" },
+      callback: "/auth/hello"
+    }
+  })
+);
 
 app.use("/", indexRouter);
 app.use("/todos", todosRouter);
