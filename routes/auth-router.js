@@ -1,4 +1,3 @@
-require("dotenv").config();
 const router = require("express").Router();
 const purecrypt = require("purecrypt");
 const bcrypt = require("bcryptjs");
@@ -17,16 +16,27 @@ router.get("/hello", async (req, res) => {
     // 		Authorization: "OAuth <access_token>"
     // 	}
     // })
+
+    // const user = {
+    //   provider: req.session.grant.provider,
+    //   email: req.session.grant.response.id_token.payload.email,
+    //   username: req.session.grant.response.id_token.payload.email,
+    //   access_token: purecrypt.encrypt(req.session.grant.response.access_token),
+    //   refresh_token: purecrypt.encrypt(
+    //     req.session.grant.response.refresh_token
+    //   ),
+    //   active: true
+    // };
+
     const user = {
       provider: req.session.grant.provider,
       email: req.session.grant.response.id_token.payload.email,
       username: req.session.grant.response.id_token.payload.email,
-      access_token: purecrypt.encrypt(req.session.grant.response.access_token),
-      refresh_token: purecrypt.encrypt(
-        req.session.grant.response.refresh_token
-      ),
+      access_token: req.session.grant.response.access_token,
+      refresh_token: req.session.grant.response.refresh_token,
       active: true
     };
+
     console.log(user);
     const currentUser = await Members.getByEmail(user.email);
     if (currentUser) {
