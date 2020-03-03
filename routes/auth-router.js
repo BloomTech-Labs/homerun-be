@@ -1,11 +1,14 @@
 const router = require("express").Router();
+const purecrypt = require("purecrypt");
 const bcrypt = require("bcryptjs");
 const Members = require("../models/members-model.js");
+const Confirmations = require("../models/confirmations-model.js");
 const { generateToken } = require("../middleware/token.js");
-const { pureCrypto } = require('../middleware/pureCrypto.js');
-const axios = require('axios');
+const sendMail = require("../middleware/sendMail.js");
+const templates = require("../middleware/emailTemplates.js");
+const axios = require("axios");
 
-router.get('/hello', async (req, res) => {
+router.get("/hello", async (req, res) => {
   try {
     // How to get events from Google Calendar
     // const events = await axios.get('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
@@ -13,27 +16,40 @@ router.get('/hello', async (req, res) => {
     // 		Authorization: "OAuth <access_token>"
     // 	}
     // })
+
+    // const user = {
+    //   provider: req.session.grant.provider,
+    //   email: req.session.grant.response.id_token.payload.email,
+    //   username: req.session.grant.response.id_token.payload.email,
+    //   access_token: purecrypt.encrypt(req.session.grant.response.access_token),
+    //   refresh_token: purecrypt.encrypt(
+    //     req.session.grant.response.refresh_token
+    //   ),
+    //   active: true
+    // };
+
     const user = {
       provider: req.session.grant.provider,
       email: req.session.grant.response.id_token.payload.email,
       username: req.session.grant.response.id_token.payload.email,
-      access_token: pureCrypto("encrypt", req.session.grant.response.access_token),
-      refresh_token: pureCrypto("encrypt", req.session.grant.response.refresh_token),
-    }
-    const currentUser = await Members.getByEmail(user.email)
+      access_token: req.session.grant.response.access_token,
+      refresh_token: req.session.grant.response.refresh_token,
+      active: true
+    };
+
+    console.log(user);
+    const currentUser = await Members.getByEmail(user.email);
     if (currentUser) {
-      res.status(200).json({ message: "Welcome back!" })
+      res.status(200).json({ message: "Welcome back!" });
     } else {
       const newUser = await Members.insert(user);
-      res.status(200).json(newUser)
+      res.status(200).json(newUser);
     }
   } catch (e) {
-    console.log(e.message)
-    res.status(500).json({ error: e.message })
+    console.log(e.message);
+    res.status(500).json({ error: e.message });
   }
-})
-
-
+});
 
 router.post("/signup", async (req, res, next) => {
   const newMember = req.body;
@@ -41,11 +57,24 @@ router.post("/signup", async (req, res, next) => {
     newMember.password = bcrypt.hashSync(newMember.password, 14);
     Members.insert(newMember)
       .then(member => {
-        // TODO: do we want to return something more here?
-        res.status(200).json({ message: "Sign up successful." });
+        const newConfirmation = {
+          member_id: member.id,
+          hash: crypto.randomBytes(20).toString("hex")
+        };
+        Confirmations.insert(newConfirmation).then(hash => {
+          // TODO: change this to member.email once testing is complete
+          sendMail("zbtaylor1@gmail.com", templates.confirmation(hash));
+          res.status(200).json({
+            message: `A confirmation email has been sent to ${member.email}`
+          });
+        });
       })
       .catch(err => {
-        next(err);
+        console.log(err);
+        res
+          .status(401)
+          .json({ message: `${req.body.email} has already been registered.` });
+        // next(err);
       });
   } else {
     res.status(400).json({ message: "Invalid credentials." });
@@ -57,9 +86,18 @@ router.post("/login", (req, res, next) => {
   if (credentials.email && credentials.password) {
     Members.getByEmail(credentials.email)
       .then(member => {
-        if (bcrypt.compareSync(credentials.password, member.password)) {
+        if (
+          member.active &&
+          bcrypt.compareSync(credentials.password, member.password)
+        ) {
           const token = generateToken(member);
           res.status(200).json({ message: `Welcome, ${member.email}`, token });
+        } else if (member.active === false) {
+          res.status(400).json({
+            message: "Please confirm your email address before logging in."
+          });
+        } else {
+          res.status(401).json({ message: "Invalid credentials" });
         }
       })
       .catch(err => {
@@ -68,6 +106,76 @@ router.post("/login", (req, res, next) => {
   } else {
     res.status(400).json({ message: "Invalid credentials" });
   }
+});
+
+router.post("/confirm", (req, res, next) => {
+  const hash = req.body.hash;
+  Confirmations.getByHash(hash)
+    .then(confirmation => {
+      const member_id = confirmation.member_id;
+      Members.getById(member_id).then(member => {
+        if (member.active === false) {
+          Members.update(member.id, { active: true }).then(updated => {
+            Confirmations.remove(member.id).then(removed => {
+              res.status(200).json({ message: "User confirmed successfully." });
+            });
+          });
+        } else {
+          res.status(200).json({ message: "User has already been confirmed." });
+        }
+      });
+    })
+    .catch(err => {
+      res.status(404).json({ message: "That link is invalid." });
+      // next(err);
+    });
+});
+
+router.post("/forgot", (req, res, next) => {
+  const email = req.body.email;
+  Members.getByEmail(email)
+    .then(member => {
+      const newConfirmation = {
+        member_id: member.id,
+        hash: crypto.randomBytes(20).toString("hex")
+      };
+      Confirmations.insert(newConfirmation)
+        .then(hash => {
+          // TODO: change this to member.email once testing is complete
+          sendMail("zbtaylor1@gmail.com", templates.reset(hash));
+        })
+        .then(() => {
+          res.status(200).json({
+            message: `A password reset link has been sent to ${member.email}`
+          });
+        });
+    })
+    .catch(err => {
+      res
+        .status(404)
+        .json({ message: "A User with that email address does not exist." });
+    });
+});
+
+router.post("/reset", (req, res, next) => {
+  const hash = req.body.hash;
+  Confirmations.getByHash(hash)
+    .then(confirmation => {
+      const member_id = confirmation.member_id;
+      const newPassword = bcrypt.hashSync(req.body.password, 14);
+      Members.update(member_id, { password: newPassword })
+        .then(() => {
+          Confirmations.remove(member_id).then(() => {
+            res.status(200).json({ message: "Your password has been reset." });
+          });
+        })
+        .catch(err => {
+          next(err);
+        });
+    })
+    .catch(err => {
+      res.status(404).json({ message: "That link is invalid." });
+    });
 });
 
 module.exports = router;
