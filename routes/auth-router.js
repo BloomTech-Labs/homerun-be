@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const purecrypt = require("purecrypt");
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const Members = require("../models/members-model.js");
 const Confirmations = require("../models/confirmations-model.js");

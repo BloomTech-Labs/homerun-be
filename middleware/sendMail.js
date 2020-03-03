@@ -2,7 +2,7 @@ require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 const credentials = {
-  service: '"SendGrid"', // no need to set host or port etc.
+  service: "SendGrid", // no need to set host or port etc.
   auth: {
     user: process.env.SG_USER, // hide
     pass: process.env.SG_PASS // hide
