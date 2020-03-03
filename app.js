@@ -37,8 +37,8 @@ app.use(
 app.use(
   grant({
     defaults: {
-      protocol: "http",
-      host: process.env.BASE_URL,
+      protocol: process.env.OAUTH_PROTOCOL,
+      host: process.env.OAUTH_URL,
       transport: "session",
       state: true
     },
