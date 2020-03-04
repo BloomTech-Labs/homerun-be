@@ -36,7 +36,7 @@ router.get("/hello", async (req, res) => {
     if (currentMember) {
       try {
         const token = await generateToken(currentMember);
-        res.redirect(`https://stage-homerun-fe.herokuapp.com/dashboard?token=${token}`)
+        res.redirect(`https://stage-homerun-fe.herokuapp.com/auth?token=${token}`)
       } catch (e) {
         console.log(e.message);
         res.status(500).json({ error: e.message });
@@ -45,7 +45,7 @@ router.get("/hello", async (req, res) => {
       try {
         const newMember = await Members.insert(member);
         const token = await generateToken(newMember);
-        res.redirect(`https://stage-homerun-fe.herokuapp.com/dashboard?token=${token}`)
+        res.redirect(`https://stage-homerun-fe.herokuapp.com/auth?token=${token}`)
       } catch (e) {
         console.log(e.message);
         res.status(500).json({ error: e.message });
