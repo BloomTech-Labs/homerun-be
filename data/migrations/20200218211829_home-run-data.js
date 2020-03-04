@@ -1,4 +1,4 @@
-exports.up = function(knex) {
+exports.up = function (knex) {
   return knex.schema
     .createTable("households", col => {
       col
@@ -22,7 +22,6 @@ exports.up = function(knex) {
       col.text("provider");
       col.text("access_token");
       col.text("refresh_token");
-      col.boolean("child");
       col.integer("points");
       col.boolean("active").defaultsTo(false);
       col
@@ -64,6 +63,17 @@ exports.up = function(knex) {
     })
     .createTable("bills", col => {
       col.increments();
+      col
+        .varchar("household_id")
+        .unsigned()
+        .references("households.id")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+    })
+    .createTable("children", col => {
+      col.increments();
+      col.text('name');
+      col.integer("points");
       col
         .varchar("household_id")
         .unsigned()
@@ -114,11 +124,12 @@ exports.up = function(knex) {
     });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema
     .dropTableIfExists("confirmations")
     .dropTableIfExists("todos_members")
     .dropTableIfExists("household_members")
+    .dropTableIfExists("children")
     .dropTableIfExists("bills")
     .dropTableIfExists("inventory")
     .dropTableIfExists("rewards")
