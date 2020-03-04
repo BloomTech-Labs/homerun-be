@@ -17,13 +17,11 @@ router.get("/hello", async (req, res) => {
     // 		Authorization: "OAuth <access_token>"
     // 	}
     // })
-
-    // TODO: something better here
     if (!req.session.grant.response.refresh_token) {
       req.session.grant.response.refresh_token = "";
     }
 
-    const user = {
+    const member = {
       provider: req.session.grant.provider,
       email: req.session.grant.response.id_token.payload.email,
       username: req.session.grant.response.id_token.payload.email,
@@ -34,16 +32,24 @@ router.get("/hello", async (req, res) => {
       active: true
     };
 
-    const currentUser = await Members.getByEmail(user.email);
-    if (currentUser) {
-      // TODO Login the user. Pass token to query string on res.redirect.
-      // res.redirect('whatever.reactapp.com/google?token=asdlfskahjlfksjhdfklasghldkfh')
+    const currentMember = await Members.getByEmail(member.email);
+    if (currentMember) {
+      try {
+        const token = await generateToken(currentMember);
+        res.redirect(`https://stage-homerun-fe.herokuapp.com/dashboard?token=${token}`)
+      } catch (e) {
+        console.log(e.message);
+        res.status(500).json({ error: e.message });
+      }
     } else {
-      const newUser = await Members.insert(user);
-      // TODO Login the user after creating user. Pass token to query string on res.redirect.
-      // TODO Their Redux would be trashed upon refresh of the redirect to Google.
-      // cosnt token = await Something.loginFLow
-      // res.redirect('whatever.reactapp.com/google?token=asdlfskahjlfksjhdfklasghldkfh')
+      try {
+        const newMember = await Members.insert(member);
+        const token = await generateToken(newMember);
+        res.redirect(`https://stage-homerun-fe.herokuapp.com/dashboard?token=${token}`)
+      } catch (e) {
+        console.log(e.message);
+        res.status(500).json({ error: e.message });
+      }
     }
   } catch (e) {
     console.log(e.message);
