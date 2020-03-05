@@ -44,7 +44,7 @@ const insert = newTodo => {
   return db("todos")
     .insert(newTodo, "id")
     .then(id => {
-      return getById(id[0]);
+      return findById(id[0]);
     });
 };
 
