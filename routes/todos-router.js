@@ -26,6 +26,14 @@ router.get("/:householdId/:memberId", async (req, res) => {
   }
 });
 
+router.post("/assignment", (req, res, next) => {
+  if (req.body.member_id && req.body.household_id) {
+    // insert record in todos_members
+  } else {
+    // remove record from todos_members
+  }
+});
+
 router.post("/add", (req, res, next) => {
   const newTodo = req.body;
   if (newTodo.title && newTodo.household) {
