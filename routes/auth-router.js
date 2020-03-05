@@ -17,13 +17,11 @@ router.get("/hello", async (req, res) => {
     // 		Authorization: "OAuth <access_token>"
     // 	}
     // })
-
-    // TODO: something better here
     if (!req.session.grant.response.refresh_token) {
       req.session.grant.response.refresh_token = "";
     }
 
-    const user = {
+    const member = {
       provider: req.session.grant.provider,
       email: req.session.grant.response.id_token.payload.email,
       username: req.session.grant.response.id_token.payload.email,
@@ -34,12 +32,28 @@ router.get("/hello", async (req, res) => {
       active: true
     };
 
-    const currentUser = await Members.getByEmail(user.email);
-    if (currentUser) {
-      res.status(200).json({ message: "Welcome back!" });
+    const currentMember = await Members.getByEmail(member.email);
+    if (currentMember) {
+      try {
+        const token = await generateToken(currentMember);
+        res.redirect(
+          `https://stage-homerun-fe.herokuapp.com/auth?token=${token}`
+        );
+      } catch (e) {
+        console.log(e.message);
+        res.status(500).json({ error: e.message });
+      }
     } else {
-      const newUser = await Members.insert(user);
-      res.status(200).json(newUser);
+      try {
+        const newMember = await Members.insert(member);
+        const token = await generateToken(newMember);
+        res.redirect(
+          `https://stage-homerun-fe.herokuapp.com/auth?token=${token}`
+        );
+      } catch (e) {
+        console.log(e.message);
+        res.status(500).json({ error: e.message });
+      }
     }
   } catch (e) {
     console.log(e.message);
@@ -59,7 +73,7 @@ router.post("/signup", async (req, res, next) => {
         };
         Confirmations.insert(newConfirmation).then(hash => {
           // TODO: change this to member.email once testing is complete
-          sendMail("zbtaylor1@gmail.com", templates.confirmation(hash));
+          sendMail("homerun.labspt7@gmail.com", templates.confirmation(hash));
           res.status(200).json({
             message: `A confirmation email has been sent to ${member.email}`
           });
@@ -138,7 +152,7 @@ router.post("/forgot", (req, res, next) => {
       Confirmations.insert(newConfirmation)
         .then(hash => {
           // TODO: change this to member.email once testing is complete
-          sendMail("zbtaylor1@gmail.com", templates.reset(hash));
+          sendMail("homerun.labspt7@gmail.com", templates.reset(hash));
         })
         .then(() => {
           res.status(200).json({
