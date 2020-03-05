@@ -26,11 +26,11 @@ router.get("/:householdId/:memberId", async (req, res) => {
   }
 });
 
-router.post("/assignment", (req, res, next) => {
+router.post("/assign", (req, res, next) => {
   if (req.body.member_id && req.body.household_id) {
     // insert record in todos_members
   } else {
-    // remove record from todos_members
+    res.status(400).json({ message: "Required assignment arguments missing." });
   }
 });
 
