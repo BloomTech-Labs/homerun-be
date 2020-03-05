@@ -19,4 +19,6 @@ router.get('/:householdId/:memberId', async (req, res) => {
 	}
 })
 
+
+
 module.exports = router
