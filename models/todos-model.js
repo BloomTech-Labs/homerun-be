@@ -51,7 +51,10 @@ const insert = newTodo => {
 const update = (id, updates) => {
   return db("todos")
     .where({ id })
-    .update(updates);
+    .update(updates)
+    .then(num => {
+      return findById(id);
+    });
 };
 
 const remove = id => {

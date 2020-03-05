@@ -44,4 +44,25 @@ router.post("/add", (req, res, next) => {
   }
 });
 
+router.post("/update/:id", (req, res, next) => {
+  const updates = req.body;
+  Todos.update(req.params.id, updates)
+    .then(todo => {
+      res.status(200).json(todo);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+router.post("/remove/:id", (req, res, next) => {
+  Todos.remove(req.params.id)
+    .then(removed => {
+      res.status(200).json({ message: `${removed} todo removed` });
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
 module.exports = router;
