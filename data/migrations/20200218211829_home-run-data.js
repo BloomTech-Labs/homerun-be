@@ -23,6 +23,7 @@ exports.up = function (knex) {
       col.text("access_token");
       col.text("refresh_token");
       col.integer("points");
+      col.integer("child").defaultsTo(false);
       col.boolean("active").defaultsTo(false);
       col
         .varchar("current_household")
@@ -72,8 +73,9 @@ exports.up = function (knex) {
     })
     .createTable("children", col => {
       col.increments();
-      col.text('name');
+      col.text('username');
       col.integer("points");
+      col.integer("child").defaultsTo(true);
       col
         .varchar("household_id")
         .unsigned()
@@ -108,6 +110,12 @@ exports.up = function (knex) {
         .integer("todos_id")
         .unsigned()
         .references("todos.id")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      col
+        .integer("children_id")
+        .unsigned()
+        .references("children.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
     })
