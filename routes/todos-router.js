@@ -26,6 +26,7 @@ router.get("/:householdId/:memberId", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 router.post("/assign", (req, res, next) => {
   if (req.body.member_id && req.body.household_id) {
     // insert record in todos_members
@@ -74,3 +75,8 @@ router.post("/remove/:id", (req, res, next) => {
 });
 
 module.exports = router;
+=======
+
+
+module.exports = router
+>>>>>>> master
