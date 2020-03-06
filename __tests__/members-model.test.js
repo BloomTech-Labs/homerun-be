@@ -46,7 +46,7 @@ describe('Testing Members Model', () => {
 		})
 	})
 	describe('Removing members from a household', () => {
-		test('Remove one members', async () => {
+		test('Add two users then remove one member', async () => {
 			let members;
 			members = await db('members');
 			expect(members).toHaveLength(0);
@@ -84,7 +84,7 @@ describe('Testing Members Model', () => {
 		})
 	})
 	describe('Finding members by email', () => {
-		test('Add two members and find by email', async () => {
+		test('Add two members and find one by email', async () => {
 			let members;
 			members = await db('members');
 			expect(members).toHaveLength(0);
@@ -117,12 +117,11 @@ describe('Testing Members Model', () => {
 				})
 			const member = await Members
 				.getByEmail('test2@test.com')
-			console.log(member)
 			expect(member.username).toMatch('test2');
 		})
 	})
-	describe('Finding members by email', () => {
-		test('Add two members and find by email', async () => {
+	describe('Updating members, find by id', () => {
+		test('Add two members and update one, and get by id', async () => {
 			let members;
 			members = await db('members');
 			expect(members).toHaveLength(0);
