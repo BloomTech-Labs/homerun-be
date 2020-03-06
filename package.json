@@ -23,7 +23,7 @@
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "jest --watch",
+    "test": "jest  --watch",
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www"
   },
