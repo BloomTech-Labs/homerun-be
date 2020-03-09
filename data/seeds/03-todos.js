@@ -6,7 +6,6 @@ exports.seed = function(knex) {
       // Inserts seed entries
       return knex("todos").insert([
         {
-          id: 1,
           household: "a12345",
           title: "This is the first todo.",
           desc:
@@ -17,7 +16,6 @@ exports.seed = function(knex) {
           completed_by: ""
         },
         {
-          id: 2,
           household: "a12345",
           title: "This is the second todo.",
           desc:
@@ -28,7 +26,6 @@ exports.seed = function(knex) {
           completed_by: ""
         },
         {
-          id: 3,
           household: "a12345",
           title: "This is the third todo.",
           desc:
@@ -39,7 +36,6 @@ exports.seed = function(knex) {
           completed_by: "Sample"
         },
         {
-          id: 4,
           household: "a12345",
           title: "This is the fourth todo.",
           desc:
@@ -50,7 +46,6 @@ exports.seed = function(knex) {
           completed_by: ""
         },
         {
-          id: 5,
           household: "a12345",
           title: "This is the fifth todo.",
           desc:
