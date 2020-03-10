@@ -8,7 +8,6 @@ router.get("/:householdId", async (req, res) => {
     for (let member of members) {
       member.children = children
     }
-    console.log(members)
     res.status(200).json(members);
   } catch (err) {
     res
@@ -38,7 +37,7 @@ router.get("/:household/c/:child", async (req, res) => {
 
 router.post("/:household/c", async (req, res) => {
   try {
-    req.body.household_id = req.params.houshold
+    req.body.household_id = req.params.household
     const request = await Members.addChild(req.body)
     res.status(200).json(request)
   } catch (e) {
