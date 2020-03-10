@@ -60,9 +60,6 @@ const findHouseholdMembers = householdId => {
     });
 };
 
-// select children.* from children
-// join households on children.household_id = households.id
-// where children.household_id = 'a12345'
 const childrenPerHousehold = householdId => {
   return db("children").where("household_id", '=', householdId)
 }
