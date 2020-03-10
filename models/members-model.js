@@ -67,8 +67,23 @@ const childrenPerHousehold = householdId => {
   return db("children").where("household_id", '=', householdId)
 }
 
-// select * from members 
-// where members.current_household = 'a12345'
+const getChildById = id => {
+  return db('children').where({ id })
+}
+
+const addChild = child => {
+  return db('children').insert(child, 'id').then(id => {
+    return getChildById(id[0]);
+  });
+}
+
+const updateChild = (id, changes) => {
+  return db('children').where({ id }).update(changes)
+}
+
+const removeChild = id => {
+  return db('children').where({ id }).del()
+}
 
 const totalHouseholdMembers = householdId => {
   return db('members').where('current_household', '=', householdId)
@@ -87,5 +102,9 @@ module.exports = {
   findHouseholdMembers,
   childrenPerHousehold,
   totalHouseholdMembers,
-  totalHouseholdChildren
+  totalHouseholdChildren,
+  getChildById,
+  addChild,
+  updateChild,
+  removeChild
 };
