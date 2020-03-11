@@ -1,11 +1,14 @@
 const db = require("../data/dbConfig.js");
 
-const insert = (todo_id, member_id) => {
+const insert = (todos_id, members_id) => {
   return db("todos_members")
-    .insert({todo_id, member_id}, "id")
-    .then(id => {
-      return findById(id[0]);
-    });
+    .insert(
+      { todos_id, members_id },
+      "*"
+    )
+    // .then(todos_id => {
+    //   return getByTodosId(todos_id);
+    // });
 };
 
 const remove = (todoId, memberId) => {
@@ -14,8 +17,24 @@ const remove = (todoId, memberId) => {
     .del();
 };
 
-module.exports {
+module.exports = {
   insert,
-  update,
   remove
+};
+
+{
+  id: 1,
+  name: "parent"
 }
+
+{
+  id: 1,
+  name: "child"
+}
+
+{
+  id: 22,
+  title: "todo"
+}
+
+composite (unique string)

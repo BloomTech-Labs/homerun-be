@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+exports.up = function(knex) {
   return knex.schema
     .createTable("households", col => {
       col
@@ -73,7 +73,7 @@ exports.up = function (knex) {
     })
     .createTable("children", col => {
       col.increments();
-      col.text('username');
+      col.text("username");
       col.integer("points");
       col.boolean("child").defaultsTo(true);
       col
@@ -99,9 +99,9 @@ exports.up = function (knex) {
         .onUpdate("CASCADE");
     })
     .createTable("todos_members", col => {
-      col.increments();
       col
         .integer("members_id")
+        .defaultTo(0)
         .unsigned()
         .references("members.id")
         .onDelete("CASCADE")
@@ -114,10 +114,12 @@ exports.up = function (knex) {
         .onUpdate("CASCADE");
       col
         .integer("children_id")
+        .defaultTo(0)
         .unsigned()
         .references("children.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
+      col.primary(["members_id", "children_id", "todos_id"], "id");
     })
     .createTable("confirmations", col => {
       col.increments("id");
@@ -132,7 +134,7 @@ exports.up = function (knex) {
     });
 };
 
-exports.down = function (knex) {
+exports.down = function(knex) {
   return knex.schema
     .dropTableIfExists("confirmations")
     .dropTableIfExists("todos_members")

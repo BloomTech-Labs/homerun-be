@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Todos = require("../models/todos-model.js");
+const TodosMembers = require("../models/todos-members-model.js");
 
 router.get("/:householdId", async (req, res) => {
   try {
@@ -26,14 +27,22 @@ router.get("/:householdId/:memberId", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-router.post("/assign", (req, res, next) => {
-  if (req.body.member_id && req.body.household_id) {
-    // insert record in todos_members
+router.post("/assign/:id", async (req, res, next) => {
+  if (req.body.member_ids) {
+    await req.body.member_ids.forEach(id => {
+      try {
+        TodosMembers.insert(req.params.id, id);
+      } catch (e) {
+        res.status(500).json({ error: e.message });
+      }
+    });
+    res.status(200).json("success");
   } else {
     res.status(400).json({ message: "Required assignment arguments missing." });
   }
 });
+
+router.post("/unassign", (req, res, next) => {});
 
 router.post("/add", (req, res, next) => {
   const newTodo = req.body;
@@ -53,7 +62,7 @@ router.post("/add", (req, res, next) => {
   }
 });
 
-router.post("/update/:id", (req, res, next) => {
+router.put("/:id", (req, res, next) => {
   const updates = req.body;
   Todos.update(req.params.id, updates)
     .then(todo => {
@@ -64,7 +73,7 @@ router.post("/update/:id", (req, res, next) => {
     });
 });
 
-router.post("/remove/:id", (req, res, next) => {
+router.delete("/:id", (req, res, next) => {
   Todos.remove(req.params.id)
     .then(removed => {
       res.status(200).json({ message: `${removed} todo removed` });
@@ -75,8 +84,3 @@ router.post("/remove/:id", (req, res, next) => {
 });
 
 module.exports = router;
-=======
-
-
-module.exports = router
->>>>>>> master
