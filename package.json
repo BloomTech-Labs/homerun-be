@@ -23,14 +23,37 @@
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "jest DEV_ENV=testing  --watch",
-    "start": "node ./bin/www",
-    "server": "nodemon ./bin/www"
+    // "test": "jest DEV_ENV=testing  --watch",
+    // "start": "node ./bin/www",
+    // "server": "nodemon ./bin/www"
+    "server": "nodemon index.js",
+    "start": "node index.js",
+    "test": "jest --detectOpenHandles --forceExit",
+    "coverage": "jest --coverage --detectOpenHandles --forceExit || true"
   },
   "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
   "author": "[Brandon] <desselle.brandon2@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "codeclimate-test-reporter": "^0.5.1",
     "nodemon": "^2.0.2"
+  },
+  "jest": {
+    "bail": 1,
+    "verbose": true,
+    "clearMocks": true,
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!package.json",
+      "!*.md",
+      "!**/node_modules/**",
+      "!**/vendor/**",
+      "!**/__tests__/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "lcov"
+    ]
   }
 }
