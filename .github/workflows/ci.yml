@@ -9,7 +9,6 @@ on: [push, pull_request]
 jobs:
   # A job to generate and publish code coverage
   coverage:
-		# A more descriptive name of the job
     name: Test and publish test coverage
 
 		# The OS on which the job will run
