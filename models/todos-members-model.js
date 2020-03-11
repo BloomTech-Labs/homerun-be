@@ -4,9 +4,13 @@ const insert = members => {
   return db("todos_members").insert(members, "*");
 };
 
-const remove = (todo_id, member_id) => {
+const remove = members => {
+  const pkeys = members.map(m => {
+    return `${m.member_id}${m.todo_id}`;
+  });
+  console.log(pkeys);
   return db("todos_members")
-    .where({ id })
+    .whereIn("todos_members_pkey", pkeys)
     .del();
 };
 
