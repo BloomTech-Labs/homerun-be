@@ -23,9 +23,6 @@
     "supertest": "^4.0.2"
   },
   "scripts": {
-    // "test": "jest DEV_ENV=testing  --watch",
-    // "start": "node ./bin/www",
-    // "server": "nodemon ./bin/www"
     "server": "nodemon index.js",
     "start": "node index.js",
     "test": "jest --detectOpenHandles --forceExit",
