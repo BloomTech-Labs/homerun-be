@@ -1,0 +1,7 @@
+exclude_patterns:
+  - "__tests__/"
+  - "spec/"
+  - "**/vendor/"
+  - "**/node_modules/"
+  - "package.json"
+  - "*.md"
