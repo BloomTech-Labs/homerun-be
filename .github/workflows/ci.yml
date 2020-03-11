@@ -10,8 +10,6 @@ jobs:
   # A job to generate and publish code coverage
   coverage:
     name: Test and publish test coverage
-
-		# The OS on which the job will run
     runs-on: ubuntu-latest
 
 		# The steps for the job, executed in sequence
