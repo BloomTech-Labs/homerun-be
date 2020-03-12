@@ -1,17 +1,22 @@
 const db = require("../data/dbConfig.js");
 
 const insert = members => {
-  return db("todos_members").insert(members, "*");
+  return db("todos_members")
+    .insert(members, "*")
+    .catch(err => console.log(err));
 };
 
 const remove = members => {
-  const pkeys = members.map(m => {
-    return `${m.member_id}${m.todo_id}`;
+  const promises = members.map(m => {
+    return db("todos_members")
+      .where({ todo_id: m.todo_id, member_id: m.member_id })
+      .del();
   });
-  console.log(pkeys);
-  return db("todos_members")
-    .whereIn("todos_members_pkey", pkeys)
-    .del();
+  return Promise.all(promises)
+    .then(values => {
+      return values.reduce((total, current) => total + current);
+    })
+    .catch(err => console.log(err));
 };
 
 module.exports = {

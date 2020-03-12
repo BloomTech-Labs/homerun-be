@@ -87,7 +87,7 @@ router.post("/:id/unassign", async (req, res, next) => {
       membersUnassigned = await TodosMembers.remove(members);
     }
 
-    const unassigned = childrenUnassigned.concat(membersUnassigned);
+    const unassigned = childrenUnassigned + membersUnassigned;
     res.status(200).json({ unassigned });
   } else {
     res.status(400).json({ message: "Required assignment arguments missing." });
