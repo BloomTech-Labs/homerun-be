@@ -47,11 +47,19 @@ router.post("/:id/assign", async (req, res, next) => {
       });
 
     if (children.length > 0) {
-      childrenAssigned = await TodosChildren.insert(children);
+      try {
+        childrenAssigned = await TodosChildren.insert(children);
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     if (members.length > 0) {
-      membersAssigned = await TodosMembers.insert(members);
+      try {
+        membersAssigned = await TodosMembers.insert(members);
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     const assigned = childrenAssigned.concat(membersAssigned);
