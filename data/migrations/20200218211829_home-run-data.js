@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+exports.up = function(knex) {
   return knex.schema
     .createTable("households", col => {
       col
@@ -38,6 +38,7 @@ exports.up = function (knex) {
       col.varchar("title", 40).notNullable();
       col.varchar("desc", 255);
       col.integer("point_value");
+      col.bigint("created_at");
       col.bigint("due");
       col.boolean("completed");
       col.text("completed_by");
@@ -73,7 +74,7 @@ exports.up = function (knex) {
     })
     .createTable("children", col => {
       col.increments();
-      col.text('username');
+      col.text("username");
       col.integer("points");
       col.boolean("child").defaultsTo(true);
       col
@@ -99,25 +100,36 @@ exports.up = function (knex) {
         .onUpdate("CASCADE");
     })
     .createTable("todos_members", col => {
-      col.increments();
       col
-        .integer("members_id")
+        .integer("member_id")
+        .defaultTo(0)
         .unsigned()
         .references("members.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
       col
-        .integer("todos_id")
+        .integer("todo_id")
         .unsigned()
         .references("todos.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
+      col.primary(["member_id", "todo_id"]);
+    })
+    .createTable("todos_children", col => {
       col
-        .integer("children_id")
+        .integer("child_id")
+        .defaultTo()
         .unsigned()
         .references("children.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
+      col
+        .integer("todo_id")
+        .unsigned()
+        .references("todos.id")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      col.primary(["child_id", "todo_id"]);
     })
     .createTable("confirmations", col => {
       col.increments("id");
@@ -132,7 +144,7 @@ exports.up = function (knex) {
     });
 };
 
-exports.down = function (knex) {
+exports.down = function(knex) {
   return knex.schema
     .dropTableIfExists("confirmations")
     .dropTableIfExists("todos_members")
