@@ -1,9 +1,18 @@
 const db = require("../data/dbConfig.js");
 
-const insert = children => {
-  return db("todos_children")
-    .insert(children, "*")
-    .catch(err => console.log(err));
+const insert = async children => {
+  try {
+    let inserted = await db("todos_children")
+      .insert(children, "*")
+      .catch(err => console.log(err));
+    if (inserted) {
+      return inserted;
+    } else {
+      return [];
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const remove = children => {
