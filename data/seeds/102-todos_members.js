@@ -1,4 +1,4 @@
-exports.seed = function (knex) {
+exports.seed = function(knex) {
   // Deletes ALL existing entries
   return knex("todos_members")
     .del()
@@ -6,34 +6,28 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex("todos_members").insert([
         {
-          members_id: 1,
-          todos_id: 1,
-          children_id: null
+          member_id: 1,
+          todo_id: 1
         },
         {
-          members_id: 1,
-          todos_id: 2,
-          children_id: null
+          member_id: 1,
+          todo_id: 2
         },
         {
-          members_id: 2,
-          todos_id: 2,
-          children_id: null
+          member_id: 2,
+          todo_id: 2
         },
         {
-          members_id: 2,
-          todos_id: 4,
-          children_id: null
+          member_id: 2,
+          todo_id: 4
         },
         {
-          members_id: 1,
-          todos_id: 5,
-          children_id: null
+          member_id: 1,
+          todo_id: 5
         },
         {
-          members_id: 2,
-          todos_id: 5,
-          children_id: null
+          member_id: 2,
+          todo_id: 5
         }
       ]);
     });
