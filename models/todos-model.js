@@ -40,6 +40,20 @@ const findById = id => {
     .first();
 };
 
+const findMembersAssigned = todo_id => {
+  return db("members")
+    .join("todos_members", "members.id", "=", "todos_members.member_id")
+    .where({ todo_id: todo_id })
+    .select("username", "child", "points");
+};
+
+const findChildrenAssigned = todo_id => {
+  return db("children")
+    .join("todos_children", "children.id", "=", "todos_children.child_id")
+    .where({ todo_id: todo_id })
+    .select("username", "child", "points");
+};
+
 const insert = newTodo => {
   return db("todos")
     .insert(newTodo, "id")
@@ -66,6 +80,8 @@ const remove = id => {
 module.exports = {
   findTodosPerHousehold,
   findTodosByMember,
+  findMembersAssigned,
+  findChildrenAssigned,
   findById,
   insert,
   update,
