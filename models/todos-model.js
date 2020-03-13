@@ -25,8 +25,8 @@ const findTodosByMember = (householdId, memberId) => {
   return db("todos")
     .select("*")
     .innerJoin("todos_members", function() {
-      this.on("todos_members.todos_id", "=", "todos.id").andOn(
-        "todos_members.members_id",
+      this.on("todos_members.todo_id", "=", "todos.id").andOn(
+        "todos_members.member_id",
         "=",
         Number(memberId)
       );
