@@ -3,32 +3,32 @@ const Todos = require("../models/todos-model.js");
 const TodosMembers = require("../models/todos-members-model.js");
 const TodosChildren = require("../models/todos-children-model.js");
 
-// router.get("/:householdId", async (req, res) => {
-//   try {
-//     const todosPerHousehold = await Todos.findTodosPerHousehold(
-//       req.params.householdId
-//     );
-//     res.status(200).json(todosPerHousehold);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message, location: "todos-router.js 8" });
-//   }
-// });
+router.get("/household/:householdId", async (req, res) => {
+  try {
+    const todosPerHousehold = await Todos.findTodosPerHousehold(
+      req.params.householdId
+    );
+    res.status(200).json(todosPerHousehold);
+  } catch (err) {
+    res.status(500).json({ error: err.message, location: "todos-router.js 8" });
+  }
+});
 
-// router.get("/:householdId/:memberId", async (req, res) => {
-//   try {
-//     const todosByMember = await Todos.findTodosByMember(
-//       req.params.householdId,
-//       req.params.memberId
-//     );
-//     res.status(200).json(todosByMember);
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({ error: err.message, location: "todos-router.js 18" });
-//   }
-// });
+router.get("/household/:householdId/:memberId", async (req, res) => {
+  try {
+    const todosByMember = await Todos.findTodosByMember(
+      req.params.householdId,
+      req.params.memberId
+    );
+    res.status(200).json(todosByMember);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: err.message, location: "todos-router.js 18" });
+  }
+});
 
-router.post("/:id/assign", async (req, res, next) => {
+router.post("/assign/:id", async (req, res, next) => {
   const todo_id = req.params.id;
   let childrenAssigned = [];
   let membersAssigned = [];
@@ -78,7 +78,7 @@ router.post("/:id/assign", async (req, res, next) => {
   }
 });
 
-router.post("/:id/unassign", async (req, res, next) => {
+router.post("/unassign/:id", async (req, res, next) => {
   const todo_id = req.params.id;
   let childrenUnassigned = [];
   let membersUnassigned = [];
