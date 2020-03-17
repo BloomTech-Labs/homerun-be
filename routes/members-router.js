@@ -52,4 +52,15 @@ router.post("/household/invite", async (req, res, next) => {
   }
 });
 
+router.put("/:id", (req, res, next) => {
+  const updates = req.body;
+  Members.update(req.params.id, updates)
+    .then(member => {
+      res.status(200).json(member);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
 module.exports = router;
