@@ -27,7 +27,8 @@ router.get("/household/:householdId/assign", async (req, res) => {
 });
 
 router.post("/household/invite", async (req, res, next) => {
-  const { email, householdId } = req.body;
+  const { email } = req.body;
+  const householdId = req.body.decodedToken.current_household;
   if (email) {
     Members.getByEmail(email)
       .then(member => {
@@ -36,7 +37,7 @@ router.post("/household/invite", async (req, res, next) => {
           hash: crypto.randomBytes(20).toString("hex")
         };
         Confirmations.insert(newConfirmation).then(hash => {
-          sendMail(member.email, templates.householdInvite(hash));
+          sendMail(member.email, templates.householdInvite(hash, householdId));
           res.status(200).json({
             message: `An invitation email has been sent to ${member.email}`
           });
