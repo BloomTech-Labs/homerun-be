@@ -26,10 +26,9 @@ router.get("/household/:householdId/assign", async (req, res) => {
   } catch (err) {}
 });
 
-router.post("/invite", async (req, res, next) => {
+router.post("/household/invite", async (req, res, next) => {
   const { email } = req.body;
   if (email) {
-    // 1. Try to find member by email in database
     Members.getByEmail(email)
       .then(member => {
         const newConfirmation = {
