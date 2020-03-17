@@ -2,35 +2,29 @@
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a280d9a48c1e094a79cb/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/homerun-be/test_coverage)
 
-🚫 Note: All lines that start with 🚫 are instructions and should be deleted before this is posted to your portfolio. This is intended to be a guideline. Feel free to add your own flare to it.
-
-🚫 The numbers 1️⃣ through 3️⃣ next to each item represent the week that part of the docs needs to be comepleted by. Make sure to delete the numbers by the end of Labs.
-
-🚫 Each student has a required minimum number of meaningful PRs each week per the rubric. Contributing to docs does NOT count as a PR to meet your weekly requirements.
-
 # API Documentation
 
-#### 1️⃣ Backend delpoyed at [🚫name service here](🚫add URL here) <br>
+#### 1️⃣ Backend deployed at TidyHive (https://dashboard.heroku.com/apps/stage-homerun-be) <br>
 
 ## 1️⃣ Getting started
 
 To get the server running locally:
 
-🚫 adjust these scripts to match your project
-
 - Clone this repo
-- **yarn install** to install all required dependencies
-- **yarn server** to start the local server
-- **yarn test** to start server using testing environment
+- **npm install** to install all required dependencies
+- **npm server** to start the local server
+- **npm test** to start server using testing environment
 
 ### Backend framework goes here
 
-🚫 Why did you choose this framework?
+Express Node.JS
 
-- Point One
-- Point Two
-- Point Three
-- Point Four
+Reasoning: 
+
+- Flexibility
+- Easy to use (speed, familiarity, etc)
+- Great Ecosystems, libraries and modules
+- Same language on frontend and backend 
 
 ## 2️⃣ Endpoints
 
@@ -54,6 +48,17 @@ To get the server running locally:
 | POST   | `/users/register/owner` | none                | Creates a new user as owner of a new organization. |
 | PUT    | `/users/:userId`        | owners, supervisors |                                                    |
 | DELETE | `/users/:userId`        | owners, supervisors |                                                    |
+
+
+#### TODOs Routes
+
+| Method | Endpoint                | Access Control      | Description                                        |
+| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
+| GET    | `/todos/a12345`         | owners              | Returns info for all inputted todos in the system. |
+| GET    | `/todos/a12345/:userId` | owners, supervisors | Returns all todos for a particular user.           |
+| POST   | `/todos/add`            | user                | Creates a new todo                                 |
+| PUT    | `/todos/:userId`        | user                | Returns: "title": "Updated todo title"             |
+| DELETE | `/todos/:userId`        | owners, supervisors |                                                    |
 
 # Data Model
 
@@ -175,3 +180,207 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 
 See [Frontend Documentation](🚫link to your frontend readme here) for details on the fronend of our project.
 🚫 Add DS iOS and/or Andriod links here if applicable.
+
+
+
+
+
+
+### Sign Up
+
+POST to `https://stage-homerun-be.herokuapp.com/auth/signup`
+
+Takes an object including:
+```javascript 
+{
+    "username": "LambdaStudent247",
+    "email": "homerun.labspt7@gmail.com",
+    "password": "password",
+    "confirm": "password",
+}
+```
+
+Example Output:
+```javascript 
+{
+    "saved": {
+        "id": 1,
+        "username": "LambdaStudent247",
+        "email": "homerun.labspt7@gmail.com",
+        "password": "$2a$10$YWS/2323oqZKgkcmJ7AeWe2Q7W1tZYokZLCSIiuAv6BmqvldmXWl.",
+        "confirm": "password",
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiSGVhdGhlciIsInJvbGVzIjoidXNlciIsImlhdCI6MTU3ODcyMTM3MCwiZXhwIjoxNTc4ODA3NzcwfQ.S-d9Ze18GIFhGFvG5fljIhiVHSbXCWx2WvUZv5mq_7s"
+}
+
+
+### Login
+
+POST to `https://bw-kids-fly.herokuapp.com/api/auth/login/user`
+
+Takes an object including:
+```javascript
+{
+   "username": "LambdaStudent247",
+    "password": "password"
+}
+```
+
+Example Output:
+
+{
+    "message": "Welcome LambdaStudent247!",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiTGFtYmRhU3R1ZGVudDI0NyIsInJvbGVzIjoidXNlciIsImlhdCI6MTU3ODcyNTk4MSwiZXhwIjoxNTc4ODEyMzgxfQ.GSpNXMkeXbkyS2S0nF_oifInr5KFgvLV_bNoEs195IY",
+    "userid": 1
+}
+
+
+
+
+
+
+### Register New Admin
+
+POST to `https://bw-kids-fly.herokuapp.com/api/adminauth/register/admin`
+
+Takes an object including:
+```javascript 
+{
+    "username": "LambdaStudent5000",
+    "password": "password"
+   
+}
+```
+
+Example Output:
+
+{
+    "id": 1,
+    "username": "LambdaStudent5000",
+    "password": "$2a$10$X58bC9c2vZxnG6mgvf16uexgaaiyIDcyxRwLEw/34G54DF8r3mCaK"
+}
+
+### Login Existing Admin
+
+POST to `https://bw-kids-fly.herokuapp.com/api/adminauth/login/admin`
+
+Takes an object including:
+```javascript
+{
+  "username": "LambdaStudent5000",
+  "password": "password"
+}
+```
+
+Example Output:
+
+{
+    "message": "Welcome admin LambdaStudent5000!",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbmlkIjoxLCJ1c2VybmFtZSI6IkxhbWJkYVN0dWRlbnQ1MDAwIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTU3ODM3MTQwMywiZXhwIjoxNTc4NDU3ODAzfQ.BLegBiUvih24THUB7LgzEFOnErW69vNXpfrMo9xfn50"
+}
+
+
+
+### Get all registered users
+
+GET to `https://bw-kids-fly.herokuapp.com/api/user/`
+
+Takes an object including:
+```javascript
+[
+    {
+        "id": 1,
+        "username": "LambdaStudent247",
+        "password": "$2a$10$6NrOGH/43.iC.t8gndaGV.N3ZNRnaaoln44K.urxOCsgmdwp67EeK"
+    },
+    {
+        "id": 2,
+        "username": "LambdaStudent247",
+        "password": "$2a$10$65ZgEq5rUvjcw4WDfZsei.OysphHJWS/0VpSCvbgey5MI8qCyWWce"
+    }
+]
+```
+
+### Post a new trip
+
+POST to `https://bw-kids-fly.herokuapp.com/api/trips/trip`
+
+Takes a JWT and an object including: 
+
+```javascript
+{
+"airport_name": "SFO",
+"airline": "1255",
+"flight_number": "25",
+"departure_time": "12PM",
+"carryon_items": "3",
+"checked_items": "1",
+"children": "10",
+"special_needs": "We have a stroller",
+}
+```
+
+Example Output:
+
+{
+    "message": "Congratulations, you successfully created a new trip!",
+    "accountID": [
+        1
+    ]
+}
+
+### Update trip
+
+PUT to `https://bw-kids-fly.herokuapp.com/api/trip/:id` //where id is trip's ID
+
+Takes a JWT and an object containing any of the existing trip properties that are to be updated.
+
+### Delete a trip
+
+DELETE to `https://bw-kids-fly.herokuapp.com/api/trip/:id` //where id is trip's ID
+
+Takes a JWT
+
+### Get all trips items in database
+
+GET to `https://bw-kids-fly.herokuapp.com/api/trips`
+
+
+Will be returned an array with trip objects.
+
+Example Output:
+
+```javascript
+([
+    {"airport name": 'LAX', airline: 'Southwest',"flight_number": '1544', "departure_time": '2:30PM',"carryon_items": '5', children: '3', "special_needs": 'We have a stroller'},
+
+    {"airport name": 'SFO', airline: 'American Airlines',"flight_number": '300', "departure_time": '5PM',"carryon_items": '4', children: '5', "special_needs": 'NA'},
+
+    {"airport name": 'MEX', airline: 'International',"flight_number": '2463', "departure_time": '8AM',"carryon_items": '2', children: '1', "special_needs": ''},
+
+
+  ]);
+
+  
+};
+```
+
+### Submitting an application
+
+POST to `https://bw-kids-fly.herokuapp.com/api/apps`
+
+```javascript
+{
+	"email": "LambdaStudent365@Lambda.edu",
+    "password": "password",
+    "confirm": "password",
+    "first_name": "Heather",
+    "last_name": "Ridgill"
+    
+}
+```
+
+Example Output:
+{
+    "message": "You have now applied to be a KidsFlyConnection Staff Member!"
+}
