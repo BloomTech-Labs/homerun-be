@@ -27,7 +27,7 @@ router.get("/household/:householdId/assign", async (req, res) => {
 });
 
 router.post("/household/invite", async (req, res, next) => {
-  const { email } = req.body;
+  const { email, householdId } = req.body;
   if (email) {
     Members.getByEmail(email)
       .then(member => {
