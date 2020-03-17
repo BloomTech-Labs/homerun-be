@@ -12,10 +12,12 @@ const cors = require("cors");
 const session = require("express-session");
 const grant = require("grant-express");
 
-const indexRouter = require("./routes/index");
+const indexRouter = require("./routes/index.js");
 const todosRouter = require("./routes/todos-router.js");
 const authRouter = require("./routes/auth-router.js");
 const membersRouter = require("./routes/members-router.js");
+
+const restricted = require("./middleware/restricted.js");
 
 const app = express();
 
@@ -67,7 +69,7 @@ app.use(
 );
 
 app.use("/", indexRouter);
-app.use("/todos", todosRouter);
+app.use("/todos", restricted, todosRouter);
 app.use("/auth", authRouter);
 app.use("/members", membersRouter);
 

@@ -8,6 +8,10 @@ router.get("/household/:householdId", async (req, res) => {
     for (let member of members) {
       member.children = children;
     }
+<<<<<<< HEAD
+=======
+    console.log(members);
+>>>>>>> 2545cca630fe3d0b1002616e722f5773de53f721
     res.status(200).json(members);
   } catch (err) {
     res
