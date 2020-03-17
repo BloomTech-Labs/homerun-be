@@ -8,7 +8,7 @@ const getById = id => {
 
 const getByEmail = email => {
   return db("members")
-    .where({ email })
+    .where({ email: email })
     .first();
 };
 

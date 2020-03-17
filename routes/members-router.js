@@ -1,5 +1,9 @@
 const router = require("express").Router();
 const Members = require("../models/members-model.js");
+const Confirmations = require("../models/confirmations-model.js");
+const crypto = require("crypto");
+const sendMail = require("../middleware/sendMail.js");
+const templates = require("../middleware/emailTemplates.js");
 
 router.get("/household/:householdId", async (req, res) => {
   try {
@@ -30,7 +34,6 @@ router.post("/household/invite", async (req, res, next) => {
   const { email } = req.body;
   const householdId = req.decodedToken.current_household;
   if (email && householdId) {
-    console.log(email, householdId);
     Members.getByEmail(email)
       .then(member => {
         const newConfirmation = {
@@ -45,9 +48,10 @@ router.post("/household/invite", async (req, res, next) => {
         });
       })
       .catch(err => {
-        res
-          .status(400)
-          .json({ message: "A user with that email address does not exist." });
+        res.status(400).json({
+          message: "A user with that email address does not exist.",
+          err
+        });
       });
   } else {
     res.status(400).json({ message: "Please enter an email address." });

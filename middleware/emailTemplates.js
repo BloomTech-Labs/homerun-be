@@ -19,7 +19,7 @@ module.exports = {
     return {
       subject: "Household Invite - Tidy Hive",
       text: `Please paste the following link in to your browser's URL bar in order to join this household: ${process.env.FE_URL}/invite/${hash}/${householdId}`,
-      html: `Please follow <a href="${process.env.FE_URL}/reset-password/${hash}/${householdId}">this link</a> to join this household.`
+      html: `Please follow <a href="${process.env.FE_URL}/invite/${hash}/${householdId}">this link</a> to join this household.`
     };
   }
 };
