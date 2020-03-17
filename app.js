@@ -71,7 +71,7 @@ app.use(
 app.use("/", indexRouter);
 app.use("/todos", restricted, todosRouter);
 app.use("/auth", authRouter);
-app.use("/members", membersRouter);
+app.use("/members", restricted, membersRouter);
 
 // error handler
 app.use(function(err, req, res, next) {

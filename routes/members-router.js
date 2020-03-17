@@ -28,8 +28,9 @@ router.get("/household/:householdId/assign", async (req, res) => {
 
 router.post("/household/invite", async (req, res, next) => {
   const { email } = req.body;
-  const householdId = req.body.decodedToken.current_household;
-  if (email) {
+  const householdId = req.decodedToken.current_household;
+  if (email && householdId) {
+    console.log(email, householdId);
     Members.getByEmail(email)
       .then(member => {
         const newConfirmation = {
