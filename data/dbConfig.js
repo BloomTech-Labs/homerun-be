@@ -1,13 +1,10 @@
-require('dotenv').config()
+require("dotenv").config();
 const knex = require("knex");
-// const environment = 'development';
-const environment = process.env.DEV_ENV || "testing";
+const environment = process.env.NODE_ENV || "development";
 
-const configOptions = require("../knexfile")[environment]
+const configOptions = require("../knexfile")[environment];
 
 module.exports = knex(configOptions);
-
-
 
 // Sample Data Shape
 
@@ -68,7 +65,7 @@ module.exports = knex(configOptions);
 // 			points: 0
 // 		},
 // 	],
-	// todos: [
+// todos: [
 // 		{
 // 			id: 1,
 // 			title: "Test Title",
