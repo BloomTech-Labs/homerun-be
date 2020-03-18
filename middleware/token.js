@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const { jwtSecret } = require("../config/secrets.js");
 
-const generateToken = user => {
+const generateToken = member => {
   const payload = {
-    subject: user.id,
-    username: user.email
+    subject: member.id,
+    email: member.email,
+    current_household: member.current_household
   };
 
   const options = {

@@ -8,7 +8,7 @@ const getById = id => {
 
 const getByEmail = email => {
   return db("members")
-    .where({ email })
+    .where({ email: email })
     .first();
 };
 
@@ -50,33 +50,46 @@ const findHouseholdMembers = householdId => {
       "members.access_token",
       "members.points",
       "members.active",
-      "members.current_household",
+      "members.current_household"
     )
-    .innerJoin("household_members", function () {
-      this.on("households.id", "=", "household_members.household_id")
-    }).where('household_id', '=', householdId)
-    .innerJoin("members", function () {
+    .innerJoin("household_members", function() {
+      this.on("households.id", "=", "household_members.household_id");
+    })
+    .where("household_id", "=", householdId)
+    .innerJoin("members", function() {
       this.on("household_members.member_id", "=", "members.id");
     });
 };
 
-// select children.* from children
-// join households on children.household_id = households.id
-// where children.household_id = 'a12345'
 const childrenPerHousehold = householdId => {
-  return db("children").where("household_id", '=', householdId)
+  return db("children").where("household_id", "=", householdId);
+};
+
+const getChildById = id => {
+  return db('children').where({ id })
 }
 
-// select * from members 
-// where members.current_household = 'a12345'
+const addChild = child => {
+  return db('children').insert(child, 'id').then(id => {
+    return getChildById(id[0]);
+  });
+}
+
+const updateChild = (id, changes) => {
+  return db('children').where({ id }).update(changes)
+}
+
+const removeChild = id => {
+  return db('children').where({ id }).del()
+}
 
 const totalHouseholdMembers = householdId => {
-  return db('members').where('current_household', '=', householdId)
-}
+  return db("members").where("current_household", "=", householdId);
+};
 
 const totalHouseholdChildren = householdId => {
-  return db('children').where('household_id', '=', householdId)
-}
+  return db("children").where("household_id", "=", householdId);
+};
 
 module.exports = {
   getById,
@@ -87,5 +100,9 @@ module.exports = {
   findHouseholdMembers,
   childrenPerHousehold,
   totalHouseholdMembers,
-  totalHouseholdChildren
+  totalHouseholdChildren,
+  getChildById,
+  addChild,
+  updateChild,
+  removeChild
 };

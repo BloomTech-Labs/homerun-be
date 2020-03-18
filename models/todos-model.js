@@ -25,8 +25,8 @@ const findTodosByMember = (householdId, memberId) => {
   return db("todos")
     .select("*")
     .innerJoin("todos_members", function() {
-      this.on("todos_members.todos_id", "=", "todos.id").andOn(
-        "todos_members.members_id",
+      this.on("todos_members.todo_id", "=", "todos.id").andOn(
+        "todos_members.member_id",
         "=",
         Number(memberId)
       );
@@ -38,6 +38,20 @@ const findById = id => {
   return db("todos")
     .where({ id })
     .first();
+};
+
+const findMembersAssigned = todo_id => {
+  return db("members")
+    .join("todos_members", "members.id", "=", "todos_members.member_id")
+    .where({ todo_id: todo_id })
+    .select("username", "child", "points");
+};
+
+const findChildrenAssigned = todo_id => {
+  return db("children")
+    .join("todos_children", "children.id", "=", "todos_children.child_id")
+    .where({ todo_id: todo_id })
+    .select("username", "child", "points");
 };
 
 const insert = newTodo => {
@@ -66,6 +80,8 @@ const remove = id => {
 module.exports = {
   findTodosPerHousehold,
   findTodosByMember,
+  findMembersAssigned,
+  findChildrenAssigned,
   findById,
   insert,
   update,
