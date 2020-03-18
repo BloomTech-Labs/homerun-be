@@ -21,8 +21,8 @@ router.get("/:householdId/assign", async (req, res) => {
     const members = await Members.totalHouseholdMembers(req.params.householdId)
     const children = await Members.totalHouseholdChildren(req.params.householdId)
     res.status(200).json([...members, ...children])
-  } catch (err) {
-
+  } catch (e) {
+    res.status(500).json({ error: e.message })
   }
 })
 
@@ -64,3 +64,5 @@ router.delete("/:household/c/:child", async (req, res) => {
 })
 
 module.exports = router;
+
+router.post
