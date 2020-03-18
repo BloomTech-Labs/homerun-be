@@ -50,19 +50,20 @@ const findHouseholdMembers = householdId => {
       "members.access_token",
       "members.points",
       "members.active",
-      "members.current_household",
+      "members.current_household"
     )
-    .innerJoin("household_members", function () {
-      this.on("households.id", "=", "household_members.household_id")
-    }).where('household_id', '=', householdId)
-    .innerJoin("members", function () {
+    .innerJoin("household_members", function() {
+      this.on("households.id", "=", "household_members.household_id");
+    })
+    .where("household_id", "=", householdId)
+    .innerJoin("members", function() {
       this.on("household_members.member_id", "=", "members.id");
     });
 };
 
 const childrenPerHousehold = householdId => {
-  return db("children").where("household_id", '=', householdId)
-}
+  return db("children").where("household_id", "=", householdId);
+};
 
 const getChildById = id => {
   return db('children').where({ id })
@@ -83,12 +84,12 @@ const removeChild = id => {
 }
 
 const totalHouseholdMembers = householdId => {
-  return db('members').where('current_household', '=', householdId)
-}
+  return db("members").where("current_household", "=", householdId);
+};
 
 const totalHouseholdChildren = householdId => {
-  return db('children').where('household_id', '=', householdId)
-}
+  return db("children").where("household_id", "=", householdId);
+};
 
 module.exports = {
   getById,

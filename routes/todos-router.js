@@ -1,24 +1,171 @@
-const router = require('express').Router();
-const Todos = require('../models/todos-model.js');
+const router = require("express").Router();
+const Todos = require("../models/todos-model.js");
+const TodosMembers = require("../models/todos-members-model.js");
+const TodosChildren = require("../models/todos-children-model.js");
 
-router.get('/:householdId', async (req, res) => {
-	try {
-		const todosPerHousehold = await Todos.findTodosPerHousehold(req.params.householdId)
-		res.status(200).json(todosPerHousehold);
-	} catch (err) {
-		res.status(500).json({ error: err.message, location: 'todos-router.js 8' })
-	}
-})
+router.get("/household/:householdId", async (req, res) => {
+  try {
+    const todosPerHousehold = await Todos.findTodosPerHousehold(
+      req.params.householdId
+    );
+    res.status(200).json(todosPerHousehold);
+  } catch (err) {
+    res.status(500).json({ error: err.message, location: "todos-router.js 8" });
+  }
+});
 
-router.get('/:householdId/:memberId', async (req, res) => {
-	try {
-		const todosByMember = await Todos.findTodosByMember(req.params.householdId, req.params.memberId)
-		res.status(200).json(todosByMember);
-	} catch (err) {
-		res.status(500).json({ error: err.message, location: 'todos-router.js 18' })
-	}
-})
+router.get("/household/:householdId/:memberId", async (req, res) => {
+  try {
+    const todosByMember = await Todos.findTodosByMember(
+      req.params.householdId,
+      req.params.memberId
+    );
+    res.status(200).json(todosByMember);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: err.message, location: "todos-router.js 18" });
+  }
+});
 
+router.post("/assign/:id", async (req, res, next) => {
+  const todo_id = req.params.id;
+  let childrenAssigned = [];
+  let membersAssigned = [];
 
+  if (req.body.assignees) {
+    const childrenToAssign = req.body.assignees
+      .filter(a => a.type === "child")
+      .map(c => {
+        return { child_id: c.id, todo_id: todo_id };
+      });
 
-module.exports = router
+    const membersToAssign = req.body.assignees
+      .filter(a => a.type === "member")
+      .map(m => {
+        return { member_id: m.id, todo_id: todo_id };
+      });
+
+    if (childrenToAssign.length > 0) {
+      try {
+        childrenAssigned = await TodosChildren.insert(childrenToAssign);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    if (membersToAssign.length > 0) {
+      try {
+        membersAssigned = await TodosMembers.insert(membersToAssign);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    const membersCurrentlyAssigned = await Todos.findMembersAssigned(
+      req.params.id
+    );
+    const childrenCurrentlyAssigned = await Todos.findChildrenAssigned(
+      req.params.id
+    );
+    const currentlyAssigned = membersCurrentlyAssigned.concat(
+      childrenCurrentlyAssigned
+    );
+    console.log(currentlyAssigned);
+    res.status(200).json(currentlyAssigned);
+  } else {
+    res.status(400).json({ message: "Required assignment arguments missing." });
+  }
+});
+
+router.post("/unassign/:id", async (req, res, next) => {
+  const todo_id = req.params.id;
+  let childrenUnassigned = [];
+  let membersUnassigned = [];
+
+  if (req.body.assignees) {
+    const childrenToUnassign = req.body.assignees
+      .filter(a => a.type === "child")
+      .map(c => {
+        return { child_id: c.id, todo_id: todo_id };
+      });
+    const membersToUnassign = req.body.assignees
+      .filter(a => a.type === "member")
+      .map(m => {
+        return { member_id: m.id, todo_id: todo_id };
+      });
+
+    if (childrenToUnassign.length > 0) {
+      childrenUnassigned = await TodosChildren.remove(childrenToUnassign);
+    }
+
+    if (membersToUnassign.length > 0) {
+      membersUnassigned = await TodosChildren.remove(membersToUnassign);
+    }
+
+    const membersCurrentlyAssigned = await Todos.findMembersAssigned(
+      req.params.id
+    );
+    const childrenCurrentlyAssigned = await Todos.findChildrenAssigned(
+      req.params.id
+    );
+    const currentlyAssigned = membersCurrentlyAssigned.concat(
+      childrenCurrentlyAssigned
+    );
+    res.status(200).json(currentlyAssigned);
+  } else {
+    res.status(400).json({ message: "Required assignment arguments missing." });
+  }
+});
+
+router.get("/assigned/:id", async (req, res, next) => {
+  try {
+    const membersAssigned = await Todos.findMembersAssigned(req.params.id);
+    const childrenAssigned = await Todos.findChildrenAssigned(req.params.id);
+    const assigned = Object.assign(membersAssigned, childrenAssigned);
+    res.status(200).json(assigned);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.post("/add", (req, res, next) => {
+  const newTodo = req.body;
+  if (newTodo.title && newTodo.household) {
+    // TODO: Confirm that the household id is valid?
+    Todos.insert(newTodo)
+      .then(todo => {
+        res.status(200).json(todo);
+      })
+      .catch(err => {
+        next(err);
+      });
+  } else {
+    res
+      .status(400)
+      .json({ message: "Required properties missing from new todo." });
+  }
+});
+
+router.put("/:id", (req, res, next) => {
+  const updates = req.body;
+  Todos.update(req.params.id, updates)
+    .then(todo => {
+      res.status(200).json(todo);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+router.delete("/:id", (req, res, next) => {
+  Todos.remove(req.params.id)
+    .then(removed => {
+      res.status(200).json({ message: `${removed} todo removed` });
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+module.exports = router;

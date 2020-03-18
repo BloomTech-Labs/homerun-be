@@ -36,9 +36,7 @@ router.get("/hello", async (req, res) => {
     if (currentMember) {
       try {
         const token = await generateToken(currentMember);
-        res.redirect(
-          `https://stage-homerun-fe.herokuapp.com/auth?token=${token}`
-        );
+        res.redirect(`https://stage-homerun-fe.herokuapp.com/auth/${token}`);
       } catch (e) {
         console.log(e.message);
         res.status(500).json({ error: e.message });
@@ -47,9 +45,7 @@ router.get("/hello", async (req, res) => {
       try {
         const newMember = await Members.insert(member);
         const token = await generateToken(newMember);
-        res.redirect(
-          `https://stage-homerun-fe.herokuapp.com/auth?token=${token}`
-        );
+        res.redirect(`https://stage-homerun-fe.herokuapp.com/auth/${token}`);
       } catch (e) {
         console.log(e.message);
         res.status(500).json({ error: e.message });
@@ -189,19 +185,3 @@ router.post("/reset", (req, res, next) => {
 });
 
 module.exports = router;
-
-/*
-
-// using Twilio SendGrid's v3 Node.js Library
-// https://github.com/sendgrid/sendgrid-nodejs
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-const msg = {
-  to: 'test@example.com',
-  from: 'test@example.com',
-  subject: 'Sending with Twilio SendGrid is Fun',
-  text: 'and easy to do anywhere, even with Node.js',
-  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-};
-sgMail.send(msg);
-*/
