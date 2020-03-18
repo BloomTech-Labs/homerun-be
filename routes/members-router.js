@@ -58,15 +58,30 @@ router.post("/household/invite", async (req, res, next) => {
   }
 });
 
-router.put("/:id", (req, res, next) => {
-  const updates = req.body;
-  Members.update(req.params.id, updates)
-    .then(member => {
-      res.status(200).json(member);
-    })
-    .catch(err => {
-      next(err);
+router.put("/", (req, res, next) => {
+  const id = req.decodedToken.subject;
+  if (req.body.hash) {
+    Confirmations.getByHash(req.body.hash).then(confirmation => {
+      console.log(id, confirmation.member_id);
+      if (confirmation.member_id === id) {
+        Members.update(id, { current_household: req.body.householdId })
+          .then(member => {
+            res.status(200).json(member);
+          })
+          .catch(err => {
+            next(err);
+          });
+      }
     });
+  } else {
+    Members.update(id, updates)
+      .then(member => {
+        res.status(200).json(member);
+      })
+      .catch(err => {
+        next(err);
+      });
+  }
 });
 
 module.exports = router;
