@@ -64,5 +64,3 @@ router.delete("/:household/c/:child", async (req, res) => {
 })
 
 module.exports = router;
-
-router.post
