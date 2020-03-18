@@ -63,12 +63,5 @@ router.delete("/:household/c/:child", async (req, res) => {
     res.status(500).json({ error: e.message })
   }
 })
-    const members = await Members.totalHouseholdMembers(req.params.householdId);
-    const children = await Members.totalHouseholdChildren(
-      req.params.householdId
-    );
-    res.status(200).json([...members, ...children]);
-  } catch (err) {}
-});
 
 module.exports = router;
