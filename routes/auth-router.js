@@ -97,7 +97,10 @@ router.post("/login", (req, res, next) => {
           bcrypt.compareSync(credentials.password, member.password)
         ) {
           const token = generateToken(member);
-          res.status(200).json({ message: `Welcome, ${member.email}`, token });
+          res.status(200).json({
+            message: `Welcome, ${member.email}`,
+            token
+          });
         } else if (member.active === false) {
           res.status(400).json({
             message: "Please confirm your email address before logging in."
