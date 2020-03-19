@@ -171,7 +171,7 @@ router.put("/:id", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   Todos.remove(req.params.id)
     .then(removed => {
-      res.status(200).json({ message: `${removed} todo removed` });
+      res.status(200).json({ message: `${removed} todo(s) removed` });
     })
     .catch(err => {
       next(err);

@@ -115,7 +115,7 @@ router.put("/", (req, res, next) => {
       }
     });
   } else {
-    Members.update(id, updates)
+    Members.update(id, req.body)
       .then(member => {
         res.status(200).json(member);
       })
