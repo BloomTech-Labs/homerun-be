@@ -10,8 +10,14 @@ router.get("/household", async (req, res) => {
     // map over all todos
     // run findMembers/ChildrenAssigned for each todo
     // append that to each todo
-    // todosPerHousehold.map(todo => {});
-    res.status(200).json(todosPerHousehold);
+    const allTodos = await Promise.all(
+      todosPerHousehold.map(async todo => {
+        const membersAssigned = await Todos.findMembersAssigned(todo.id);
+        const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
+        return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
+      })
+    );
+    res.status(200).json(allTodos);
   } catch (err) {
     res.status(500).json({ error: err.message, location: "todos-router.js 8" });
   }
