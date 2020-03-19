@@ -3,21 +3,25 @@ const Todos = require("../models/todos-model.js");
 const TodosMembers = require("../models/todos-members-model.js");
 const TodosChildren = require("../models/todos-children-model.js");
 
-router.get("/household/:householdId", async (req, res) => {
+router.get("/household", async (req, res) => {
+  const householdId = req.decodedToken.current_household;
   try {
-    const todosPerHousehold = await Todos.findTodosPerHousehold(
-      req.params.householdId
-    );
+    const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
+    // map over all todos
+    // run findMembers/ChildrenAssigned for each todo
+    // append that to each todo
+    // todosPerHousehold.map(todo => {});
     res.status(200).json(todosPerHousehold);
   } catch (err) {
     res.status(500).json({ error: err.message, location: "todos-router.js 8" });
   }
 });
 
-router.get("/household/:householdId/:memberId", async (req, res) => {
+router.get("/household/member/:memberId", async (req, res) => {
+  const householdId = req.decodedToken.current_household;
   try {
     const todosByMember = await Todos.findTodosByMember(
-      req.params.householdId,
+      householdId,
       req.params.memberId
     );
     res.status(200).json(todosByMember);
