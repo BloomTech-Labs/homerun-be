@@ -4,6 +4,7 @@ const Confirmations = require("../models/confirmations-model.js");
 const crypto = require("crypto");
 const sendMail = require("../middleware/sendMail.js");
 const templates = require("../middleware/emailTemplates.js");
+const { generateToken } = require("../middleware/token.js");
 
 router.get("/household", async (req, res) => {
   const householdId = req.decodedToken.current_household;
@@ -103,11 +104,11 @@ router.put("/", (req, res, next) => {
   const id = req.decodedToken.subject;
   if (req.body.hash) {
     Confirmations.getByHash(req.body.hash).then(confirmation => {
-      console.log(id, confirmation.member_id);
       if (confirmation.member_id === id) {
         Members.update(id, { current_household: req.body.householdId })
-          .then(member => {
-            res.status(200).json(member);
+          .then(async member => {
+            const token = await generateToken(currentMember);
+            res.status(200).json({ member, token });
           })
           .catch(err => {
             next(err);
@@ -116,8 +117,9 @@ router.put("/", (req, res, next) => {
     });
   } else {
     Members.update(id, req.body)
-      .then(member => {
-        res.status(200).json(member);
+      .then(async member => {
+        const token = await generateToken(currentMember);
+        res.status(200).json({ member, token });
       })
       .catch(err => {
         next(err);
