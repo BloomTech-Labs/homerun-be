@@ -23,7 +23,7 @@ const insert = newMember => {
 const update = (id, updates) => {
   return db("members")
     .where({ id })
-    .update(updates);
+    .update(updates, ["id", "email", "current_household"]);
 };
 
 const remove = id => {
@@ -66,22 +66,28 @@ const childrenPerHousehold = householdId => {
 };
 
 const getChildById = id => {
-  return db('children').where({ id })
-}
+  return db("children").where({ id });
+};
 
 const addChild = child => {
-  return db('children').insert(child, 'id').then(id => {
-    return getChildById(id[0]);
-  });
-}
+  return db("children")
+    .insert(child, "id")
+    .then(id => {
+      return getChildById(id[0]);
+    });
+};
 
 const updateChild = (id, changes) => {
-  return db('children').where({ id }).update(changes)
-}
+  return db("children")
+    .where({ id })
+    .update(changes);
+};
 
 const removeChild = id => {
-  return db('children').where({ id }).del()
-}
+  return db("children")
+    .where({ id })
+    .del();
+};
 
 const totalHouseholdMembers = householdId => {
   return db("members").where("current_household", "=", householdId);
