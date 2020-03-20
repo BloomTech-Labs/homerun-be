@@ -107,7 +107,7 @@ router.put("/", (req, res, next) => {
       if (confirmation.member_id === id) {
         Members.update(id, { current_household: req.body.householdId })
           .then(async member => {
-            const token = await generateToken(currentMember);
+            const token = await generateToken(member);
             res.status(200).json({ member, token });
           })
           .catch(err => {
@@ -118,7 +118,7 @@ router.put("/", (req, res, next) => {
   } else {
     Members.update(id, req.body)
       .then(async member => {
-        const token = await generateToken(currentMember);
+        const token = await generateToken(member);
         res.status(200).json({ member, token });
       })
       .catch(err => {
