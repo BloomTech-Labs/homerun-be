@@ -90,11 +90,15 @@ const removeChild = id => {
 };
 
 const totalHouseholdMembers = householdId => {
-  return db("members").where("current_household", "=", householdId);
+  return db("members")
+    .where("current_household", "=", householdId)
+    .select(["id", "username", "email", "points"]);
 };
 
 const totalHouseholdChildren = householdId => {
-  return db("children").where("household_id", "=", householdId);
+  return db("children")
+    .where("household_id", "=", householdId)
+    .select(["id", "username", "points"]);
 };
 
 module.exports = {
