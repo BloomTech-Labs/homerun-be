@@ -98,7 +98,7 @@ const totalHouseholdMembers = householdId => {
 const totalHouseholdChildren = householdId => {
   return db("children")
     .where("household_id", "=", householdId)
-    .select(["id", "username", "points"]);
+    .select(["id", "username", "points", "child"]);
 };
 
 module.exports = {

@@ -73,7 +73,7 @@ router.post("/signup", async (req, res, next) => {
         };
         Confirmations.insert(newConfirmation).then(hash => {
           // TODO: change this to member.email once testing is complete
-          sendMail("homerun.labspt7@gmail.com", templates.confirmation(hash));
+          sendMail(member.email, templates.confirmation(hash));
           res.status(200).json({
             message: `A confirmation email has been sent to ${member.email}`
           });
