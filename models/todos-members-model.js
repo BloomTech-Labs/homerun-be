@@ -1,9 +1,19 @@
 const db = require("../data/dbConfig.js");
+const Todos = require("./todos-model.js");
 
-const insert = members => {
-  return db("todos_members")
-    .insert(members, "*")
-    .catch(err => console.log(err));
+const insert = async members => {
+  try {
+    let inserted = await db("todos_members")
+      .insert(members, "*")
+      .catch(err => console.log(err));
+    if (inserted) {
+      return inserted;
+    } else {
+      return [];
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const remove = members => {

@@ -36,7 +36,9 @@ router.get("/hello", async (req, res) => {
     if (currentMember) {
       try {
         const token = await generateToken(currentMember);
-        res.redirect(`https://stage-homerun-fe.herokuapp.com/auth/${token}`);
+        res.redirect(
+          `${process.env.FE_URL}/auth/?token=${token}&member_id=${currentMember.id}&username=${currentMember.username}&points=${currentMember.points}`
+        );
       } catch (e) {
         console.log(e.message);
         res.status(500).json({ error: e.message });
@@ -45,7 +47,9 @@ router.get("/hello", async (req, res) => {
       try {
         const newMember = await Members.insert(member);
         const token = await generateToken(newMember);
-        res.redirect(`https://stage-homerun-fe.herokuapp.com/auth/${token}`);
+        res.redirect(
+          `${process.env.FE_URL}/auth/?token=${token}&member_id=${currentMember.id}&username=${currentMember.username}&points=${currentMember.points}`
+        );
       } catch (e) {
         console.log(e.message);
         res.status(500).json({ error: e.message });
@@ -69,7 +73,7 @@ router.post("/signup", async (req, res, next) => {
         };
         Confirmations.insert(newConfirmation).then(hash => {
           // TODO: change this to member.email once testing is complete
-          sendMail("homerun.labspt7@gmail.com", templates.confirmation(hash));
+          sendMail(member.email, templates.confirmation(hash));
           res.status(200).json({
             message: `A confirmation email has been sent to ${member.email}`
           });
@@ -97,7 +101,13 @@ router.post("/login", (req, res, next) => {
           bcrypt.compareSync(credentials.password, member.password)
         ) {
           const token = generateToken(member);
-          res.status(200).json({ message: `Welcome, ${member.email}`, token });
+          res.status(200).json({
+            message: `Welcome, ${member.email}`,
+            token,
+            member_id: member.id,
+            username: member.username,
+            points: member.points
+          });
         } else if (member.active === false) {
           res.status(400).json({
             message: "Please confirm your email address before logging in."

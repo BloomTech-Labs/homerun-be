@@ -19,16 +19,16 @@ To get the server running locally:
 
 Express Node.JS
 
-Reasoning: 
+Reasoning:
 
 - Flexibility
 - Easy to use (speed, familiarity, etc)
 - Great Ecosystems, libraries and modules
-- Same language on frontend and backend 
+- Same language on frontend and backend
 
 ## 2️⃣ Endpoints
 
-🚫This is a placeholder, replace the endpoints, access controll, and descriptioin to match your project
+[Endpoints can be found here.](https://documenter.getpostman.com/view/9155829/SzKbMFcG?version=latest)
 
 #### Organization Routes
 
@@ -48,7 +48,6 @@ Reasoning:
 | POST   | `/users/register/owner` | none                | Creates a new user as owner of a new organization. |
 | PUT    | `/users/:userId`        | owners, supervisors |                                                    |
 | DELETE | `/users/:userId`        | owners, supervisors |                                                    |
-
 
 #### TODOs Routes
 
@@ -181,17 +180,13 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 See [Frontend Documentation](🚫link to your frontend readme here) for details on the fronend of our project.
 🚫 Add DS iOS and/or Andriod links here if applicable.
 
-
-
-
-
-
 ### Sign Up
 
 POST to `https://stage-homerun-be.herokuapp.com/auth/signup`
 
 Takes an object including:
-```javascript 
+
+```javascript
 {
     "username": "LambdaStudent247",
     "email": "homerun.labspt7@gmail.com",
@@ -201,7 +196,8 @@ Takes an object including:
 ```
 
 Example Output:
-```javascript 
+
+````javascript
 {
     "saved": {
         "id": 1,
@@ -224,40 +220,36 @@ Takes an object including:
    "username": "LambdaStudent247",
     "password": "password"
 }
-```
+````
 
 Example Output:
 
 {
-    "message": "Welcome LambdaStudent247!",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiTGFtYmRhU3R1ZGVudDI0NyIsInJvbGVzIjoidXNlciIsImlhdCI6MTU3ODcyNTk4MSwiZXhwIjoxNTc4ODEyMzgxfQ.GSpNXMkeXbkyS2S0nF_oifInr5KFgvLV_bNoEs195IY",
-    "userid": 1
+"message": "Welcome LambdaStudent247!",
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiTGFtYmRhU3R1ZGVudDI0NyIsInJvbGVzIjoidXNlciIsImlhdCI6MTU3ODcyNTk4MSwiZXhwIjoxNTc4ODEyMzgxfQ.GSpNXMkeXbkyS2S0nF_oifInr5KFgvLV_bNoEs195IY",
+"userid": 1
 }
-
-
-
-
-
 
 ### Register New Admin
 
 POST to `https://bw-kids-fly.herokuapp.com/api/adminauth/register/admin`
 
 Takes an object including:
-```javascript 
+
+```javascript
 {
     "username": "LambdaStudent5000",
     "password": "password"
-   
+
 }
 ```
 
 Example Output:
 
 {
-    "id": 1,
-    "username": "LambdaStudent5000",
-    "password": "$2a$10$X58bC9c2vZxnG6mgvf16uexgaaiyIDcyxRwLEw/34G54DF8r3mCaK"
+"id": 1,
+"username": "LambdaStudent5000",
+"password": "$2a$10\$X58bC9c2vZxnG6mgvf16uexgaaiyIDcyxRwLEw/34G54DF8r3mCaK"
 }
 
 ### Login Existing Admin
@@ -265,6 +257,7 @@ Example Output:
 POST to `https://bw-kids-fly.herokuapp.com/api/adminauth/login/admin`
 
 Takes an object including:
+
 ```javascript
 {
   "username": "LambdaStudent5000",
@@ -275,37 +268,36 @@ Takes an object including:
 Example Output:
 
 {
-    "message": "Welcome admin LambdaStudent5000!",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbmlkIjoxLCJ1c2VybmFtZSI6IkxhbWJkYVN0dWRlbnQ1MDAwIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTU3ODM3MTQwMywiZXhwIjoxNTc4NDU3ODAzfQ.BLegBiUvih24THUB7LgzEFOnErW69vNXpfrMo9xfn50"
+"message": "Welcome admin LambdaStudent5000!",
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbmlkIjoxLCJ1c2VybmFtZSI6IkxhbWJkYVN0dWRlbnQ1MDAwIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTU3ODM3MTQwMywiZXhwIjoxNTc4NDU3ODAzfQ.BLegBiUvih24THUB7LgzEFOnErW69vNXpfrMo9xfn50"
 }
-
-
 
 ### Get all registered users
 
 GET to `https://bw-kids-fly.herokuapp.com/api/user/`
 
 Takes an object including:
+
 ```javascript
 [
-    {
-        "id": 1,
-        "username": "LambdaStudent247",
-        "password": "$2a$10$6NrOGH/43.iC.t8gndaGV.N3ZNRnaaoln44K.urxOCsgmdwp67EeK"
-    },
-    {
-        "id": 2,
-        "username": "LambdaStudent247",
-        "password": "$2a$10$65ZgEq5rUvjcw4WDfZsei.OysphHJWS/0VpSCvbgey5MI8qCyWWce"
-    }
-]
+  {
+    id: 1,
+    username: "LambdaStudent247",
+    password: "$2a$10$6NrOGH/43.iC.t8gndaGV.N3ZNRnaaoln44K.urxOCsgmdwp67EeK"
+  },
+  {
+    id: 2,
+    username: "LambdaStudent247",
+    password: "$2a$10$65ZgEq5rUvjcw4WDfZsei.OysphHJWS/0VpSCvbgey5MI8qCyWWce"
+  }
+];
 ```
 
 ### Post a new trip
 
 POST to `https://bw-kids-fly.herokuapp.com/api/trips/trip`
 
-Takes a JWT and an object including: 
+Takes a JWT and an object including:
 
 ```javascript
 {
@@ -323,10 +315,10 @@ Takes a JWT and an object including:
 Example Output:
 
 {
-    "message": "Congratulations, you successfully created a new trip!",
-    "accountID": [
-        1
-    ]
+"message": "Congratulations, you successfully created a new trip!",
+"accountID": [
+1
+]
 }
 
 ### Update trip
@@ -345,7 +337,6 @@ Takes a JWT
 
 GET to `https://bw-kids-fly.herokuapp.com/api/trips`
 
-
 Will be returned an array with trip objects.
 
 Example Output:
@@ -361,7 +352,7 @@ Example Output:
 
   ]);
 
-  
+
 };
 ```
 
@@ -376,11 +367,11 @@ POST to `https://bw-kids-fly.herokuapp.com/api/apps`
     "confirm": "password",
     "first_name": "Heather",
     "last_name": "Ridgill"
-    
+
 }
 ```
 
 Example Output:
 {
-    "message": "You have now applied to be a KidsFlyConnection Staff Member!"
+"message": "You have now applied to be a KidsFlyConnection Staff Member!"
 }
