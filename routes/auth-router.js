@@ -29,7 +29,7 @@ router.get("/hello", async (req, res) => {
       refresh_token: purecrypt.encrypt(
         req.session.grant.response.refresh_token
       ),
-      active: true
+      active: true,
     };
 
     const currentMember = await Members.getByEmail(member.email);
@@ -65,21 +65,22 @@ router.post("/signup", async (req, res, next) => {
   const newMember = req.body;
   if (newMember.email && newMember.password) {
     newMember.password = bcrypt.hashSync(newMember.password, 14);
+    newMember.currentHousehold = crypto.randomBytes(6).toString("hex");
     Members.insert(newMember)
-      .then(member => {
+      .then((member) => {
         const newConfirmation = {
           member_id: member.id,
-          hash: crypto.randomBytes(20).toString("hex")
+          hash: crypto.randomBytes(20).toString("hex"),
         };
-        Confirmations.insert(newConfirmation).then(hash => {
+        Confirmations.insert(newConfirmation).then((hash) => {
           // TODO: change this to member.email once testing is complete
           sendMail(member.email, templates.confirmation(hash));
           res.status(200).json({
-            message: `A confirmation email has been sent to ${member.email}`
+            message: `A confirmation email has been sent to ${member.email}`,
           });
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         res
           .status(401)
@@ -95,7 +96,7 @@ router.post("/login", (req, res, next) => {
   const credentials = req.body;
   if (credentials.email && credentials.password) {
     Members.getByEmail(credentials.email)
-      .then(member => {
+      .then((member) => {
         if (
           member.active &&
           bcrypt.compareSync(credentials.password, member.password)
@@ -106,17 +107,17 @@ router.post("/login", (req, res, next) => {
             token,
             member_id: member.id,
             username: member.username,
-            points: member.points
+            points: member.points,
           });
         } else if (member.active === false) {
           res.status(400).json({
-            message: "Please confirm your email address before logging in."
+            message: "Please confirm your email address before logging in.",
           });
         } else {
           res.status(401).json({ message: "Invalid credentials" });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         next(err);
       });
   } else {
@@ -127,12 +128,12 @@ router.post("/login", (req, res, next) => {
 router.post("/confirm", (req, res, next) => {
   const hash = req.body.hash;
   Confirmations.getByHash(hash)
-    .then(confirmation => {
+    .then((confirmation) => {
       const member_id = confirmation.member_id;
-      Members.getById(member_id).then(member => {
+      Members.getById(member_id).then((member) => {
         if (member.active === false) {
-          Members.update(member.id, { active: true }).then(updated => {
-            Confirmations.remove(member.id).then(removed => {
+          Members.update(member.id, { active: true }).then((updated) => {
+            Confirmations.remove(member.id).then((removed) => {
               res.status(200).json({ message: "User confirmed successfully." });
             });
           });
@@ -141,7 +142,7 @@ router.post("/confirm", (req, res, next) => {
         }
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(404).json({ message: "That link is invalid." });
       // next(err);
     });
@@ -150,23 +151,23 @@ router.post("/confirm", (req, res, next) => {
 router.post("/forgot", (req, res, next) => {
   const email = req.body.email;
   Members.getByEmail(email)
-    .then(member => {
+    .then((member) => {
       const newConfirmation = {
         member_id: member.id,
-        hash: crypto.randomBytes(20).toString("hex")
+        hash: crypto.randomBytes(20).toString("hex"),
       };
       Confirmations.insert(newConfirmation)
-        .then(hash => {
+        .then((hash) => {
           // TODO: change this to member.email once testing is complete
           sendMail("homerun.labspt7@gmail.com", templates.reset(hash));
         })
         .then(() => {
           res.status(200).json({
-            message: `A password reset link has been sent to ${member.email}`
+            message: `A password reset link has been sent to ${member.email}`,
           });
         });
     })
-    .catch(err => {
+    .catch((err) => {
       res
         .status(404)
         .json({ message: "A User with that email address does not exist." });
@@ -176,7 +177,7 @@ router.post("/forgot", (req, res, next) => {
 router.post("/reset", (req, res, next) => {
   const hash = req.body.hash;
   Confirmations.getByHash(hash)
-    .then(confirmation => {
+    .then((confirmation) => {
       const member_id = confirmation.member_id;
       const newPassword = bcrypt.hashSync(req.body.password, 14);
       Members.update(member_id, { password: newPassword })
@@ -185,11 +186,11 @@ router.post("/reset", (req, res, next) => {
             res.status(200).json({ message: "Your password has been reset." });
           });
         })
-        .catch(err => {
+        .catch((err) => {
           next(err);
         });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(404).json({ message: "That link is invalid." });
     });
 });
