@@ -3,6 +3,7 @@ const purecrypt = require("purecrypt");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const Members = require("../models/members-model.js");
+const Households = require("../models/households-model.js");
 const Confirmations = require("../models/confirmations-model.js");
 const { generateToken } = require("../middleware/token.js");
 const sendMail = require("../middleware/sendMail.js");
@@ -33,6 +34,7 @@ router.get("/hello", async (req, res) => {
     };
 
     const currentMember = await Members.getByEmail(member.email);
+
     if (currentMember) {
       try {
         const token = await generateToken(currentMember);
@@ -45,10 +47,13 @@ router.get("/hello", async (req, res) => {
       }
     } else {
       try {
+        const householdId = crypto.randomBytes(3).toString("hex");
+        await Households.insert({ id: householdId });
+        member.current_household = householdId;
         const newMember = await Members.insert(member);
         const token = await generateToken(newMember);
         res.redirect(
-          `${process.env.FE_URL}/auth/?token=${token}&member_id=${currentMember.id}&username=${currentMember.username}&points=${currentMember.points}`
+          `${process.env.FE_URL}/auth/?token=${token}&member_id=${newMember.id}&username=${newMember.username}&points=${newMember.points}`
         );
       } catch (e) {
         console.log(e.message);
@@ -65,7 +70,9 @@ router.post("/signup", async (req, res, next) => {
   const newMember = req.body;
   if (newMember.email && newMember.password) {
     newMember.password = bcrypt.hashSync(newMember.password, 14);
-    newMember.currentHousehold = crypto.randomBytes(6).toString("hex");
+    const householdId = crypto.randomBytes(3).toString("hex");
+    await Households.insert({ id: householdId });
+    newMember.current_household = householdId;
     Members.insert(newMember)
       .then((member) => {
         const newConfirmation = {
