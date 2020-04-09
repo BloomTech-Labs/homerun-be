@@ -71,10 +71,14 @@ const update = (id, updates) => {
     });
 };
 
-const remove = id => {
-  return db("todos")
-    .where({ id })
-    .del();
+const remove = (todoID, householdId) => {
+    return db("todos")
+          .where({ id: todoID })
+          .del()
+          .then(res => {
+            return findTodosPerHousehold(householdId)
+          })
+
 };
 
 module.exports = {
