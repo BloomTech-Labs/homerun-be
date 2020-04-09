@@ -169,10 +169,12 @@ router.put("/:id", (req, res, next) => {
     });
 });
 
+// deletes the todo and sends the remaining todos back in the json response
 router.delete("/:id", (req, res, next) => {
-  Todos.remove(req.params.id)
-    .then(removed => {
-      res.status(200).json({ message: `${removed} todo(s) removed` });
+  const householdId = req.decodedToken.current_household;
+  Todos.remove(req.params.id, householdId)
+    .then(householdTodos => {
+      res.status(200).json(householdTodos);
     })
     .catch(err => {
       next(err);
