@@ -7,10 +7,8 @@ const db = require("../data/dbConfig.js");
 // inner join households_todos on households.id = households_todos.households_id and households.id = 'a12345'
 // inner join todos on households_todos.todos_id = todos.id
 
-const findTodosPerHousehold = householdId => {
-  return db("todos")
-    .select("*")
-    .where("household", householdId);
+const findTodosPerHousehold = (householdId) => {
+  return db("todos").select("*").where("household", householdId);
 };
 
 // ? Grabbing all todos per user
@@ -24,7 +22,7 @@ const findTodosPerHousehold = householdId => {
 const findTodosByMember = (householdId, memberId) => {
   return db("todos")
     .select("*")
-    .innerJoin("todos_members", function() {
+    .innerJoin("todos_members", function () {
       this.on("todos_members.todo_id", "=", "todos.id").andOn(
         "todos_members.member_id",
         "=",
@@ -34,30 +32,28 @@ const findTodosByMember = (householdId, memberId) => {
     .where("todos.household", householdId);
 };
 
-const findById = id => {
-  return db("todos")
-    .where({ id })
-    .first();
+const findById = (id) => {
+  return db("todos").where({ id }).first();
 };
 
-const findMembersAssigned = todo_id => {
+const findMembersAssigned = (todo_id) => {
   return db("members")
     .join("todos_members", "members.id", "=", "todos_members.member_id")
     .where({ todo_id: todo_id })
-    .select("username", "child", "points");
+    .select("username", "child", "points", "id");
 };
 
-const findChildrenAssigned = todo_id => {
+const findChildrenAssigned = (todo_id) => {
   return db("children")
     .join("todos_children", "children.id", "=", "todos_children.child_id")
     .where({ todo_id: todo_id })
-    .select("username", "child", "points");
+    .select("username", "child", "points", "id");
 };
 
-const insert = newTodo => {
+const insert = (newTodo) => {
   return db("todos")
     .insert(newTodo, "id")
-    .then(id => {
+    .then((id) => {
       return findById(id[0]);
     });
 };
@@ -66,19 +62,18 @@ const update = (id, updates) => {
   return db("todos")
     .where({ id })
     .update(updates)
-    .then(num => {
+    .then((num) => {
       return findById(id);
     });
 };
 
 const remove = (todoID, householdId) => {
-    return db("todos")
-          .where({ id: todoID })
-          .del()
-          .then(res => {
-            return findTodosPerHousehold(householdId)
-          })
-
+  return db("todos")
+    .where({ id: todoID })
+    .del()
+    .then((res) => {
+      return findTodosPerHousehold(householdId);
+    });
 };
 
 module.exports = {
@@ -89,5 +84,5 @@ module.exports = {
   findById,
   insert,
   update,
-  remove
+  remove,
 };
