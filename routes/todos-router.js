@@ -110,7 +110,7 @@ router.post("/unassign/:id", async (req, res, next) => {
     }
 
     if (membersToUnassign.length > 0) {
-      membersUnassigned = await TodosChildren.remove(membersToUnassign);
+      membersUnassigned = await TodosMembers.remove(membersToUnassign);
     }
 
     const membersCurrentlyAssigned = await Todos.findMembersAssigned(
