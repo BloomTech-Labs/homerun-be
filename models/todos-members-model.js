@@ -1,11 +1,14 @@
 const db = require("../data/dbConfig.js");
 const Todos = require("./todos-model.js");
 
-const insert = async members => {
+const insert = async (members) => {
   try {
-    let inserted = await db("todos_members")
-      .insert(members, "*")
-      .catch(err => console.log(err));
+    let inserted = await db
+      .raw(
+        db("todos_members").insert(members).toString() +
+          ' ON CONFLICT DO NOTHING;'
+      )
+      .catch((err) => console.log(err));
     if (inserted) {
       return inserted;
     } else {

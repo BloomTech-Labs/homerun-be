@@ -1,10 +1,13 @@
 const db = require("../data/dbConfig.js");
 
-const insert = async children => {
+const insert = async (children) => {
   try {
-    let inserted = await db("todos_children")
-      .insert(children, "*")
-      .catch(err => console.log(err));
+    let inserted = await db
+      .raw(
+        db("todos_children").insert(children).toString() +
+          ' ON CONFLICT DO NOTHING;'
+      )
+      .catch((err) => console.log(err));
     if (inserted) {
       return inserted;
     } else {
