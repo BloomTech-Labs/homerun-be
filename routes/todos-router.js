@@ -11,7 +11,7 @@ router.get("/household", async (req, res) => {
     // run findMembers/ChildrenAssigned for each todo
     // append that to each todo
     const allTodos = await Promise.all(
-      todosPerHousehold.map(async todo => {
+      todosPerHousehold.map(async (todo) => {
         const membersAssigned = await Todos.findMembersAssigned(todo.id);
         const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
         return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
@@ -39,93 +39,53 @@ router.get("/household/member/:memberId", async (req, res) => {
 });
 
 router.post("/assign/:id", async (req, res, next) => {
-  const todo_id = req.params.id;
-  let childrenAssigned = [];
-  let membersAssigned = [];
+  const id = req.params.id;
+  const user = req.body;
 
-  if (req.body.assignees) {
-    const childrenToAssign = req.body.assignees
-      .filter(a => a.type === "child")
-      .map(c => {
-        return { child_id: c.id, todo_id: todo_id };
-      });
-
-    const membersToAssign = req.body.assignees
-      .filter(a => a.type === "member")
-      .map(m => {
-        return { member_id: m.id, todo_id: todo_id };
-      });
-
-    if (childrenToAssign.length > 0) {
-      try {
-        childrenAssigned = await TodosChildren.insert(childrenToAssign);
-      } catch (e) {
-        console.log(e);
-      }
+  if (user.type === "child") {
+    try {
+      await TodosChildren.insert({ child_id: user.id, todo_id: id });
+    } catch (e) {
+      console.log(e);
     }
-
-    if (membersToAssign.length > 0) {
-      try {
-        membersAssigned = await TodosMembers.insert(membersToAssign);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-
-    const membersCurrentlyAssigned = await Todos.findMembersAssigned(
-      req.params.id
-    );
-    const childrenCurrentlyAssigned = await Todos.findChildrenAssigned(
-      req.params.id
-    );
-    const currentlyAssigned = membersCurrentlyAssigned.concat(
-      childrenCurrentlyAssigned
-    );
-    console.log(currentlyAssigned);
-    res.status(200).json(currentlyAssigned);
   } else {
-    res.status(400).json({ message: "Required assignment arguments missing." });
+    try {
+      await TodosMembers.insert({ member_id: user.id, todo_id: id });
+    } catch (e) {
+      console.log(e);
+    }
   }
+
+  const membersAssigned = await Todos.findMembersAssigned(id);
+  const childrenAssigned = await Todos.findChildrenAssigned(id);
+  const allAssigned = membersAssigned.concat(childrenAssigned);
+
+  res.status(200).json(allAssigned);
 });
 
 router.post("/unassign/:id", async (req, res, next) => {
-  const todo_id = req.params.id;
-  let childrenUnassigned = [];
-  let membersUnassigned = [];
+  const id = req.params.id;
+  const user = req.body;
 
-  if (req.body.assignees) {
-    const childrenToUnassign = req.body.assignees
-      .filter(a => a.type === "child")
-      .map(c => {
-        return { child_id: c.id, todo_id: todo_id };
-      });
-    const membersToUnassign = req.body.assignees
-      .filter(a => a.type === "member")
-      .map(m => {
-        return { member_id: m.id, todo_id: todo_id };
-      });
-
-    if (childrenToUnassign.length > 0) {
-      childrenUnassigned = await TodosChildren.remove(childrenToUnassign);
+  if (user.type === "child") {
+    try {
+      await TodosChildren.remove({ child_id: user.id, todo_id: id });
+    } catch (e) {
+      console.log(e);
     }
-
-    if (membersToUnassign.length > 0) {
-      membersUnassigned = await TodosMembers.remove(membersToUnassign);
-    }
-
-    const membersCurrentlyAssigned = await Todos.findMembersAssigned(
-      req.params.id
-    );
-    const childrenCurrentlyAssigned = await Todos.findChildrenAssigned(
-      req.params.id
-    );
-    const currentlyAssigned = membersCurrentlyAssigned.concat(
-      childrenCurrentlyAssigned
-    );
-    res.status(200).json(currentlyAssigned);
   } else {
-    res.status(400).json({ message: "Required assignment arguments missing." });
+    try {
+      await TodosMembers.remove({ member_id: user.id, todo_id: id });
+    } catch (e) {
+      console.log(e);
+    }
   }
+
+  const membersAssigned = await Todos.findMembersAssigned(id);
+  const childrenAssigned = await Todos.findChildrenAssigned(id);
+  const allAssigned = membersAssigned.concat(childrenAssigned);
+
+  res.status(200).json(allAssigned);
 });
 
 router.get("/assigned/:id", async (req, res, next) => {
@@ -145,10 +105,10 @@ router.post("/add", (req, res, next) => {
   if (newTodo.title && newTodo.household) {
     // TODO: Confirm that the household id is valid?
     Todos.insert(newTodo)
-      .then(todo => {
+      .then((todo) => {
         res.status(200).json(todo);
       })
-      .catch(err => {
+      .catch((err) => {
         next(err);
       });
   } else {
@@ -161,10 +121,10 @@ router.post("/add", (req, res, next) => {
 router.put("/:id", (req, res, next) => {
   const updates = req.body;
   Todos.update(req.params.id, updates)
-    .then(todo => {
+    .then((todo) => {
       res.status(200).json(todo);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 });
@@ -173,10 +133,10 @@ router.put("/:id", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   const householdId = req.decodedToken.current_household;
   Todos.remove(req.params.id, householdId)
-    .then(householdTodos => {
+    .then((householdTodos) => {
       res.status(200).json(householdTodos);
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 });
