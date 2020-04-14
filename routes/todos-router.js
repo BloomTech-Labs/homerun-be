@@ -14,6 +14,9 @@ router.get("/household", async (req, res) => {
       todosPerHousehold.map(async (todo) => {
         const membersAssigned = await Todos.findMembersAssigned(todo.id);
         const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
+        if (!membersAssigned && !childrenAssigned) {
+          return { ...todo, assigned: [] };
+        }
         return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
       })
     );
@@ -106,7 +109,7 @@ router.post("/add", (req, res, next) => {
     // TODO: Confirm that the household id is valid?
     Todos.insert(newTodo)
       .then((todo) => {
-        res.status(200).json(todo);
+        res.status(200).json({ ...todo, assigned: [] });
       })
       .catch((err) => {
         next(err);
