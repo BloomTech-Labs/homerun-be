@@ -136,8 +136,19 @@ router.put("/:id", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   const householdId = req.decodedToken.current_household;
   Todos.remove(req.params.id, householdId)
-    .then((householdTodos) => {
-      res.status(200).json(householdTodos);
+    .then(async (householdTodos) => {
+      // res.status(200).json(householdTodos);
+      const allTodos = await Promise.all(
+        householdTodos.map(async (todo) => {
+          const membersAssigned = await Todos.findMembersAssigned(todo.id);
+          const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
+          if (!membersAssigned && !childrenAssigned) {
+            return { ...todo, assigned: [] };
+          }
+          return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
+        })
+      );
+      res.status(200).json(allTodos);
     })
     .catch((err) => {
       next(err);
