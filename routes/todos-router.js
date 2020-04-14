@@ -124,8 +124,11 @@ router.post("/add", (req, res, next) => {
 router.put("/:id", (req, res, next) => {
   const updates = req.body;
   Todos.update(req.params.id, updates)
-    .then((todo) => {
-      res.status(200).json(todo);
+    .then(async (todo) => {
+      const membersAssigned = await Todos.findMembersAssigned(req.params.id);
+      const childrenAssigned = await Todos.findChildrenAssigned(req.params.id);
+      const assigned = Object.assign(membersAssigned, childrenAssigned);
+      res.status(200).json({ ...todo, assigned: assigned });
     })
     .catch((err) => {
       next(err);
@@ -136,19 +139,8 @@ router.put("/:id", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   const householdId = req.decodedToken.current_household;
   Todos.remove(req.params.id, householdId)
-    .then(async (householdTodos) => {
-      // res.status(200).json(householdTodos);
-      const allTodos = await Promise.all(
-        householdTodos.map(async (todo) => {
-          const membersAssigned = await Todos.findMembersAssigned(todo.id);
-          const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
-          if (!membersAssigned && !childrenAssigned) {
-            return { ...todo, assigned: [] };
-          }
-          return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
-        })
-      );
-      res.status(200).json(allTodos);
+    .then((householdTodos) => {
+      res.status(200).json(householdTodos);
     })
     .catch((err) => {
       next(err);
