@@ -28,11 +28,34 @@ router.get("/household", async (req, res) => {
 
 router.get("/member", async (req, res) => {
   const householdId = req.decodedToken.current_household;
-  const userId = req.decodedToken.subject;
+  const memberId = req.decodedToken.subject;
   try {
-    const todosByMember = await Todos.findTodosByMember(householdId, userId);
+    const todosByMember = await Todos.findTodosByMember(householdId, memberId);
     const allTodos = await Promise.all(
       todosByMember.map(async (todo) => {
+        const membersAssigned = await Todos.findMembersAssigned(todo.id);
+        const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
+        if (!membersAssigned && !childrenAssigned) {
+          return { ...todo, assigned: [] };
+        }
+        return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
+      })
+    );
+    res.status(200).json(allTodos);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: err.message, location: "todos-router.js 18" });
+  }
+});
+
+router.get("/child", async (req, res) => {
+  const householdId = req.decodedToken.current_household;
+  const childId = req.decodedToken.subject;
+  try {
+    const todosByChild = await Todos.findTodosByChild(householdId, childId);
+    const allTodos = await Promise.all(
+      todosByChild.map(async (todo) => {
         const membersAssigned = await Todos.findMembersAssigned(todo.id);
         const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
         if (!membersAssigned && !childrenAssigned) {

@@ -32,6 +32,19 @@ const findTodosByMember = (householdId, memberId) => {
     .where("todos.household", householdId);
 };
 
+const findTodosByChild = (householdId, childId) => {
+  return db("todos")
+    .select("*")
+    .innerJoin("todos_children", function () {
+      this.on("todos_children.todo_id", "=", "todos.id").andOn(
+        "todos_children.child_id",
+        "=",
+        Number(childId)
+      );
+    })
+    .where("todos.household", householdId);
+};
+
 const findById = (id) => {
   return db("todos").where({ id }).first();
 };
@@ -79,6 +92,7 @@ const remove = (todoID, householdId) => {
 module.exports = {
   findTodosPerHousehold,
   findTodosByMember,
+  findTodosByChild,
   findMembersAssigned,
   findChildrenAssigned,
   findById,
