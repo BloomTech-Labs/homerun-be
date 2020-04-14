@@ -26,14 +26,22 @@ router.get("/household", async (req, res) => {
   }
 });
 
-router.get("/household/member/:memberId", async (req, res) => {
+router.get("/member", async (req, res) => {
   const householdId = req.decodedToken.current_household;
+  const userId = req.decodedToken.subject;
   try {
-    const todosByMember = await Todos.findTodosByMember(
-      householdId,
-      req.params.memberId
+    const todosByMember = await Todos.findTodosByMember(householdId, userId);
+    const allTodos = await Promise.all(
+      todosByMember.map(async (todo) => {
+        const membersAssigned = await Todos.findMembersAssigned(todo.id);
+        const childrenAssigned = await Todos.findChildrenAssigned(todo.id);
+        if (!membersAssigned && !childrenAssigned) {
+          return { ...todo, assigned: [] };
+        }
+        return { ...todo, assigned: membersAssigned.concat(childrenAssigned) };
+      })
     );
-    res.status(200).json(todosByMember);
+    res.status(200).json(allTodos);
   } catch (err) {
     res
       .status(500)
