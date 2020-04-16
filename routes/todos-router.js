@@ -49,9 +49,9 @@ router.get("/member", async (req, res) => {
   }
 });
 
-router.get("/child", async (req, res) => {
+router.get("/child/:id", async (req, res) => {
   const householdId = req.decodedToken.current_household;
-  const childId = req.body.id;
+  const childId = req.params.id;
   if (childId) {
     try {
       const todosByChild = await Todos.findTodosByChild(householdId, childId);
