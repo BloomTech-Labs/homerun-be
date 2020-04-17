@@ -16,10 +16,10 @@ module.exports = {
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./data/migrations"
+      directory: "./db/migrations"
     },
     seeds: {
-      directory: "./data/seeds"
+      directory: "./db/seeds"
     }
   },
 
@@ -37,10 +37,10 @@ module.exports = {
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./data/migrations"
+      directory: "./db/migrations"
     },
     seeds: {
-      directory: "./data/seeds"
+      directory: "./db/seeds"
     }
   },
 
@@ -53,10 +53,10 @@ module.exports = {
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./data/migrations"
+      directory: "./db/migrations"
     },
     seeds: {
-      directory: "./data/seeds"
+      directory: "./db/seeds"
     }
   },
 
@@ -73,10 +73,10 @@ module.exports = {
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./data/migrations"
+      directory: "./db/migrations"
     },
     seeds: {
-      directory: "./data/seeds"
+      directory: "./db/seeds"
     }
   }
 };
