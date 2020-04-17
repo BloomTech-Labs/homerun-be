@@ -1,4 +1,4 @@
-const db = require("../data/dbConfig.js");
+const db = require("../db/dbConfig.js");
 
 const getById = id => {
   return db("members")
@@ -52,11 +52,11 @@ const findHouseholdMembers = householdId => {
       "members.active",
       "members.current_household"
     )
-    .innerJoin("household_members", function() {
+    .innerJoin("household_members", function () {
       this.on("households.id", "=", "household_members.household_id");
     })
     .where("household_id", "=", householdId)
-    .innerJoin("members", function() {
+    .innerJoin("members", function () {
       this.on("household_members.member_id", "=", "members.id");
     });
 };
