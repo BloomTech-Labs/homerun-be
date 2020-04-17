@@ -1,4 +1,4 @@
-const db = require("../data/dbConfig.js");
+const db = require("../db/dbConfig.js");
 
 const findById = (id) => {
   return db("households").where({ id }).first();
