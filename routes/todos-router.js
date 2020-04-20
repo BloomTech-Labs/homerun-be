@@ -6,34 +6,25 @@ const TodosChildren = require("../models/todos-children-model.js");
 // Factory Function
 const userTypeFilter = {
   async insert(user, id) {
-    if (user.type === "child") {
-      console.log("todos-router.js :10", user)
-      try {
+    try {
+      if (user.type === "child") {
         await TodosChildren.insert({ child_id: user.id, todo_id: id });
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      try {
+      } else {
         await TodosMembers.insert({ member_id: user.id, todo_id: id });
-      } catch (e) {
-        console.log(e);
       }
+    } catch (e) {
+      console.log(e.message)
     }
   },
   async remove(user, id) {
-    if (user.type === "child") {
-      try {
+    try {
+      if (user.type === "child") {
         await TodosChildren.remove({ child_id: user.id, todo_id: id });
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      try {
+      } else {
         await TodosMembers.remove({ member_id: user.id, todo_id: id });
-      } catch (e) {
-        console.log(e);
       }
+    } catch (e) {
+      console.log(e.message)
     }
   }
 }
