@@ -5,8 +5,9 @@ const TodosChildren = require("../models/todos-children-model.js");
 
 // Factory Function
 const checkChild = {
-  async insert(user) {
+  async insert(user, id) {
     if (user.type === "child") {
+      console.log("todos-router.js :10", user)
       try {
         await TodosChildren.insert({ child_id: user.id, todo_id: id });
       } catch (e) {
@@ -20,7 +21,7 @@ const checkChild = {
       }
     }
   },
-  async remove(user) {
+  async remove(user, id) {
     if (user.type === "child") {
       try {
         await TodosChildren.remove({ child_id: user.id, todo_id: id });
@@ -130,7 +131,7 @@ router.post("/assign/:id", async (req, res, next) => {
   //     console.log(e);
   //   }
   // }
-  await checkChild.insert(user);
+  await checkChild.insert(user, id);
 
   const membersAssigned = await Todos.findMembersAssigned(id);
   const childrenAssigned = await Todos.findChildrenAssigned(id);
@@ -156,7 +157,7 @@ router.post("/unassign/:id", async (req, res, next) => {
   //     console.log(e);
   //   }
   // }
-  await checkChild.remove(user);
+  await checkChild.remove(user, id);
 
   const membersAssigned = await Todos.findMembersAssigned(id);
   const childrenAssigned = await Todos.findChildrenAssigned(id);
