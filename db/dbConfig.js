@@ -19,7 +19,7 @@ module.exports = knex(configOptions);
 // 		households: ["b1234", "a3214"] // Handle Front-end?
 // 	},
 // 	{
-// 		id: 2,
+// 		id: 2,a
 // 		username: "Test 2",
 // 		email: "test@test.com",
 // 		password: "test1234",
