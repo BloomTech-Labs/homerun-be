@@ -41,6 +41,7 @@ module.exports = async (req, res, next) => {
 			} catch (e) {
 				console.log(e.message)
 			}
+			break;
 		case `/unassign/${id}`:
 			try {
 				if (user.type === "child") {
@@ -52,8 +53,9 @@ module.exports = async (req, res, next) => {
 			} catch (e) {
 				console.log(e.message)
 			}
+			break;
 		default:
-			console.log("Invalid request")
+			return next("Invalid request")
 
 	}
 }
