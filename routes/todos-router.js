@@ -3,6 +3,41 @@ const Todos = require("../models/todos-model.js");
 const TodosMembers = require("../models/todos-members-model.js");
 const TodosChildren = require("../models/todos-children-model.js");
 
+// Factory Function
+const userTypeFilter = {
+  async insert(user, id) {
+    if (user.type === "child") {
+      console.log("todos-router.js :10", user)
+      try {
+        await TodosChildren.insert({ child_id: user.id, todo_id: id });
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      try {
+        await TodosMembers.insert({ member_id: user.id, todo_id: id });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  },
+  async remove(user, id) {
+    if (user.type === "child") {
+      try {
+        await TodosChildren.remove({ child_id: user.id, todo_id: id });
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      try {
+        await TodosMembers.remove({ member_id: user.id, todo_id: id });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+}
+
 router.get("/household", async (req, res) => {
   const householdId = req.decodedToken.current_household;
   try {
@@ -83,19 +118,20 @@ router.post("/assign/:id", async (req, res, next) => {
   const id = req.params.id;
   const user = req.body;
 
-  if (user.type === "child") {
-    try {
-      await TodosChildren.insert({ child_id: user.id, todo_id: id });
-    } catch (e) {
-      console.log(e);
-    }
-  } else {
-    try {
-      await TodosMembers.insert({ member_id: user.id, todo_id: id });
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  // if (user.type === "child") {
+  //   try {
+  //     await TodosChildren.insert({ child_id: user.id, todo_id: id });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // } else {
+  //   try {
+  //     await TodosMembers.insert({ member_id: user.id, todo_id: id });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+  await userTypeFilter.insert(user, id);
 
   const membersAssigned = await Todos.findMembersAssigned(id);
   const childrenAssigned = await Todos.findChildrenAssigned(id);
@@ -108,19 +144,20 @@ router.post("/unassign/:id", async (req, res, next) => {
   const id = req.params.id;
   const user = req.body;
 
-  if (user.type === "child") {
-    try {
-      await TodosChildren.remove({ child_id: user.id, todo_id: id });
-    } catch (e) {
-      console.log(e);
-    }
-  } else {
-    try {
-      await TodosMembers.remove({ member_id: user.id, todo_id: id });
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  // if (user.type === "child") {
+  //   try {
+  //     await TodosChildren.remove({ child_id: user.id, todo_id: id });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // } else {
+  //   try {
+  //     await TodosMembers.remove({ member_id: user.id, todo_id: id });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+  await userTypeFilter.remove(user, id);
 
   const membersAssigned = await Todos.findMembersAssigned(id);
   const childrenAssigned = await Todos.findChildrenAssigned(id);
