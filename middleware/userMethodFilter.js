@@ -17,8 +17,12 @@ const remove = async (user, id) => {
 	}
 }
 
+const paramCheck = (req) => {
+	if (!req.body || !req.params.id) throw new Error("Missing body or todo id")
+}
+
 module.exports = async (req, res, next) => {
-	if (!req.body || !req.params.id) console.log("Missing body or todo id")
+	paramCheck(req)
 	const user = req.body;
 	const id = req.params.id;
 	switch (req.path) {
