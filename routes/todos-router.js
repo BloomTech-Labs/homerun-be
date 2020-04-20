@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const Todos = require("../models/todos-model.js");
-const TodosMembers = require("../models/todos-members-model.js");
-const TodosChildren = require("../models/todos-children-model.js");
+const userTypeFilter = require('../middleware/userMethodFilter.js')
 
 // Factory Function
 const userTypeFilter = {
@@ -93,7 +92,7 @@ router.get("/child/:id", async (req, res) => {
   }
 });
 
-router.post("/assign/:id", async (req, res, next) => {
+router.post("/assign/:id", userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
   const user = req.body;
   await userTypeFilter.insert(user, id);
@@ -101,7 +100,7 @@ router.post("/assign/:id", async (req, res, next) => {
   res.status(200).json(assigned);
 });
 
-router.post("/unassign/:id", async (req, res, next) => {
+router.post("/unassign/:id", userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
   const user = req.body;
   await userTypeFilter.remove(user, id);
