@@ -27,20 +27,10 @@ module.exports = async (req, res, next) => {
 	const id = req.params.id;
 	switch (req.path) {
 		case `/assign/${id}`:
-			try {
-				insert(user, id)
-				next()
-			} catch (e) {
-				console.log(e.message)
-			}
+			insert(user, id).then(() => next()).catch(err => console.log(err.message))
 			break;
 		case `/unassign/${id}`:
-			try {
-				remove(user, id)
-				next()
-			} catch (e) {
-				console.log(e.message)
-			}
+			remove(user, id).then(() => next()).catch(err => console.log(err.message))
 			break;
 		default:
 			return next("Invalid request")

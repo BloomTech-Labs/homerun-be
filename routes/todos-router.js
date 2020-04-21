@@ -1,5 +1,9 @@
 const router = require("express").Router();
 const Todos = require("../models/todos-model.js");
+
+const Categories = require('../models/categories-model.js');
+const categoriesRouter = require('./categories-router.js');
+
 const userTypeFilter = require('../middleware/userMethodFilter.js')
 
 const getAssignedUsers = async (todoId) => {
@@ -14,8 +18,12 @@ router.get("/household", async (req, res) => {
     const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
     const allTodos = await Promise.all(
       todosPerHousehold.map(async (todo) => {
+        // findTodoCategories should return an array with all the categories the todo belongs to
+        const todoCategories = await Categories.findTodoCategories(todo.id);
+        console.log(todoCategories);
         const assigned = await getAssignedUsers(todo.id);
-        return { ...todo, assigned: assigned };
+
+        return { ...todo, assigned, categories: todoCategories };
       })
     );
     res.status(200).json(allTodos);
@@ -31,8 +39,9 @@ router.get("/member", async (req, res) => {
     const todosByMember = await Todos.findTodosByMember(householdId, memberId);
     const allTodos = await Promise.all(
       todosByMember.map(async (todo) => {
+        const todoCategories = await Categories.findTodoCategories(todo.id);
         const assigned = await getAssignedUsers(todo.id);
-        return { ...todo, assigned: assigned };
+        return { ...todo, assigned, categories: todoCategories };
       })
     );
     res.status(200).json(allTodos);
@@ -51,8 +60,14 @@ router.get("/child/:id", async (req, res) => {
       const todosByChild = await Todos.findTodosByChild(householdId, childId);
       const allTodos = await Promise.all(
         todosByChild.map(async (todo) => {
+          const todoCategories = await Categories.findTodoCategories(todo.id);
           const assigned = await getAssignedUsers(todo.id);
-          return { ...todo, assigned: assigned };
+
+          return {
+            ...todo,
+            assigned,
+            categories: todoCategories
+          };
         })
       );
       res.status(200).json(allTodos);
@@ -98,7 +113,11 @@ router.post("/add", (req, res, next) => {
     // TODO: Confirm that the household id is valid?
     Todos.insert(newTodo)
       .then((todo) => {
-        res.status(200).json({ ...todo, assigned: [] });
+        Categories.findTodoCategories(todo.id)
+          .then(categories => {
+            res.status(200).json({ ...todo, assigned: [], categories });
+          })
+
       })
       .catch((err) => {
         next(err);
@@ -115,7 +134,9 @@ router.put("/:id", (req, res, next) => {
   Todos.update(req.params.id, updates)
     .then(async (todo) => {
       const assigned = await getAssignedUsers(todo.id);
-      res.status(200).json({ ...todo, assigned: assigned });
+      const todoCategories = await Categories.findTodoCategories(todo.id);
+
+      res.status(200).json({ ...todo, assigned, categories: todoCategories });
     })
     .catch((err) => {
       next(err);
@@ -129,7 +150,12 @@ router.delete("/:id", (req, res, next) => {
       const allTodos = await Promise.all(
         householdTodos.map(async (todo) => {
           const assigned = await getAssignedUsers(todo.id);
-          return { ...todo, assigned: assigned };
+          const todoCategories = await Categories.findTodoCategories(todo.id);
+          return {
+            ...todo,
+            assigned,
+            categories: todoCategories
+          };
         })
       );
       res.status(200).json(allTodos);
@@ -138,5 +164,12 @@ router.delete("/:id", (req, res, next) => {
       next(err);
     });
 });
+
+
+// sub routers - rather than pile even more code in todos-router i just decided
+// to make categories routes have their own router file - since
+// categories-router will be a sub route of todos-router all routes inside it will
+// need to be prepended with '/todos'
+router.use('/categories', categoriesRouter);
 
 module.exports = router;
