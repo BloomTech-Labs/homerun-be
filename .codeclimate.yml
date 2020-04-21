@@ -3,3 +3,5 @@ exclude_patterns:
 - "**/*.test.js"
 - "**/node_modules/"
 - "**/db/"
+- "**/knexfile.js"
+- "**/middleware/emailTemplates.js"
