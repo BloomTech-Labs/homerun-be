@@ -83,16 +83,12 @@ router.get("/child/:id", async (req, res) => {
 
 router.post("/assign/:id", userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
-  const user = req.body;
-  await userTypeFilter.insert(user, id);
   const assigned = await getAssignedUsers(id);
   res.status(200).json(assigned);
 });
 
 router.post("/unassign/:id", userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
-  const user = req.body;
-  await userTypeFilter.remove(user, id);
   const assigned = await getAssignedUsers(id);
   res.status(200).json(assigned);
 });
