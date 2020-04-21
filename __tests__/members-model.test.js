@@ -1,10 +1,7 @@
-const db = require('../data/dbConfig.js');
+const db = require('../db/dbConfig.js');
 const Members = require('../models/members-model.js');
 
 describe('Testing Members Model', () => {
-	// beforeEach(() => {
-	// 	return db('members').del();
-	// })
 	beforeEach(() => {
 		return db.raw("TRUNCATE members, members RESTART IDENTITY CASCADE");
 	});
