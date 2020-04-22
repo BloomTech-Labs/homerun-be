@@ -62,7 +62,7 @@ router.get("/child/:id", async (req, res) => {
         todosByChild.map(async (todo) => {
           const todoCategories = await Categories.findTodoCategories(todo.id);
           const assigned = await getAssignedUsers(todo.id);
-          
+
           return {
             ...todo,
             assigned,
@@ -114,9 +114,9 @@ router.post("/add", (req, res, next) => {
     Todos.insert(newTodo)
       .then((todo) => {
         Categories.findTodoCategories(todo.id)
-        .then(categories => {
-          res.status(200).json({ ...todo, assigned: [], categories });
-        })
+          .then(categories => {
+            res.status(200).json({ ...todo, assigned: [], categories });
+          })
 
       })
       .catch((err) => {

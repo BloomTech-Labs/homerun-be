@@ -1,0 +1,7 @@
+exclude_patterns:
+- "**/__tests__/"
+- "**/*.test.js"
+- "**/node_modules/"
+- "**/db/"
+- "**/knexfile.js"
+- "**/middleware/emailTemplates.js"
