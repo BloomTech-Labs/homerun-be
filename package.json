@@ -9,7 +9,8 @@
   "scripts": {
     "test": "jest NODE_ENV=testing --watch",
     "start": "node ./bin/www",
-    "server": "nodemon ./bin/www"
+    "server": "nodemon ./bin/www",
+    "coverage": "jest --coverage --detectOpenHandles --forceExit || true"
   },
   "jest": {
     "collectCoverageFrom": [
