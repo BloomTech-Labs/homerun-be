@@ -1,8 +1,24 @@
 {
   "name": "homerun-be",
+  "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
+  "author": "[Brandon] <desselle.brandon2@gmail.com>",
+  "license": "MIT",
   "private": true,
   "version": "1.0.0",
   "main": "app.js",
+  "scripts": {
+    "test": "jest NODE_ENV=testing --watch",
+    "start": "node ./bin/www",
+    "server": "nodemon ./bin/www"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/vendor/**",
+      "!**/__tests__/**"
+    ]
+  },
   "dependencies": {
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
@@ -22,14 +38,6 @@
     "purecrypt": "^1.0.4",
     "supertest": "^4.0.2"
   },
-  "scripts": {
-    "test": "jest NODE_ENV=testing --watch",
-    "start": "node ./bin/www",
-    "server": "nodemon ./bin/www"
-  },
-  "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
-  "author": "[Brandon] <desselle.brandon2@gmail.com>",
-  "license": "MIT",
   "devDependencies": {
     "nodemon": "^2.0.2"
   }
