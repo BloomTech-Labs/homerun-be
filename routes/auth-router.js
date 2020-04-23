@@ -166,7 +166,7 @@ router.post("/forgot", (req, res, next) => {
       Confirmations.insert(newConfirmation)
         .then((hash) => {
           // TODO: change this to member.email once testing is complete
-          sendMail("homerun.labspt7@gmail.com", templates.reset(hash));
+          sendMail(member.email, templates.reset(hash));
         })
         .then(() => {
           res.status(200).json({
