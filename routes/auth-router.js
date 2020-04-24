@@ -202,4 +202,14 @@ router.post("/reset", (req, res, next) => {
     });
 });
 
+
+router.delete("/:member_id", async (req, res) => {
+  try {
+    const request = await Members.remove(req.params.member_id);
+    res.status(200).json(request);
+  } catch {
+    res.status(500).json({ Message: "Unable to delete user" });
+  }
+});
+
 module.exports = router;

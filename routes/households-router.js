@@ -9,7 +9,7 @@ router.post("/unlock/:id", (req, res, next) => {
         if (household.pin === req.body.pin) {
           res.status(200).json({ success: true });
         } else {
-          res.status(400).json(message: "Invalid PIN" });
+          res.status(400).json({message: "Invalid PIN" });
         }
       })
       .catch((err) => {
