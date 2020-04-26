@@ -10,7 +10,7 @@ exports.seed = function (knex) {
           todo_id: 2,
         },
         {
-          member_id: 1,
+          member_id: 2,
           todo_id: 3,
         },
         {
