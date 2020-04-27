@@ -104,6 +104,7 @@ router.post("/login", (req, res, next) => {
   if (credentials.email && credentials.password) {
     Members.getByEmail(credentials.email)
       .then((member) => {
+        console.log(member);
         if (
           member.active &&
           bcrypt.compareSync(credentials.password, member.password)
