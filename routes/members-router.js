@@ -6,8 +6,18 @@ const sendMail = require("../middleware/sendMail.js");
 const templates = require("../middleware/emailTemplates.js");
 const { generateToken } = require("../middleware/token.js");
 
+router.get("/", async (req,res) => {
+  try {
+    const request = Members;
+    res.status(200).json(request);
+  } catch {
+    res.status(500).json({Message: "Something went wrong."})
+  }
+})
+
 router.get("/household", async (req, res) => {
   const householdId = req.decodedToken.current_household;
+  console.log(householdId);
   try {
     const members = await Members.findHouseholdMembers(householdId);
     const children = await Members.childrenPerHousehold(householdId);
