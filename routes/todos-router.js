@@ -20,7 +20,6 @@ router.get("/household", async (req, res) => {
       todosPerHousehold.map(async (todo) => {
         // findTodoCategories should return an array with all the categories the todo belongs to
         const todoCategories = await Categories.findTodoCategories(todo.id);
-        console.log(todoCategories);
         const assigned = await getAssignedUsers(todo.id);
 
         return { ...todo, assigned, categories: todoCategories };
