@@ -1,4 +1,6 @@
-exports.seed = async function(knex) {
+const dayjs = require("dayjs");
+
+exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex.raw("TRUNCATE TABLE todos RESTART IDENTITY CASCADE");
   return knex("todos").then(() => {
@@ -6,54 +8,62 @@ exports.seed = async function(knex) {
     return knex("todos").insert([
       {
         household: "a12345",
-        title: "This is the first todo.",
+        title: "Straighten up your room",
         desc:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
         point_value: 20,
-        due: 1318781876406,
+        due: dayjs()
+          .add(Math.random() * 10, "day")
+          .unix(),
         completed: false,
-        completed_by: ""
+        completed_by: "",
       },
       {
         household: "a12345",
-        title: "This is the second todo.",
+        title: "Do the dishes",
         desc:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
         point_value: 125,
-        due: 1318781876406,
+        due: dayjs()
+          .add(Math.random() * 10, "day")
+          .unix(),
         completed: false,
-        completed_by: ""
+        completed_by: "",
       },
       {
         household: "a12345",
-        title: "This is the third todo.",
+        title: "Vacuum the living room",
         desc:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
         point_value: 40,
-        due: 1318781876406,
-        completed: true,
-        completed_by: "Sample"
+        due: dayjs()
+          .add(Math.random() * 10, "day")
+          .unix(),
+        completed: false,
+        completed_by: "Sample",
       },
       {
         household: "a12345",
-        title: "This is the fourth todo.",
+        title: "Scrub the shower",
         desc:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
         point_value: 0,
-        due: 1318781876406,
+        due: dayjs().unix(),
         completed: false,
-        completed_by: ""
+        completed_by: "",
       },
       {
         household: "a12345",
-        title: "This is the fifth todo.",
+        title: "Walk the dog",
         desc:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
         point_value: 25,
-        due: 1318781876406,
+        due: dayjs()
+          .add(Math.random() * 10, "day")
+          .unix(),
         completed: true,
-        completed_by: "Test"
-      }
+        completed_by: "Test",
+      },
     ]);
   });
 };

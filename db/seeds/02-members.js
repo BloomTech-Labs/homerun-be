@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-exports.seed = async function(knex) {
+exports.seed = async function (knex) {
   // Deletes ALL existing entries
   await knex.raw("TRUNCATE TABLE members RESTART IDENTITY CASCADE");
   return knex("members").then(() => {
@@ -8,7 +8,7 @@ exports.seed = async function(knex) {
     return knex("members").insert([
       {
         current_household: "a12345",
-        username: "mom",
+        username: "Mom",
         email: "mom@test.com",
         password: bcrypt.hashSync("test1234", 14),
         provider: "email",
@@ -16,11 +16,11 @@ exports.seed = async function(knex) {
         refresh_token: "",
         points: 25,
         active: true,
-        child: false
+        child: false,
       },
       {
         current_household: "a12345",
-        username: "dad",
+        username: "Dad",
         email: "dad@test.com",
         password: bcrypt.hashSync("test1234", 14),
         provider: "email",
@@ -28,8 +28,8 @@ exports.seed = async function(knex) {
         refresh_token: "",
         points: 40,
         active: true,
-        child: false
-      }
+        child: false,
+      },
     ]);
   });
 };
