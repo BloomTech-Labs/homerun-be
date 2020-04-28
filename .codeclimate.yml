@@ -1,47 +1,60 @@
 version: "2"
-# plugins:
-#   rubocop:
-#     enabled: true
-#     checks:
-#      Rubocop/Metrics/ClassLength:
-#        enabled: false
-#   eslint:
-#     enabled: true
-#   csslint:
-#     enabled: true
-#   duplication:
-#     enabled: true
-#     config:
-#       languages:
-#       - ruby:
-#       - javascript:
+checks:
+  argument-count:
+    enabled: true
+    config:
+      threshold: 4
+  complex-logic:
+    enabled: true
+    config:
+      threshold: 4
+  file-lines:
+    enabled: true
+    config:
+      threshold: 250
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 5
+  method-count:
+    enabled: true
+    config:
+      threshold: 20
+  method-lines:
+    enabled: true
+    config:
+      threshold: 25
+  nested-control-flow:
+    enabled: true
+    config:
+      threshold: 4
+  return-statements:
+    enabled: true
+    config:
+      threshold: 4
+  similar-code:
+    enabled: true
+    config:
+      threshold: #language-specific defaults. overrides affect all languages.
+  identical-code:
+    enabled: true
+    config:
+      threshold: #language-specific defaults. overrides affect all languages.
+plugins:
+ rubocop:
+  enabled: true
+ eslint:
+  enabled: true
 exclude_patterns:
-- __tests__/**/*
-- node_modules/**/*
-- db/**/*
-- knexfile.js
-- middleware/**/*
+- "config/"
+- "db/"
+- "dist/"
+- "public/"
+- "**/node_modules/"
+- "script/"
+- "**/spec/"
+- "**/__tests__/"
+- "**/vendor/"
+- "**/*.d.ts"
 
-# Example .codeclimate.yml from https://docs.codeclimate.com/docs/example-codeclimateyml
-
-# plugins:
-#   rubocop:
-#     enabled: true
-#     #checks:
-#     #  Rubocop/Metrics/ClassLength:
-#     #    enabled: false
-#   brakeman:
-#     enabled: true
-#   eslint:
-#     enabled: true
-#   csslint:
-#     enabled: true
-#   duplication:
-#     enabled: true
-#     config:
-#       languages:
-#       - ruby:
-#       - javascript:
-# exclude_paths:
-# - spec/**/*
-# - "**/vendor/**/*"
+# Following https://docs.codeclimate.com/docs/advanced-configuration#section-checks
