@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "jest NODE_ENV=testing --watch",
+    "test": "cross-env NODE_ENV=testing jest --watch",
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
     "coverage": "jest --coverage --detectOpenHandles --forceExit || true"
@@ -40,11 +40,6 @@
     "pg": "^7.18.1",
     "purecrypt": "^1.0.4",
     "supertest": "^4.0.2"
-  },
-  "scripts": {
-    "test": "cross-env NODE_ENV=testing jest --watch",
-    "start": "node ./bin/www",
-    "server": "nodemon ./bin/www"
   },
   "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
   "author": "[Brandon] <desselle.brandon2@gmail.com>",
