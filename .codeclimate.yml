@@ -1,20 +1,4 @@
 version: "2"
-plugins:
-  rubocop:
-    enabled: true
-    checks:
-     Rubocop/Metrics/ClassLength:
-       enabled: false
-  eslint:
-    enabled: true
-  csslint:
-    enabled: true
-  duplication:
-    enabled: true
-    config:
-      languages:
-      - ruby:
-      - javascript:
 exclude_patterns:
   - "**/__tests__/"
   - "**/*.test.js"
