@@ -1,12 +1,12 @@
+# Contributors
+
+|    [Heather Ridgill ](https://github.com/Heather-Ridgill)      |     [Micah Jank](https://github.com/MicahJank)       |     [Katrina Roaix](https://github.com/kroaix)     |     [Yankho Trumble](https://github.com/Mayankho)     | | [Zach Taylor ](https://github.com/zbtaylor) | [Vinni Hoke](https://github.com/vinnihoke) | [Brandon Dresselle - TL](https://github.com/BDesselle) |
+
 [![Maintainability](https://api.codeclimate.com/v1/badges/a280d9a48c1e094a79cb/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/homerun-be/maintainability)
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a280d9a48c1e094a79cb/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/homerun-be/test_coverage)
 
-# API Documentation
-
-#### 1️⃣ Backend deployed at TidyHive (https://dashboard.heroku.com/apps/stage-homerun-be) <br>
-
-## 1️⃣ Getting started
+# Getting started
 
 To get the server running locally:
 
@@ -15,135 +15,597 @@ To get the server running locally:
 - **npm server** to start the local server
 - **npm test** to start server using testing environment
 
-### Backend framework goes here
+# Documentation
 
-Express Node.JS
+#### Backend deployed at TidyHive (https://dashboard.heroku.com/apps/stage-homerun-be)
 
-Reasoning:
+#### See [Frontend Documentation](https://github.com/Lambda-School-Labs/homerun-fe) for details on the fronend of our project.
+
+
+# Backend framework goes here
+
+- Express 
+- Node.JS
+
+## Reasoning:
 
 - Flexibility
 - Easy to use (speed, familiarity, etc)
 - Great Ecosystems, libraries and modules
 - Same language on frontend and backend
 
-## 2️⃣ Endpoints
+## Endpoints
 
 [Endpoints can be found here.](https://documenter.getpostman.com/view/9155829/SzKbMFcG?version=latest)
 
-#### Organization Routes
+# Auth Routes
 
-| Method | Endpoint                | Access Control | Description                                  |
-| ------ | ----------------------- | -------------- | -------------------------------------------- |
-| GET    | `/organizations/:orgId` | all users      | Returns the information for an organization. |
-| PUT    | `/organizatoins/:orgId` | owners         | Modify an existing organization.             |
-| DELETE | `/organizations/:orgId` | owners         | Delete an organization.                      |
+## *Signup*
 
-#### User Routes
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/auth/signup`        | all users      | 
 
-| Method | Endpoint                | Access Control      | Description                                        |
-| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
-| GET    | `/users/current`        | all users           | Returns info for the logged in user.               |
-| GET    | `/users/org/:userId`    | owners, supervisors | Returns all users for an organization.             |
-| GET    | `/users/:userId`        | owners, supervisors | Returns info for a single user.                    |
-| POST   | `/users/register/owner` | none                | Creates a new user as owner of a new organization. |
-| PUT    | `/users/:userId`        | owners, supervisors |                                                    |
-| DELETE | `/users/:userId`        | owners, supervisors |                                                    |
 
-#### TODOs Routes
+Takes an object including:
+```javascript 
+Body Raw
 
-| Method | Endpoint                | Access Control      | Description                                        |
-| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
-| GET    | `/todos/a12345`         | owners              | Returns info for all inputted todos in the system. |
-| GET    | `/todos/a12345/:userId` | owners, supervisors | Returns all todos for a particular user.           |
-| POST   | `/todos/add`            | user                | Creates a new todo                                 |
-| PUT    | `/todos/:userId`        | user                | Returns: "title": "Updated todo title"             |
-| DELETE | `/todos/:userId`        | owners, supervisors |                                                    |
+{
+  "username": "some_user_name",
+  "email": "test@test.com",
+  "password": "password"
+}
+```
+### Returned Example
 
-# Data Model
+{
+  "message": "A confirmation email has been sent to test@test.com"
+}
 
-🚫This is just an example. Replace this with your data model
 
-#### 2️⃣ ORGANIZATIONS
 
----
+## *Confirm Email*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/auth/confirm`        | all users      | 
+
+
+Takes an object including:
+```javascript 
+Body Raw
+
+  {
+	"hash": "a1di21o1n2908q2398h"
+}
 
 ```
+### Returned Example
+
 {
-  id: UUID
-  name: STRING
-  industry: STRING
-  paid: BOOLEAN
-  customer_id: STRING
-  subscription_id: STRING
+  "message": "User confirmed successfully."
+}
+
+
+## *Log in
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/auth/login`        | all users      | 
+
+
+Takes an object including:
+```javascript 
+Body Raw
+
+{
+	"email": "mom@test.com",
+	"password": "password"
+}
+
+```
+### Returned Example
+
+{ <br>
+  "message": "Welcome, mom@test.com", <br>
+  "token": "" <br>
+}
+
+## *Forgot Password*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/auth/forgot`        | all users      | 
+
+
+Takes an object including:
+```javascript 
+Body Raw
+
+{
+	"email": "mom@test.com"
+}
+
+```
+### Returned Example
+
+{
+  "message": "A password reset link has been sent to zbtaylor1@gmail.com"
+}
+
+
+## *Password Reset*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/auth/reset`        | all users      | 
+
+
+Takes an object including:
+```javascript 
+Body Raw
+
+{
+	"hash": "e7e14facb3b2138f3b24eab6ba162ee89e0ac339",
+	"password": "new_password"
+}
+
+```
+### Returned Example
+
+{
+  "message": "Your password has been reset."
+}
+
+# OAuth Google
+
+## *Confirm Email*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| GET    | `/connect/google`        | all users      | 
+
+
+<br>
+
+# TODO Endpoints
+
+## *Add a todo*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/todos/add`        | logged in users     | 
+
+
+Takes an object including:
+```javascript 
+Body Raw
+
+ {
+	"title": "New Todo",
+	"household": "a12345"
+}
+```
+### Returned Example
+```javascript 
+{
+  "id": 6,
+  "household": "a12345",
+  "title": "New Todo",
+  "desc": null,
+  "point_value": null,
+  "created_at": null,
+  "due": null,
+  "completed": null,
+  "completed_by": null,
 }
 ```
 
-#### USERS
+## *Update a todo*
 
----
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| PUT    | `/todos/1`        | Only logged in users account     | 
+
+
+Takes an object including:
+```javascript 
+
+Body Raw
+{
+	"title": "Updated Todo Title"
+}
 
 ```
+### Returned Example
+```javascript 
 {
-  id: UUID
-  organization_id: UUID foreign key in ORGANIZATIONS table
-  first_name: STRING
-  last_name: STRING
-  role: STRING [ 'owner', 'supervisor', 'employee' ]
-  email: STRING
-  phone: STRING
-  cal_visit: BOOLEAN
-  emp_visit: BOOLEAN
-  emailpref: BOOLEAN
-  phonepref: BOOLEAN
+  "id": 1,
+  "household": "a12345",
+  "title": "Updated Todo Title",
+  "desc": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
+  "point_value": 20,
+  "created_at": null,
+  "due": "1318781876406",
+  "completed": false,
+  "completed_by": ""
+}
+```
+## *Assign a todo*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/todos/assign/5`        | Only logged in users account     | 
+
+
+Takes an object including:
+```javascript 
+
+Body Raw
+{
+    "assignees": [
+        {
+            "type": "member",
+            "id": 1
+        },
+        {
+            "type": "member",
+            "id": 2
+        },
+        {
+            "type": "child",
+            "id": 1
+        }
+    ]
+}
+
+```
+### Returned Example
+```javascript 
+[
+  {
+    "username": "mom",
+    "child": false,
+    "points": 25
+  },
+  {
+    "username": "dad",
+    "child": false,
+    "points": 40
+  },
+  {
+    "username": "Lil Suzie",
+    "child": true,
+    "points": 25
+  }
+]
+```
+
+## *Unassign a todo*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/unassign/5`        | Only logged in users account     | 
+
+
+Takes an object including:
+```javascript 
+
+Body Raw
+{
+    "assignees": [
+        {
+            "type": "member",
+            "id": 1
+        },
+        {
+            "type": "child",
+            "id": 1
+        }
+    ]
+}
+
+```
+### Returned Example
+```javascript 
+[
+  {
+    "username": "mom",
+    "child": false,
+    "points": 25
+  },
+  {
+    "username": "dad",
+    "child": false,
+    "points": 40
+  }
+]
+```
+
+## *Delete a todo*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| DEL    | `/todos/5`        | Only logged in users account     | 
+
+
+Takes an object including:
+Authorization: Token
+
+
+### Returned Example
+```javascript 
+{
+	message: "$1 todo(s) removed"
+}
+```
+## *Todo by household*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| GET    | `/todos/household`        | Only logged in users account     | 
+
+
+Takes an object including:
+Authorization: Token
+
+
+### Returned Example
+```javascript 
+{
+    "id": 2,
+    "household": "a12345",
+    "title": "This is the second todo.",
+    "desc": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
+    "point_value": 125,
+    "created_at": null,
+    "due": "1318781876406",
+    "completed": false,
+    "completed_by": "",
+    "assigned": [
+      {
+        "username": "mom",
+        "child": false,
+        "points": 25
+      },
+      {
+        "username": "dad",
+        "child": false,
+        "points": 40
+      },
+      {
+        "username": "Lil Suzie",
+        "child": true,
+        "points": 25
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "household": "a12345",
+    "title": "This is the third todo.",
+    "desc": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sint illum voluptatibus voluptatum quia?",
+    "point_value": 40,
+    "created_at": null,
+    "due": "1318781876406",
+    "completed": true,
+    "completed_by": "Sample",
+    "assigned": []
+  },
+```
+## *All Users Assigned to Todo*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| GET    | `/todos/assigned/5`        | Only logged in users account     | 
+
+
+Takes an object including:
+```javascript 
+
+Body Raw
+{
+    "assignees": [
+        {
+            "type": "member",
+            "id": 1
+        },
+        {
+            "type": "member",
+            "id": 2
+        },
+        {
+            "type": "child",
+            "id": 1
+        }
+    ]
+}
+
+```
+
+### Returned Example
+```javascript 
+{
+    "assignees": [
+        {
+            "type": "member",
+            "id": 1
+        },
+        {
+            "type": "member",
+            "id": 2
+        },
+        {
+            "type": "child",
+            "id": 1
+        }
+    ]
 }
 ```
 
-## 2️⃣ Actions
+# Members & Children Endpoints
 
-🚫 This is an example, replace this with the actions that pertain to your backend
+## *Add Child*
 
-`getOrgs()` -> Returns all organizations
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| POST    | `/household/children`        | Only logged in users account     | 
 
-`getOrg(orgId)` -> Returns a single organization by ID
 
-`addOrg(org)` -> Returns the created org
+Takes an object including:
+```javascript 
 
-`updateOrg(orgId)` -> Update an organization by ID
+Body Raw
+{
+	"username": "Child Name"
+}
 
-`deleteOrg(orgId)` -> Delete an organization by ID
-<br>
-<br>
-<br>
-`getUsers(orgId)` -> if no param all users
+```
 
-`getUser(userId)` -> Returns a single user by user ID
+### Returned Example
+```javascript 
+[
+  {
+    "id": 5,
+    "username": "Child Name",
+    "points": null,
+    "child": true,
+    "household_id": "a12345"
+  }
+]
+```
 
-`addUser(user object)` --> Creates a new user and returns that user. Also creates 7 availabilities defaulted to hours of operation for their organization.
+## *Update Child
 
-`updateUser(userId, changes object)` -> Updates a single user by ID.
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| PUT    | `/household/children/1`        | Only logged in users account     | 
 
-`deleteUser(userId)` -> deletes everything dependent on the user
 
-## 3️⃣ Environment Variables
+Takes an object including:
+```javascript 
+
+Body Raw
+{
+	"username": "Changed Child Name",
+	"points": 10
+}
+
+```
+
+### Returned Example
+```javascript 
+[
+  {
+    1
+  }
+]
+```
+
+## *Delete Child*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| DEL    | `/household/children/5`        | Only logged in users account     | 
+
+
+Takes an object including:
+Authorization: Token
+
+
+### Returned Example
+```javascript 
+{
+	1
+}
+```
+
+## *Update Member / Accept Household Invite*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| PUT    | `/household/children`        | Only logged in users account     | 
+
+
+Takes an object including:
+```javascript 
+
+Body Raw
+{
+	"username": "Changed Member Name"
+}
+
+```
+
+### Returned Example
+```javascript 
+{
+	"username": "Changed Member Name"
+}
+```
+
+## *All Members in Household*
+
+| Method | Endpoint                | Access Control |                                 
+| ------ | ----------------------- | -------------- | 
+| GET    | `/household/assignable`        | Only logged in users account     | 
+
+
+Takes an object including:
+Authorization: Token
+
+### Returned Example
+```javascript 
+  {
+    "id": 1,
+    "username": "mom",
+    "email": "mom@test.com",
+    "password": "$2a$14$VfyTw42uvMPAGGWlHPOXSe9yphUBAyp0XYpKk0txhgYTsSmD0UFni",
+    "provider": "email",
+    "access_token": "",
+    "refresh_token": "",
+    "points": 25,
+    "child": false,
+    "active": true,
+    "current_household": "a12345"
+  },
+  {
+    "id": 1,
+    "username": "Lil Suzie",
+    "points": 25,
+    "child": true,
+    "household_id": "a12345"
+  },
+```
+
+
+# Environment Variables
 
 In order for the app to function correctly, the user must set up their own environment variables.
 
 create a .env file that includes the following:
 
-🚫 These are just examples, replace them with the specifics for your app
+- DEV_LOCAL=postgresql://postgres:Test1234@localhost/postgres (Download postgres and add url with your password here)
+- JWT_SECRET=thisissupercereal
+- SG_USER=apikey
+- SG_PASS=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
+- BASE_URL=http://localhost:3000
+- FE_URL=http://localhost:3001
+- OAUTH_URL=localhost:3000
+- OAUTH_PROTOCOL=http
+- ALGO=aes-256-cbc
+- CRYPTO_KEY=True nobility is being superior to your former self.
+- SESSION_KEY=this is a session key
+- G_CLIENT_ID=1050964061778-o501f0usfcgqtapvsmhvs89eebtndv9m.apps.googleusercontent.com
+- G_CLIENT_SECRET=G1tKjOJDY5srwnyMPf8bJbvk
+- F_CLIENT_ID=200338417844322
+- F_CLIENT_SECRET=7a99ae1f44e01f370261b55b9e37d45f
 
-_ STAGING_DB - optional development db for using functionality not available in SQLite
-_ NODE\*ENV - set to "development" until ready for "production"
 
-- JWT*SECRET - you can generate this by using a python shell and running import random''.join([random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#\$%^&amp;*(-_=+)') for i in range(50)])
-  _ SENDGRID_API_KEY - this is generated in your Sendgrid account \* stripe_secret - this is generated in the Stripe dashboard
+# HAVE FUN! 
 
-## Contributing
-
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
-
-Please note we have a [code of conduct](./code_of_conduct.md). Please follow it in all your interactions with the project.
-
+<!-- 
 ### Issue/Bug Request
 
 **If you are having an issue with the existing project code, please submit a bug report under the following guidelines:**
@@ -173,205 +635,7 @@ Remember that this project is licensed under the MIT license, and by submitting 
 
 ### Attribution
 
-These contribution guidelines have been adapted from [this good-Contributing.md-template](https://gist.github.com/PurpleBooth/b24679402957c63ec426).
-
-## Documentation
-
-See [Frontend Documentation](🚫link to your frontend readme here) for details on the fronend of our project.
-🚫 Add DS iOS and/or Andriod links here if applicable.
-
-### Sign Up
-
-POST to `https://stage-homerun-be.herokuapp.com/auth/signup`
-
-Takes an object including:
-
-```javascript
-{
-    "username": "LambdaStudent247",
-    "email": "homerun.labspt7@gmail.com",
-    "password": "password",
-    "confirm": "password",
-}
-```
-
-Example Output:
-
-````javascript
-{
-    "saved": {
-        "id": 1,
-        "username": "LambdaStudent247",
-        "email": "homerun.labspt7@gmail.com",
-        "password": "$2a$10$YWS/2323oqZKgkcmJ7AeWe2Q7W1tZYokZLCSIiuAv6BmqvldmXWl.",
-        "confirm": "password",
-    },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiSGVhdGhlciIsInJvbGVzIjoidXNlciIsImlhdCI6MTU3ODcyMTM3MCwiZXhwIjoxNTc4ODA3NzcwfQ.S-d9Ze18GIFhGFvG5fljIhiVHSbXCWx2WvUZv5mq_7s"
-}
+These contribution guidelines have been adapted from [this good-Contributing.md-template](https://gist.github.com/PurpleBooth/b24679402957c63ec426). -->
 
 
-### Login
 
-POST to `https://bw-kids-fly.herokuapp.com/api/auth/login/user`
-
-Takes an object including:
-```javascript
-{
-   "username": "LambdaStudent247",
-    "password": "password"
-}
-````
-
-Example Output:
-
-{
-"message": "Welcome LambdaStudent247!",
-"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiTGFtYmRhU3R1ZGVudDI0NyIsInJvbGVzIjoidXNlciIsImlhdCI6MTU3ODcyNTk4MSwiZXhwIjoxNTc4ODEyMzgxfQ.GSpNXMkeXbkyS2S0nF_oifInr5KFgvLV_bNoEs195IY",
-"userid": 1
-}
-
-### Register New Admin
-
-POST to `https://bw-kids-fly.herokuapp.com/api/adminauth/register/admin`
-
-Takes an object including:
-
-```javascript
-{
-    "username": "LambdaStudent5000",
-    "password": "password"
-
-}
-```
-
-Example Output:
-
-{
-"id": 1,
-"username": "LambdaStudent5000",
-"password": "$2a$10\$X58bC9c2vZxnG6mgvf16uexgaaiyIDcyxRwLEw/34G54DF8r3mCaK"
-}
-
-### Login Existing Admin
-
-POST to `https://bw-kids-fly.herokuapp.com/api/adminauth/login/admin`
-
-Takes an object including:
-
-```javascript
-{
-  "username": "LambdaStudent5000",
-  "password": "password"
-}
-```
-
-Example Output:
-
-{
-"message": "Welcome admin LambdaStudent5000!",
-"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbmlkIjoxLCJ1c2VybmFtZSI6IkxhbWJkYVN0dWRlbnQ1MDAwIiwicm9sZXMiOiJhZG1pbiIsImlhdCI6MTU3ODM3MTQwMywiZXhwIjoxNTc4NDU3ODAzfQ.BLegBiUvih24THUB7LgzEFOnErW69vNXpfrMo9xfn50"
-}
-
-### Get all registered users
-
-GET to `https://bw-kids-fly.herokuapp.com/api/user/`
-
-Takes an object including:
-
-```javascript
-[
-  {
-    id: 1,
-    username: "LambdaStudent247",
-    password: "$2a$10$6NrOGH/43.iC.t8gndaGV.N3ZNRnaaoln44K.urxOCsgmdwp67EeK"
-  },
-  {
-    id: 2,
-    username: "LambdaStudent247",
-    password: "$2a$10$65ZgEq5rUvjcw4WDfZsei.OysphHJWS/0VpSCvbgey5MI8qCyWWce"
-  }
-];
-```
-
-### Post a new trip
-
-POST to `https://bw-kids-fly.herokuapp.com/api/trips/trip`
-
-Takes a JWT and an object including:
-
-```javascript
-{
-"airport_name": "SFO",
-"airline": "1255",
-"flight_number": "25",
-"departure_time": "12PM",
-"carryon_items": "3",
-"checked_items": "1",
-"children": "10",
-"special_needs": "We have a stroller",
-}
-```
-
-Example Output:
-
-{
-"message": "Congratulations, you successfully created a new trip!",
-"accountID": [
-1
-]
-}
-
-### Update trip
-
-PUT to `https://bw-kids-fly.herokuapp.com/api/trip/:id` //where id is trip's ID
-
-Takes a JWT and an object containing any of the existing trip properties that are to be updated.
-
-### Delete a trip
-
-DELETE to `https://bw-kids-fly.herokuapp.com/api/trip/:id` //where id is trip's ID
-
-Takes a JWT
-
-### Get all trips items in database
-
-GET to `https://bw-kids-fly.herokuapp.com/api/trips`
-
-Will be returned an array with trip objects.
-
-Example Output:
-
-```javascript
-([
-    {"airport name": 'LAX', airline: 'Southwest',"flight_number": '1544', "departure_time": '2:30PM',"carryon_items": '5', children: '3', "special_needs": 'We have a stroller'},
-
-    {"airport name": 'SFO', airline: 'American Airlines',"flight_number": '300', "departure_time": '5PM',"carryon_items": '4', children: '5', "special_needs": 'NA'},
-
-    {"airport name": 'MEX', airline: 'International',"flight_number": '2463', "departure_time": '8AM',"carryon_items": '2', children: '1', "special_needs": ''},
-
-
-  ]);
-
-
-};
-```
-
-### Submitting an application
-
-POST to `https://bw-kids-fly.herokuapp.com/api/apps`
-
-```javascript
-{
-	"email": "LambdaStudent365@Lambda.edu",
-    "password": "password",
-    "confirm": "password",
-    "first_name": "Heather",
-    "last_name": "Ridgill"
-
-}
-```
-
-Example Output:
-{
-"message": "You have now applied to be a KidsFlyConnection Staff Member!"
-}
