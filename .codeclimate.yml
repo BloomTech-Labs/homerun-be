@@ -16,11 +16,11 @@ version: "2"
 #       - ruby:
 #       - javascript:
 exclude_patterns:
-- __tests__/
-- node_modules
-- db
+- __tests__/**/*
+- node_modules/**/*
+- db/**/*
 - knexfile.js
-- middleware/emailTemplates.js
+- middleware/**/*
 
 # Example .codeclimate.yml from https://docs.codeclimate.com/docs/example-codeclimateyml
 
