@@ -1,3 +1,4 @@
+version: "2"
 plugins:
   rubocop:
     enabled: true
@@ -14,7 +15,7 @@ plugins:
       languages:
       - ruby:
       - javascript:
-exclude_paths:
+exclude_patterns:
     - "**/__tests__/"
     - "**/*.test.js"
     - "**/node_modules/"
