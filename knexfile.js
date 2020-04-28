@@ -30,7 +30,7 @@ module.exports = {
     //   user: process.env.DEV_DB_USER,
     //   password: process.env.DEV_DB_PASS
     // },
-    connection: process.env.DEV_TEST,
+    connection: "postgresql://localhost/home-run-test",
     pool: {
       min: 2,
       max: 10

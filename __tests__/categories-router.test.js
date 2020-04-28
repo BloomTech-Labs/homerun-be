@@ -2,19 +2,17 @@ const request = require('supertest');
 
 const server = require('../app.js');
 
-const db = require('../data/dbConfig.js');
+const db = require('../db/dbConfig.js');
+
+const token = require('../middleware/token.js');
 
 
-// some of the routes that need to be tested require a token sent in the header - to get that i will login with the mom account
+// some of the routes that need to be tested require a token sent in the header - to get that i will generate a token with the mom account
 // before any of the tests happen and store the token in a variable
-let token;
+let generatedToken;
 beforeAll(done => {
-    console.log(process.env.NODE_ENV);
-    request(server).post('/auth/login').send({ email: 'mom@test.com', password: 'test1234' })
-    .end((err, response) => {
-        token = response.body.token;
-        done();
-    });
+    generatedToken = token.generateToken({ id: 1, email: 'mom@test.com', current_household: 'a12345' })
+    done();
 });
 
 describe('categories-router testing', () => {
@@ -23,6 +21,12 @@ describe('categories-router testing', () => {
             return request(server).get('/todos/categories')
                     .then(res => {
                         expect(res.status).toBe(401);
+                    })
+        })
+        it('should pass with 200 OK when the token is sent on the header', () => {
+            return request(server).get('/todos/categories').set('Authorization', generatedToken)
+                    .then(res => {
+                        expect(res.status).toBe(200);
                     })
         })
     })

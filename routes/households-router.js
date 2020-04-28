@@ -9,7 +9,7 @@ router.post("/unlock/:id", (req, res, next) => {
         if (household.pin === req.body.pin) {
           res.status(200).json({ success: true });
         } else {
-          res.status(400).json(message: "Invalid PIN" });
+          res.status(400).json({message: "Invalid PIN" });
         }
       })
       .catch((err) => {
@@ -28,3 +28,16 @@ router.put("/:id", (req, res, next) => {
       next(err);
     });
 });
+
+router.delete("/", (req, res) =>{
+  const id  = req.decodedToken.current_household;
+  Households.remove( id )
+  .then((message) => {
+    res.status(200).json({ message: "Successfully deleted household" });
+  })
+  .catch((err) => {
+    next(err);
+  });
+});
+
+module.exports = router;

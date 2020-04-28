@@ -14,9 +14,9 @@ exports.up = function(knex) {
          .references("todos.id")
          .onDelete("CASCADE")
          .onUpdate("CASCADE");
-      tbl.integer("category_id")
+      tbl.text("category_name")
          .unsigned()
-         .references("category.id")
+         .references("category.category_name")
          .onDelete("CASCADE")
          .onUpdate("CASCADE");
   })

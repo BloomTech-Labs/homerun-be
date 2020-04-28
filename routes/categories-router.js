@@ -27,8 +27,8 @@ router.get('/:todoID', validateID, (req, res) => {
 
 // adds a new category for the todo id that is passed in
 router.post('/', validateID, (req, res) => {
-    const { todo_id, category_id } = req.body;
-    Categories.addTodoCategories(todo_id, category_id)
+    const { todo_id, category_name } = req.body;
+    Categories.addTodoCategories(todo_id, category_name)
             .then(categories => {
                 res.status(201).json(categories);
             })
@@ -39,8 +39,8 @@ router.post('/', validateID, (req, res) => {
 
 // find out why this delete is erroring
 router.delete('/delete', validateID, (req, res) => {
-    const { todo_id, category_id } = req.body;
-    Categories.removeTodoCategories(todo_id, category_id)
+    const { todo_id, category_name } = req.body;
+    Categories.removeTodoCategories(todo_id, category_name)
              .then(categories => {
                  res.json(categories);
              })

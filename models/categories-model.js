@@ -14,9 +14,8 @@ const findCategories = () => {
 // }
 
 const findTodoCategories = todoId => {
-    console.log('hello');
    return db('todo_categories')
-        .join('category', 'todo_categories.category_id', 'category.id')
+        .join('category', 'todo_categories.category_name', 'category.category_name')
         .select('category.category_name')
         .where({ todo_id: todoId })
         .then(res => {
@@ -32,18 +31,18 @@ const findTodoCategories = todoId => {
 }
 
 // add new todo_categories by todo id and category id
-const addTodoCategories = (todo_id, category_id) => {
+const addTodoCategories = (todo_id, category_name) => {
     return db('todo_categories')
-             .insert({ todo_id, category_id })
+             .insert({ todo_id, category_name })
              .then(() => {
                  return findTodoCategories(todo_id); 
              })          
 }
 
 // remove existing todo_categories by todo id and category id
-const removeTodoCategories = (todo_id, category_id) => {
+const removeTodoCategories = (todo_id, category_name) => {
     return db('todo_categories')
-             .where({ todo_id, category_id })
+             .where({ todo_id, category_name })
              .del()
              .then(() => { 
                  return findTodoCategories(todo_id)
