@@ -12,7 +12,7 @@
 #     - enabled: true|false
 #     - channel: alternate channel to use (stable is default)
 #     - config: plugin configuration
-- exclude_patterns:
+exclude_patterns:
     - "**/__tests__/"
     - "**/*.test.js"
     - "**/node_modules/"
