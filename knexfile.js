@@ -20,7 +20,7 @@ module.exports = {
 
   testing: {
     client: "pg",
-    connection: `postgresql://localhost/${process.env.DB_TEST_NAME}`,
+    connection: `postgresql://localhost/homerun_testing,
     pool: {
       min: 2,
       max: 10
