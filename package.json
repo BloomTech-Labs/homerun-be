@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "jest NODE_ENV=testing --watch",
+    "test": "cross-env NODE_ENV=testing jest --watch",
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
     "coverage": "jest --coverage --detectOpenHandles --forceExit || true"
@@ -25,6 +25,7 @@
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
     "dayjs": "^1.8.25",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
@@ -40,6 +41,9 @@
     "purecrypt": "^1.0.4",
     "supertest": "^4.0.2"
   },
+  "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
+  "author": "[Brandon] <desselle.brandon2@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "nodemon": "^2.0.2"
   }
