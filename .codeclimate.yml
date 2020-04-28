@@ -1,4 +1,21 @@
-exclude_patterns:
+plugins:
+  rubocop:
+    enabled: true
+    checks:
+     Rubocop/Metrics/ClassLength:
+       enabled: false
+  brakeman:
+    enabled: true
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript:
+exclude_paths:
     - "**/__tests__/"
     - "**/*.test.js"
     - "**/node_modules/"
