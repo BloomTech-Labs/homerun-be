@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=testing jest --watch",
+    "test": "cross-env NODE_ENV=testing jest --watchAll",
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
     "coverage": "jest --coverage --detectOpenHandles --forceExit || true"
