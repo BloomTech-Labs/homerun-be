@@ -34,6 +34,6 @@ describe("User Method Filter inserts a child or member", () => {
 	})
 })
 
-// ! This is not working code, and doesn't test properly. I'm adding this to see it if impacts our test coverage.
+// ! This is not working code but it should pass. I'm adding this to see it if impacts our test coverage.
 
 // https://stackoverflow.com/questions/56014527/how-to-mock-a-middleware-in-supertest
