@@ -578,9 +578,9 @@ Authorization: Token
     "household_id": "a12345"
   },
 ```
+<!-- PRIVATE -->
 
-
-# Environment Variables
+<!-- # Environment Variables
 
 In order for the app to function correctly, the user must set up their own environment variables.
 
@@ -600,7 +600,7 @@ create a .env file that includes the following:
 - G_CLIENT_ID=1050964061778-o501f0usfcgqtapvsmhvs89eebtndv9m.apps.googleusercontent.com
 - G_CLIENT_SECRET=G1tKjOJDY5srwnyMPf8bJbvk
 - F_CLIENT_ID=200338417844322
-- F_CLIENT_SECRET=7a99ae1f44e01f370261b55b9e37d45f
+- F_CLIENT_SECRET=7a99ae1f44e01f370261b55b9e37d45f -->
 
 
 # HAVE FUN! 
