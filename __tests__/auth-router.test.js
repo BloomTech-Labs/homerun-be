@@ -1,6 +1,3 @@
-// jest.mock('../middleware/userMethodFilter.js', () => jest.fn((req, res, next) => next()))
-
-const typeCheckMock = require('../middleware/userMethodFilter.js');
 const supertest = require('supertest');
 const app = require('../app.js');
 
@@ -18,8 +15,6 @@ const user = {
 	password: "aslasdf123456asdf321a6s5df46"
 }
 
-jest.mock('../middleware/userMethodFilter.js')
-
 let agent;
 let server;
 beforeEach(done => {
@@ -35,8 +30,8 @@ afterEach(done => {
 	server && server.close(done);
 })
 
-describe("User Method Filter inserts a child or member", () => {
-	test("Add a child to the DB", () => {
+describe("User signup functional", () => {
+	test("User can sign up with username, email, password", () => {
 		agent.post(`/signup`)
 			.send(user)
 			.set('Accept', 'application/json')
@@ -44,6 +39,7 @@ describe("User Method Filter inserts a child or member", () => {
 			.expect(200)
 	})
 
+	// Dummy tests
 	test("Dummy to check CC coverage", () => {
 		expect(2 + 2).toBe(4);
 	})
@@ -62,8 +58,4 @@ describe("User Method Filter inserts a child or member", () => {
 	test("Dummy to check CC coverage", () => {
 		expect(2 + 2).toBe(4);
 	})
-
 })
-// ! This is not working code but it should pass. I'm adding this to see it if impacts our test coverage.
-
-// https://stackoverflow.com/questions/56014527/how-to-mock-a-middleware-in-supertest
