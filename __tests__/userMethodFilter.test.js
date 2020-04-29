@@ -44,10 +44,6 @@ describe("User Method Filter inserts a child or member", () => {
 			.expect(200)
 	})
 
-
-
-
-
 })
 
 test("Dummy check", () => {
