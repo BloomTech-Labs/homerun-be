@@ -18,7 +18,7 @@ module.exports = {
     }
   },
 
-  testing: {
+  test: {
     client: "pg",
     connection: `postgresql://localhost/${process.env.DB_TEST_NAME}`,
     pool: {
