@@ -1,6 +1,7 @@
 require("dotenv").config();
 const knex = require("knex");
 const environment = process.env.NODE_ENV || "development";
+console.log(process.env.NODE_ENV)
 
 const configOptions = require("../knexfile")[environment]; // change environment to 'testing' to get tests to run
 
