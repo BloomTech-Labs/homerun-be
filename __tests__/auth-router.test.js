@@ -38,24 +38,4 @@ describe("User signup functional", () => {
 			.expect('Content-Type', /json/)
 			.expect(200)
 	})
-
-	// Dummy tests
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
 })

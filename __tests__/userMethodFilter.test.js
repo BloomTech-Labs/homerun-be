@@ -44,25 +44,6 @@ describe("User Method Filter inserts a child or member", () => {
 			.expect(200)
 	})
 
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-	test("Dummy to check CC coverage", () => {
-		expect(2 + 2).toBe(4);
-	})
-
 })
 // ! This is not working code but it should pass. I'm adding this to see it if impacts our test coverage.
 
