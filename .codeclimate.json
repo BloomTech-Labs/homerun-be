@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "exclude_patterns": [
+    "config/",
+    "db/",
+    "dist/",
+    "public/",
+    "**/node_modules/",
+    "script/",
+    "**/spec/",
+    "**/__tests__/",
+    "**/vendor/",
+    "**/*.d.ts"
+  ]
+}
