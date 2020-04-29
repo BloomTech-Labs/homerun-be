@@ -104,6 +104,7 @@ router.post("/login", (req, res, next) => {
   if (credentials.email && credentials.password) {
     Members.getByEmail(credentials.email)
       .then((member) => {
+        console.log(member);
         if (
           member.active &&
           bcrypt.compareSync(credentials.password, member.password)
@@ -166,7 +167,7 @@ router.post("/forgot", (req, res, next) => {
       Confirmations.insert(newConfirmation)
         .then((hash) => {
           // TODO: change this to member.email once testing is complete
-          sendMail("homerun.labspt7@gmail.com", templates.reset(hash));
+          sendMail(member.email, templates.reset(hash));
         })
         .then(() => {
           res.status(200).json({
@@ -200,6 +201,16 @@ router.post("/reset", (req, res, next) => {
     .catch((err) => {
       res.status(404).json({ message: "That link is invalid." });
     });
+});
+
+
+router.delete("/:member_id", async (req, res) => {
+  try {
+    const request = await Members.remove(req.params.member_id);
+    res.status(200).json(request);
+  } catch {
+    res.status(500).json({ Message: "Unable to delete user" });
+  }
 });
 
 module.exports = router;
