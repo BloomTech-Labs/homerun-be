@@ -23,7 +23,7 @@ module.exports = {
     }
   },
 
-  testing: {
+  test: {
     client: "pg",
     // connection: {
     //   database: process.env.DEV_DB_NAME,
