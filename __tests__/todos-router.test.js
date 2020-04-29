@@ -9,7 +9,7 @@ const token = require('../middleware/token.js');
 
 let generatedToken;
 beforeAll(async done => {
-    generatedToken = token.generateToken({ id: 1, email: 'mom@test.com', current_household: 'a12345' })
+    generatedToken = token.generateToken({ id: 1, email: 'mom@test.com', current_household: 'a12345' }) 
     done();
 });
 
