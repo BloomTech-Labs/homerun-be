@@ -48,15 +48,11 @@
 #  eslint:
 #   enabled: true
 exclude_patterns:
-  - 'config/'
-  - 'db/'
-  - 'dist/'
-  - 'public/'
-  - '**/node_modules/'
-  - 'script/'
-  - '**/spec/'
-  - '**/__tests__/'
-  - '**/vendor/'
-  - '**/*.d.ts'
+  - "**/__tests__/"
+  - "tests/"
+  - "spec/"
+  - "**/vendor/"
+  - "**/node_modules/"
+  - "**/*.test.js"
 
 # Following https://docs.codeclimate.com/docs/advanced-configuration#section-checks
