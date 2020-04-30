@@ -1,13 +1,5 @@
 version: "3"
 exclude_patterns:
-<<<<<<< HEAD
-  - "**/__tests__/"
-  - "tests/"
-  - "spec/"
-  - "**/vendor/"
-  - "**/node_modules/"
-  - "**/*.test.js"
-=======
   - 'config/'
   - 'db/'
   - 'dist/'
@@ -18,4 +10,3 @@ exclude_patterns:
   - '**/__tests__/'
   - '**/vendor/'
   - '**/*.d.ts'
->>>>>>> 908a8adb91fb44ce164d025871b02150ce861ae8
