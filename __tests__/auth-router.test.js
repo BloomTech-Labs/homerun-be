@@ -10,7 +10,7 @@ const child = {
 }
 
 const user = {
-	username: "john",
+	// username: "john",
 	email: "test@gmail.com",
 	password: "aslasdf123456asdf321a6s5df46"
 }
