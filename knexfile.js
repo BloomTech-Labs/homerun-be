@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 // Update with your config settings.
 
 module.exports = {
@@ -7,15 +7,15 @@ module.exports = {
     connection: process.env.DEV_LOCAL,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./db/migrations"
+      directory: "./db/migrations",
     },
     seeds: {
-      directory: "./db/seeds"
-    }
+      directory: "./db/seeds",
+    },
   },
 
   test: {
@@ -23,15 +23,15 @@ module.exports = {
     connection: `postgresql://localhost/${process.env.DB_TEST_NAME}`,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./db/migrations"
+      directory: "./db/migrations",
     },
     seeds: {
-      directory: "./db/seeds"
-    }
+      directory: "./db/seeds",
+    },
   },
 
   staging: {
@@ -39,34 +39,30 @@ module.exports = {
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./db/migrations"
+      directory: "./db/migrations",
     },
     seeds: {
-      directory: "./db/seeds"
-    }
+      directory: "./db/seeds",
+    },
   },
 
   production: {
     client: "pg",
-    connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
-    },
+    connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./db/migrations"
+      directory: "./db/migrations",
     },
     seeds: {
-      directory: "./db/seeds"
-    }
-  }
+      directory: "./db/seeds",
+    },
+  },
 };
