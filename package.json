@@ -32,19 +32,16 @@
     "express": "~4.16.1",
     "express-session": "^1.17.0",
     "grant-express": "^4.7.0",
-    "jest": "^25.1.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.15",
     "morgan": "~1.9.1",
     "nodemailer": "^6.4.4",
     "pg": "^7.18.1",
-    "purecrypt": "^1.0.4",
-    "supertest": "^4.0.2"
+    "purecrypt": "^1.0.4"
   },
-  "repository": "https://github.com/Lambda-School-Labs/homerun-be.git",
-  "author": "[Brandon] <desselle.brandon2@gmail.com>",
-  "license": "MIT",
   "devDependencies": {
+    "jest": "^25.1.0",
+    "supertest": "^4.0.2",
     "nodemon": "^2.0.2"
   }
 }

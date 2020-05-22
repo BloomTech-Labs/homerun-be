@@ -15,6 +15,38 @@ To get the server running locally:
 - **npm server** to start the local server
 - **npm test** to start server using testing environment
 
+## Setting up local environments
+
+1) Postgres setup
+
+    a) [Download an installer](https://www.postgresql.org/download/), and begin the installation process. The default username **postgres** will be shown to you. Change this if you'd like. Choose a password, and don't forget it.
+
+    b) After installation, navigate to the folder where it installed and go to the "bin" subfolder. Copy the directory and add this to your computer's PATH environment variable. If this was done correctly you will be able to reference the executables within the folder from anywhere, you can test by trying `postgres --help` in any newly opened terminal, and you will see a list of options appear.
+
+    c) Create two local databases, one for local development, and one for testing. You can do this with the `createdb` application in the terminal. If the username chosen was `postgres` when installing, then do `createdb -U postgres tidyhive`. You will be prompted for the password before execution. Do the same using `tidyhive-test` for the testing db.
+    d) ALTERNATIVELY: you can set the PGUSER and PGPASSWORD environment variables to skip username and password prompting.
+2) Setting up the .env file
+
+    a) In order to use purecrypt, two env variables are required. If you don't have PGUSER or PGPASSWORD env variables globally set, then you will need to include them here to access the databases. Other env variables needed are included. For ALGO, see the purecrypt documentation for available options:
+    
+    ```text
+    // If you chose other db names, adjust as necessary
+    DB_DEV_URL=postgres://localhost/tidyhive
+    DB_TEST_URL=postgres://localhost/tidyhive-test
+    JWT_SECRET=<MY JWT SECRET>
+    SESSION_KEY=<MY SESSION KEY>
+
+    // Postgres stuff
+    PGUSER=<MY POSTGRES USERNAME>
+    PGPASSWORD=<MY POSTGRES PASSWORD>
+
+    // Purecrypt stuff:
+    CRYPTO_KEY=<PURECRYPT KEY>
+    ALGO=<PURECRYPT ALGORITHM>
+    ```
+
+    b) Now you will need to migrate both databases. To do so run `knex migrate:latest` and `knex migrate:latest --env=test`. Finally check to see they behave correctly by running `yarn test`.
+
 # Documentation
 
 #### Backend deployed at TidyHive (https://dashboard.heroku.com/apps/stage-homerun-be)
