@@ -17,9 +17,9 @@ To get the server running locally:
 
 ## Setting up local environments
 
-1) [https://www.postgresql.org/download/](Postgres)
+1) Postgres setup
 
-    a) Download an installer, and begin the installation process. The default username **postgres** will be shown to you. Change this if you'd like. Choose a password, and don't forget it.
+    a) [Download an installer](https://www.postgresql.org/download/), and begin the installation process. The default username **postgres** will be shown to you. Change this if you'd like. Choose a password, and don't forget it.
 
     b) After installation, navigate to the folder where it installed and go to the "bin" subfolder. Copy the directory and add this to your computer's PATH environment variable. If this was done correctly you will be able to reference the executables within the folder from anywhere, you can test by trying `postgres --help` in any newly opened terminal, and you will see a list of options appear.
 
