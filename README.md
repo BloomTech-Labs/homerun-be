@@ -18,11 +18,15 @@ To get the server running locally:
 ## Setting up local environments
 
 1) [https://www.postgresql.org/download/](Postgres)
+
   a) Download an installer, and begin the installation process. The default username **postgres** will be shown to you. Change this if you'd like. Choose a password, and don't forget it.
+
   b) After installation, navigate to the folder where it installed and go to the "bin" subfolder. Copy the directory and add this to your computer's PATH environment variable. If this was done correctly you will be able to reference the executables within the folder from anywhere, you can test by trying `postgres --help` in any newly opened terminal, and you will see a list of options appear.
+
   c) Create two local databases, one for local development, and one for testing. You can do this with the `createdb` application in the terminal. If the username chosen was `postgres` when installing, then do `createdb -U postgres tidyhive`. You will be prompted for the password before execution. Do the same using `tidyhive-test` for the testing db.
   d) ALTERNATIVELY: you can set the PGUSER and PGPASSWORD environment variables to skip username and password prompting.
 2) Setting up the .env file
+
   a) In order to use purecrypt, two env variables are required. If you don't have PGUSER or PGPASSWORD env variables globally set, then you will need to include them here to access the databases. Other env variables needed are included. For ALGO, see the purecrypt documentation for available options:
 
 ```none
