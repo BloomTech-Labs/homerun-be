@@ -29,7 +29,7 @@ To get the server running locally:
 
   a) In order to use purecrypt, two env variables are required. If you don't have PGUSER or PGPASSWORD env variables globally set, then you will need to include them here to access the databases. Other env variables needed are included. For ALGO, see the purecrypt documentation for available options:
 
-```none
+```text
 // If you chose other db names, adjust as necessary
 DB_DEV_URL=postgres://localhost/tidyhive
 DB_TEST_URL=postgres://localhost/tidyhive-test
