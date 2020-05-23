@@ -53,6 +53,18 @@ describe('categories-router testing', () => {
                     expect(res.status).toBe(404)
                 })
         })
+        it('should return status 200 when valid ID is passed in', () => {
+            return request(server).get('/todos/categories/2').set('Authorization', generatedToken)
+                .then(res => {
+                    expect(res.status).toBe(200)
+                })
+        })
+        it('should return proper category', () => {
+            return request(server).get('/todos/categories/2').set('Authorization', generatedToken)
+                .then(res => {
+                    expect(res.body).toEqual(["kitchen"])
+                })
+            })
     })
 })
 
