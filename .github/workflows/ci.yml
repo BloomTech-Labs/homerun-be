@@ -38,9 +38,9 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
           CRYPTO_KEY: super secret
           ALGO: aes-256-cbc
-          PGUSER: ""
-          PGPASSWORD: ""
-          DB_TEST_URL: ""
+          PGUSER: ''
+          PGPASSWORD: ''
+          DB_TEST_URL: ''
           JWT_SECRET: JWT
           SESSION_KEY: SESSION
         with:
