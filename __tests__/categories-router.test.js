@@ -8,6 +8,7 @@ const token = require('../middleware/token.js');
 
 const knex = require('../db/dbConfig')
 
+const Category = require('../models/categories-model')
 
 // some of the routes that need to be tested require a token sent in the header - to get that i will generate a token with the mom account
 // before any of the tests happen and store the token in a variable
@@ -65,6 +66,28 @@ describe('categories-router testing', () => {
                     expect(res.body).toEqual(["kitchen"])
                 })
             })
+    })
+    describe('POST todos/categories/', () => {
+        it('returns 201 status on successful add', () => {
+            return request(server).post('/todos/categories/').send({todo_id: 1, category_name: 'bedroom'}).set('Authorization', generatedToken)
+                .then(res => {
+                    expect(res.status).toBe(201)
+                })
+        })
+        it('returns 500 error if missing information', () => {
+            return request(server).post('/todos/categories/').send({category_name: 'bedroom'}).set('Authorization', generatedToken)
+                .then(res => {
+                    expect(res.status).toBe(500)
+                })
+        })
+    })
+    describe('DELETE todos/categories/', () => {
+        it('returns 201 error upon successful delete' , () => {
+            return request(server).delete('/todos/categories/delete').send({todo_id: 1, category_name: 'bedroom'}).set('Authorization', generatedToken)
+                .then(res => {
+                    expect(res.status).toBe(200)
+                })
+        })
     })
 })
 
