@@ -41,12 +41,12 @@ router.post('/', validateID, (req, res) => {
 router.delete('/delete', validateID, (req, res) => {
     const { todo_id, category_name } = req.body;
     Categories.removeTodoCategories(todo_id, category_name)
-             .then(categories => {
-                 res.json(categories);
-             })
-             .catch(err => {
-                 res.status(500).json({ error: err.message })
-             })
+            .then(categories => {
+                res.json(categories);
+            })
+            .catch(err => {
+                res.status(500).json({ error: err.message })
+            })
 })
 
 
