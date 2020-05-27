@@ -10,7 +10,7 @@
     "test": "cross-env NODE_ENV=test jest --watchAll --coverage",
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
-    "coverage": "knex migrate:latest && jest --coverage --detectOpenHandles --forceExit || true"
+    "coverage": "cross-env NODE_ENV=test knex migrate:latest && jest --coverage --detectOpenHandles --forceExit || true"
   },
   "jest": {
     "collectCoverageFrom": [
