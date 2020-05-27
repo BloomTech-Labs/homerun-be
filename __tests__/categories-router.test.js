@@ -82,7 +82,7 @@ describe('categories-router testing', () => {
         })
     })
     describe('DELETE todos/categories/', () => {
-        it('returns 201 error upon successful delete' , () => {
+        it('returns 200 status upon successful delete' , () => {
             return request(server).delete('/todos/categories/delete').send({todo_id: 1, category_name: 'bedroom'}).set('Authorization', generatedToken)
                 .then(res => {
                     expect(res.status).toBe(200)
