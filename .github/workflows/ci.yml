@@ -42,9 +42,8 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
           CRYPTO_KEY: super secret
           ALGO: aes-256-cbc
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
+          PG_USER: postgres
+          PG_PASSWORD: postgres
           DB_TEST_URL: postgres://localhost/test
           JWT_SECRET: JWT
           SESSION_KEY: SESSION
