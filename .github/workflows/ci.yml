@@ -35,10 +35,7 @@ jobs:
             # Run the NPM install command before proceeding
       - run: npm install
       - run: npm run action-migrate
-          # A GitHub action for running tests and publishing coverage
-      - uses: paambaati/codeclimate-action@v2.4.0
-        env:
-          # An environment variable, the value is a GitHub repo secret
+        env: &pg-env
           CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
           CRYPTO_KEY: super secret
           ALGO: aes-256-cbc
@@ -47,6 +44,9 @@ jobs:
           DB_TEST_URL: postgres://localhost/test
           JWT_SECRET: JWT
           SESSION_KEY: SESSION
+          # A GitHub action for running tests and publishing coverage
+      - uses: paambaati/codeclimate-action@v2.4.0
+        env: *pg-env
         with:
           # Run our `coverage` command from our `package.json`
           coverageCommand: npm run action-coverage
