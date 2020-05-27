@@ -34,7 +34,9 @@ jobs:
             "12"
             # Run the NPM install command before proceeding
       - run: npm install
-      - run: npm run action-migrate
+      - run: |-
+          npm run action-migrate
+          npm run action-seed
         env:
           PGUSER: postgres
           PGPASSWORD: postgres
