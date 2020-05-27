@@ -12,7 +12,7 @@
     "server": "nodemon ./bin/www",
     "action-migrate": "cross-env NODE_ENV=test knex migrate:latest",
     "action-seed": "cross-env NODE_ENV=test knex seed:run",
-    "action-coverage": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit || true"
+    "action-coverage": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit"
   },
   "jest": {
     "collectCoverageFrom": [
