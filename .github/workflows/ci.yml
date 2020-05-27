@@ -19,6 +19,10 @@ jobs:
       # The steps for the job, executed in sequence
     steps:
       - uses: harmon758/postgresql-action@v1 
+        with:
+          postgresql db: test
+          postgresql user: postgres
+          postgresql password: postgres
 
       # A GitHub action for checking out the current branch
       - uses: actions/checkout@master
@@ -29,13 +33,25 @@ jobs:
           node-version:
             "12"
             # Run the NPM install command before proceeding
-      - run:
-          npm install
+      - run: npm install
+      - run: |-
+          npm run action-migrate
+          npm run action-seed
+        env:
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          DB_TEST_URL: postgres://localhost/test
           # A GitHub action for running tests and publishing coverage
       - uses: paambaati/codeclimate-action@v2.4.0
         env:
-          # An environment variable, the value is a GitHub repo secret
           CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
+          CRYPTO_KEY: super secret
+          ALGO: aes-256-cbc
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          DB_TEST_URL: postgres://localhost/test
+          JWT_SECRET: JWT
+          SESSION_KEY: SESSION
         with:
           # Run our `coverage` command from our `package.json`
-          coverageCommand: npm run coverage
+          coverageCommand: npm run action-coverage
