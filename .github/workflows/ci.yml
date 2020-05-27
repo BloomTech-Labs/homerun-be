@@ -33,8 +33,8 @@ jobs:
           node-version:
             "12"
             # Run the NPM install command before proceeding
-      - run:
-          npm install
+      - run: npm install
+      - run: npm run action-migrate
           # A GitHub action for running tests and publishing coverage
       - uses: paambaati/codeclimate-action@v2.4.0
         env:
@@ -49,4 +49,4 @@ jobs:
           SESSION_KEY: SESSION
         with:
           # Run our `coverage` command from our `package.json`
-          coverageCommand: npm run coverage
+          coverageCommand: npm run action-coverage
