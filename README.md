@@ -622,30 +622,6 @@ Authorization: Token
     "household_id": "a12345"
   },
 ```
-<!-- PRIVATE -->
-
-<!-- # Environment Variables
-
-In order for the app to function correctly, the user must set up their own environment variables.
-
-create a .env file that includes the following:
-
-- DEV_LOCAL=postgresql://postgres:Test1234@localhost/postgres (Download postgres and add url with your password here)
-- JWT_SECRET=thisissupercereal
-- SG_USER=apikey
-- SG_PASS=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
-- BASE_URL=http://localhost:3000
-- FE_URL=http://localhost:3001
-- OAUTH_URL=localhost:3000
-- OAUTH_PROTOCOL=http
-- ALGO=aes-256-cbc
-- CRYPTO_KEY=True nobility is being superior to your former self.
-- SESSION_KEY=this is a session key
-- G_CLIENT_ID=1050964061778-o501f0usfcgqtapvsmhvs89eebtndv9m.apps.googleusercontent.com
-- G_CLIENT_SECRET=G1tKjOJDY5srwnyMPf8bJbvk
-- F_CLIENT_ID=200338417844322
-- F_CLIENT_SECRET=7a99ae1f44e01f370261b55b9e37d45f -->
-
 
 # HAVE FUN! 
 
@@ -680,6 +656,4 @@ Remember that this project is licensed under the MIT license, and by submitting 
 ### Attribution
 
 These contribution guidelines have been adapted from [this good-Contributing.md-template](https://gist.github.com/PurpleBooth/b24679402957c63ec426). -->
-
-
 
