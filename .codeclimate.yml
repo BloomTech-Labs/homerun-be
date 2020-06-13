@@ -1,4 +1,4 @@
-version: "2"
+version: '2'
 checks:
   # Disable checks for similar code.
   # Because this creates too many false positives.

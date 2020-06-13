@@ -1,16 +1,16 @@
-exports.seed = function(knex) {
+exports.seed = function (knex) {
   // Deletes ALL existing entries
-  return knex("inventory")
+  return knex('inventory')
     .del()
     .then(() => {
       // Inserts seed entries
-      return knex("inventory").insert([
+      return knex('inventory').insert([
         {
-          household_id: "a12345"
+          household_id: 'a12345',
         },
         {
-          household_id: "b12345"
-        }
+          household_id: 'b12345',
+        },
       ]);
     });
 };

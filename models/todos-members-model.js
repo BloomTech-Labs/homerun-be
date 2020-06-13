@@ -1,8 +1,8 @@
-const db = require("../db/dbConfig.js");
+const db = require('../db/dbConfig.js');
 
 const insert = async (todo_member) => {
   try {
-    let inserted = await db("todos_members")
+    let inserted = await db('todos_members')
       .insert(todo_member)
       .catch((err) => console.log(err));
     if (inserted) {
@@ -16,7 +16,7 @@ const insert = async (todo_member) => {
 };
 
 const remove = async (todo_member) => {
-  return db("todos_members")
+  return db('todos_members')
     .where(todo_member)
     .del()
     .catch((err) => console.log(err));
