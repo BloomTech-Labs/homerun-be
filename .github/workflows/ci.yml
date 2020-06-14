@@ -15,10 +15,9 @@ jobs:
     # The OS on which the job will run
     runs-on:
       ubuntu-latest
-
       # The steps for the job, executed in sequence
     steps:
-      - uses: harmon758/postgresql-action@v1 
+      - uses: harmon758/postgresql-action@v1
         with:
           postgresql db: test
           postgresql user: postgres
@@ -31,7 +30,7 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version:
-            "12"
+            '12'
             # Run the NPM install command before proceeding
       - run: npm install
       - run: |-

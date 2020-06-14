@@ -1,10 +1,11 @@
-const router = require("express").Router();
-const Todos = require("../models/todos-model.js");
+/* eslint-disable no-unused-vars */
+const router = require('express').Router();
+const Todos = require('../models/todos-model.js');
 
 const Categories = require('../models/categories-model.js');
 const categoriesRouter = require('./categories-router.js');
 
-const userTypeFilter = require('../middleware/userMethodFilter.js')
+const userTypeFilter = require('../middleware/userMethodFilter.js');
 
 const getAssignedUsers = async (todoId) => {
   const membersAssigned = await Todos.findMembersAssigned(todoId);
@@ -12,7 +13,7 @@ const getAssignedUsers = async (todoId) => {
   return membersAssigned.concat(childrenAssigned);
 };
 
-router.get("/household", async (req, res) => {
+router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   try {
     const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
@@ -21,17 +22,17 @@ router.get("/household", async (req, res) => {
         // findTodoCategories should return an array with all the categories the todo belongs to
         const todoCategories = await Categories.findTodoCategories(todo.id);
         const assigned = await getAssignedUsers(todo.id);
-
-        return { ...todo, assigned, categories: todoCategories };
+        // ! May need to fix
+        return { todo, assigned, categories: todoCategories };
       })
     );
     res.status(200).json(allTodos);
   } catch (err) {
-    res.status(500).json({ error: err.message, location: "todos-router.js 8" });
+    res.status(500).json({ error: err.message, location: 'todos-router.js 8' });
   }
 });
 
-router.get("/member", async (req, res) => {
+router.get('/member', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   const memberId = req.decodedToken.subject;
   try {
@@ -47,11 +48,11 @@ router.get("/member", async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ error: err.message, location: "todos-router.js 18" });
+      .json({ error: err.message, location: 'todos-router.js 18' });
   }
 });
 
-router.get("/child/:id", async (req, res) => {
+router.get('/child/:id', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   const childId = req.params.id;
   if (childId) {
@@ -65,7 +66,7 @@ router.get("/child/:id", async (req, res) => {
           return {
             ...todo,
             assigned,
-            categories: todoCategories
+            categories: todoCategories,
           };
         })
       );
@@ -73,27 +74,27 @@ router.get("/child/:id", async (req, res) => {
     } catch (err) {
       res
         .status(500)
-        .json({ error: err.message, location: "todos-router.js 18" });
+        .json({ error: err.message, location: 'todos-router.js 18' });
     }
   } else {
-    res.status(400).json({ message: "Missing Child ID" });
+    res.status(400).json({ message: 'Missing Child ID' });
   }
 });
 
-router.post("/assign/:id", userTypeFilter, async (req, res, next) => {
+router.post('/assign/:id', userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
   const assigned = await getAssignedUsers(id);
   res.status(200).json(assigned);
 });
 
-router.post("/unassign/:id", userTypeFilter, async (req, res, next) => {
+router.post('/unassign/:id', userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
   const assigned = await getAssignedUsers(id);
   res.status(200).json(assigned);
 });
 
 // Do we use this anywhere?
-router.get("/assigned/:id", async (req, res, next) => {
+router.get('/assigned/:id', async (req, res, next) => {
   try {
     const membersAssigned = await Todos.findMembersAssigned(req.params.id);
     const childrenAssigned = await Todos.findChildrenAssigned(req.params.id);
@@ -105,18 +106,16 @@ router.get("/assigned/:id", async (req, res, next) => {
   }
 });
 
-router.post("/add", (req, res, next) => {
+router.post('/add', (req, res, next) => {
   const newTodo = req.body;
   newTodo.household = req.decodedToken.current_household;
   if (newTodo.title && newTodo.household) {
     // TODO: Confirm that the household id is valid?
     Todos.insert(newTodo)
       .then((todo) => {
-        Categories.findTodoCategories(todo.id)
-          .then(categories => {
-            res.status(200).json({ ...todo, assigned: [], categories });
-          })
-
+        Categories.findTodoCategories(todo.id).then((categories) => {
+          res.status(200).json({ ...todo, assigned: [], categories });
+        });
       })
       .catch((err) => {
         next(err);
@@ -124,11 +123,11 @@ router.post("/add", (req, res, next) => {
   } else {
     res
       .status(400)
-      .json({ message: "Required properties missing from new todo." });
+      .json({ message: 'Required properties missing from new todo.' });
   }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put('/:id', (req, res, next) => {
   const updates = req.body;
   Todos.update(req.params.id, updates)
     .then(async (todo) => {
@@ -142,7 +141,7 @@ router.put("/:id", (req, res, next) => {
     });
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
   const householdId = req.decodedToken.current_household;
   Todos.remove(req.params.id, householdId)
     .then(async (householdTodos) => {
@@ -153,7 +152,7 @@ router.delete("/:id", (req, res, next) => {
           return {
             ...todo,
             assigned,
-            categories: todoCategories
+            categories: todoCategories,
           };
         })
       );
@@ -163,7 +162,6 @@ router.delete("/:id", (req, res, next) => {
       next(err);
     });
 });
-
 
 // sub routers - rather than pile even more code in todos-router i just decided
 // to make categories routes have their own router file - since

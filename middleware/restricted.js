@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const { jwtSecret } = require("../config/secrets.js");
+const jwt = require('jsonwebtoken');
+const { jwtSecret } = require('../config/secrets.js');
 
 module.exports = (req, res, next) => {
   const token = req.headers.authorization;
@@ -9,8 +9,8 @@ module.exports = (req, res, next) => {
       if (err) {
         // invalid token
         res.status(401).json({
-          message: "Please log in",
-          tokenExpired: true
+          message: 'Please log in',
+          tokenExpired: true,
         });
       } else {
         // valid token
@@ -20,6 +20,6 @@ module.exports = (req, res, next) => {
     });
   } else {
     // missing token
-    res.status(401).json({ message: "Please log in" });
+    res.status(401).json({ message: 'Please log in' });
   }
 };

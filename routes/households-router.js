@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const Households = require("../models/households-model.js");
+const router = require('express').Router();
+const Households = require('../models/households-model.js');
 
-router.post("/unlock/:id", (req, res, next) => {
+router.post('/unlock/:id', (req, res, next) => {
   const { id } = req.params;
   if (req.body.pin) {
     Households.findById(id)
@@ -9,7 +9,7 @@ router.post("/unlock/:id", (req, res, next) => {
         if (household.pin === req.body.pin) {
           res.status(200).json({ success: true });
         } else {
-          res.status(400).json({message: "Invalid PIN" });
+          res.status(400).json({ message: 'Invalid PIN' });
         }
       })
       .catch((err) => {
@@ -18,7 +18,7 @@ router.post("/unlock/:id", (req, res, next) => {
   }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   Households.update(id, req.body)
     .then((household) => {
@@ -29,15 +29,15 @@ router.put("/:id", (req, res, next) => {
     });
 });
 
-router.delete("/", (req, res) =>{
-  const id  = req.decodedToken.current_household;
-  Households.remove( id )
-  .then((message) => {
-    res.status(200).json({ message: "Successfully deleted household" });
-  })
-  .catch((err) => {
-    next(err);
-  });
+router.delete('/', (req, res, next) => {
+  const id = req.decodedToken.current_household;
+  Households.remove(id)
+    .then(() => {
+      res.status(200).json({ message: 'Successfully deleted household' });
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 module.exports = router;

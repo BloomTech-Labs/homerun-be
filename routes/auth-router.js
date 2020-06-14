@@ -1,16 +1,17 @@
-const router = require("express").Router();
-const purecrypt = require("purecrypt");
-const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
-const Members = require("../models/members-model.js");
-const Households = require("../models/households-model.js");
-const Confirmations = require("../models/confirmations-model.js");
-const { generateToken } = require("../middleware/token.js");
-const sendMail = require("../middleware/sendMail.js");
-const templates = require("../middleware/emailTemplates.js");
-const axios = require("axios");
+/* eslint-disable no-unused-vars */
+const router = require('express').Router();
+const purecrypt = require('purecrypt');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const Members = require('../models/members-model.js');
+const Households = require('../models/households-model.js');
+const Confirmations = require('../models/confirmations-model.js');
+const { generateToken } = require('../middleware/token.js');
+const sendMail = require('../middleware/sendMail.js');
+const templates = require('../middleware/emailTemplates.js');
+const axios = require('axios');
 
-router.get("/hello", async (req, res) => {
+router.get('/hello', async (req, res) => {
   try {
     // How to get events from Google Calendar
     // const events = await axios.get('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
@@ -19,7 +20,7 @@ router.get("/hello", async (req, res) => {
     // 	}
     // })
     if (!req.session.grant.response.refresh_token) {
-      req.session.grant.response.refresh_token = "";
+      req.session.grant.response.refresh_token = '';
     }
 
     const member = {
@@ -47,7 +48,7 @@ router.get("/hello", async (req, res) => {
       }
     } else {
       try {
-        const householdId = crypto.randomBytes(3).toString("hex");
+        const householdId = crypto.randomBytes(3).toString('hex');
         await Households.insert({ id: householdId });
         member.current_household = householdId;
         const newMember = await Members.insert(member);
@@ -66,18 +67,18 @@ router.get("/hello", async (req, res) => {
   }
 });
 
-router.post("/signup", async (req, res, next) => {
+router.post('/signup', async (req, res, next) => {
   const newMember = req.body;
   if (newMember.email && newMember.password) {
     newMember.password = bcrypt.hashSync(newMember.password, 14);
-    const householdId = crypto.randomBytes(3).toString("hex");
+    const householdId = crypto.randomBytes(3).toString('hex');
     await Households.insert({ id: householdId });
     newMember.current_household = householdId;
     Members.insert(newMember)
       .then((member) => {
         const newConfirmation = {
           member_id: member.id,
-          hash: crypto.randomBytes(20).toString("hex"),
+          hash: crypto.randomBytes(20).toString('hex'),
         };
         Confirmations.insert(newConfirmation).then((hash) => {
           // TODO: change this to member.email once testing is complete
@@ -95,11 +96,11 @@ router.post("/signup", async (req, res, next) => {
         // next(err);
       });
   } else {
-    res.status(400).json({ message: "Invalid credentials." });
+    res.status(400).json({ message: 'Invalid credentials.' });
   }
 });
 
-router.post("/login", (req, res, next) => {
+router.post('/login', (req, res, next) => {
   const credentials = req.body;
   if (credentials.email && credentials.password) {
     Members.getByEmail(credentials.email)
@@ -119,21 +120,21 @@ router.post("/login", (req, res, next) => {
           });
         } else if (member.active === false) {
           res.status(400).json({
-            message: "Please confirm your email address before logging in.",
+            message: 'Please confirm your email address before logging in.',
           });
         } else {
-          res.status(401).json({ message: "Invalid credentials" });
+          res.status(401).json({ message: 'Invalid credentials' });
         }
       })
       .catch((err) => {
         next(err);
       });
   } else {
-    res.status(400).json({ message: "Invalid credentials" });
+    res.status(400).json({ message: 'Invalid credentials' });
   }
 });
 
-router.post("/confirm", (req, res, next) => {
+router.post('/confirm', (req, res, next) => {
   const hash = req.body.hash;
   Confirmations.getByHash(hash)
     .then((confirmation) => {
@@ -142,27 +143,27 @@ router.post("/confirm", (req, res, next) => {
         if (member.active === false) {
           Members.update(member.id, { active: true }).then((updated) => {
             Confirmations.remove(member.id).then((removed) => {
-              res.status(200).json({ message: "User confirmed successfully." });
+              res.status(200).json({ message: 'User confirmed successfully.' });
             });
           });
         } else {
-          res.status(200).json({ message: "User has already been confirmed." });
+          res.status(200).json({ message: 'User has already been confirmed.' });
         }
       });
     })
     .catch((err) => {
-      res.status(404).json({ message: "That link is invalid." });
+      res.status(404).json({ message: 'That link is invalid.' });
       // next(err);
     });
 });
 
-router.post("/forgot", (req, res, next) => {
+router.post('/forgot', (req, res, next) => {
   const email = req.body.email;
   Members.getByEmail(email)
     .then((member) => {
       const newConfirmation = {
         member_id: member.id,
-        hash: crypto.randomBytes(20).toString("hex"),
+        hash: crypto.randomBytes(20).toString('hex'),
       };
       Confirmations.insert(newConfirmation)
         .then((hash) => {
@@ -175,14 +176,14 @@ router.post("/forgot", (req, res, next) => {
           });
         });
     })
-    .catch((err) => {
+    .catch(() => {
       res
         .status(404)
-        .json({ message: "A User with that email address does not exist." });
+        .json({ message: 'A User with that email address does not exist.' });
     });
 });
 
-router.post("/reset", (req, res, next) => {
+router.post('/reset', (req, res, next) => {
   const hash = req.body.hash;
   Confirmations.getByHash(hash)
     .then((confirmation) => {
@@ -191,25 +192,24 @@ router.post("/reset", (req, res, next) => {
       Members.update(member_id, { password: newPassword })
         .then(() => {
           Confirmations.remove(member_id).then(() => {
-            res.status(200).json({ message: "Your password has been reset." });
+            res.status(200).json({ message: 'Your password has been reset.' });
           });
         })
         .catch((err) => {
           next(err);
         });
     })
-    .catch((err) => {
-      res.status(404).json({ message: "That link is invalid." });
+    .catch(() => {
+      res.status(404).json({ message: 'That link is invalid.' });
     });
 });
 
-
-router.delete("/:member_id", async (req, res) => {
+router.delete('/:member_id', async (req, res) => {
   try {
     const request = await Members.remove(req.params.member_id);
     res.status(200).json(request);
-  } catch {
-    res.status(500).json({ Message: "Unable to delete user" });
+  } catch (err) {
+    res.status(500).json({ Message: 'Unable to delete user' });
   }
 });
 
