@@ -81,7 +81,6 @@ router.post('/signup', async (req, res, next) => {
           hash: crypto.randomBytes(20).toString('hex'),
         };
         Confirmations.insert(newConfirmation).then((hash) => {
-          // TODO: change this to member.email once testing is complete
           sendMail(member.email, templates.confirmation(hash));
           res.status(200).json({
             message: `A confirmation email has been sent to ${member.email}`,
