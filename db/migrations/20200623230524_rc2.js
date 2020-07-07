@@ -1,6 +1,6 @@
 exports.up = function(knex) {
   return knex.schema
-    .alter('members', tbl => {
+    .alterTable('members', tbl => {
       // with a reworked signup flow this is no longer necessary
       tbl.dropColumn('active');
       // this is only used on the front-end
@@ -9,12 +9,12 @@ exports.up = function(knex) {
       tbl.dropColumn('child');
       tbl.dropColumn('points');
     })
-    .alter('children', tbl => {
+    .alterTable('children', tbl => {
       // same justification as above
       tbl.dropColumn('child');
       tbl.dropColumn('points');
     })
-    .alter('confirmations', tbl => {
+    .alterTable('confirmations', tbl => {
       // this column dropped as part of sign-up rework. When a confirmation is stored,
       // the member doesn't exist yet. We just need to remember what email they used
       // so that they can finish registration by choosing their username/password
