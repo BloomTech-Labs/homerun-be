@@ -34,27 +34,6 @@ const remove = (id) => {
 
 // ! Looks too complicated, might be able to slim down.
 
-const findHouseholdMembers = (householdId) => {
-  return db('households')
-    .select(
-      'members.id',
-      'members.username',
-      'members.email',
-      'members.provider',
-      'members.access_token',
-      'members.points',
-      'members.active',
-      'members.current_household'
-    )
-    .innerJoin('household_members', function () {
-      this.on('households.id', '=', 'household_members.household_id');
-    })
-    .where('household_id', '=', householdId)
-    .innerJoin('members', function () {
-      this.on('household_members.member_id', '=', 'members.id');
-    });
-};
-
 const childrenPerHousehold = (householdId) => {
   return db('children').where('household_id', '=', householdId);
 };
@@ -79,13 +58,13 @@ const removeChild = (id) => {
   return db('children').where({ id }).del();
 };
 
-const totalHouseholdMembers = (householdId) => {
+const getHouseholdMembers = (householdId) => {
   return db('members')
     .where('current_household', '=', householdId)
     .select(['id', 'username', 'email', 'points']);
 };
 
-const totalHouseholdChildren = (householdId) => {
+const getHouseholdChildren = (householdId) => {
   return db('children')
     .where('household_id', '=', householdId)
     .select(['id', 'username', 'points', 'child']);
@@ -97,10 +76,9 @@ module.exports = {
   insert,
   update,
   remove,
-  findHouseholdMembers,
   childrenPerHousehold,
-  totalHouseholdMembers,
-  totalHouseholdChildren,
+  getHouseholdMembers,
+  getHouseholdChildren,
   getChildById,
   addChild,
   updateChild,
