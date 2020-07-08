@@ -26,14 +26,6 @@ const remove = (id) => {
   return db('members').where({ id }).del();
 };
 
-// Grabs all houshold memebrs when passed a specific household
-
-// select members.*  from households
-// inner join household_members on households.id = household_members.household_id and households.id = 'a12345'
-// inner join members on household_members.member_id = members.id
-
-// ! Looks too complicated, might be able to slim down.
-
 const childrenPerHousehold = (householdId) => {
   return db('children').where('household_id', '=', householdId);
 };

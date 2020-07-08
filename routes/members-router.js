@@ -20,7 +20,9 @@ router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   try {
     const members = await Members.getHouseholdMembers(householdId);
+    members.forEach(m => m.child = false);
     const children = await Members.getHouseholdChildren(householdId);
+    children.forEach(m => m.child = true);
     res.status(200).json([...members, ...children]);
   } catch (e) {
     res.status(500).json({ error: e.message });

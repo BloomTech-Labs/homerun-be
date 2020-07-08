@@ -7,12 +7,10 @@ exports.up = function(knex) {
       // instead of taking up room in the database with an extremely redundant field
       // just add a 'child' bool to the object before returning it in any responses
       tbl.dropColumn('child');
-      tbl.dropColumn('points');
     })
     .alterTable('children', tbl => {
       // same justification as above
       tbl.dropColumn('child');
-      tbl.dropColumn('points');
     })
     .alterTable('confirmations', tbl => {
       // this column dropped as part of sign-up rework. When a confirmation is stored,
@@ -20,6 +18,11 @@ exports.up = function(knex) {
       // so that they can finish registration by choosing their username/password
       tbl.dropColumn('member_id');
       tbl.varchar('email', 128).notNullable();
+    })
+    .alterTable('household_members', tbl => {
+      // for the next release-canvas with permission levels
+      // this table is currently empty, so this won't cause any errors
+      tbl.integer("permissions").notNullable();
     })
 };
 
