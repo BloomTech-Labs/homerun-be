@@ -15,7 +15,7 @@ const getAssignedUsers = async (todoId) => {
 
 router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
-  try {
+  // try {
     const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
     const allTodos = await Promise.all(
       todosPerHousehold.map(async (todo) => {
@@ -27,9 +27,9 @@ router.get('/household', async (req, res) => {
       })
     );
     res.status(200).json(allTodos);
-  } catch (err) {
-    res.status(500).json({ error: err.message, location: 'todos-router.js 8' });
-  }
+  // } catch (err) {
+  //   res.status(500).json({ error: err.message, location: 'todos-router.js 8' });
+  // }
 });
 
 router.get('/member', async (req, res) => {

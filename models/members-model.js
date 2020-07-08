@@ -59,7 +59,7 @@ const getHouseholdMembers = (householdId) => {
 const getHouseholdChildren = (householdId) => {
   return db('children')
     .where('household_id', '=', householdId)
-    .select(['id', 'username', 'points', 'child']);
+    .select(['id', 'username', 'points']);
 };
 
 module.exports = {
