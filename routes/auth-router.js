@@ -10,6 +10,8 @@ const { generateToken } = require('../middleware/token.js');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
 const axios = require('axios');
+const { token } = require('morgan');
+const googleAuthMiddleware = require('../middleware/googleAuth');
 
 router.get('/hello', async (req, res) => {
   try {
@@ -65,6 +67,12 @@ router.get('/hello', async (req, res) => {
     console.log(e.message);
     res.status(500).json({ error: e.message });
   }
+});
+
+router.post('/google', googleAuthMiddleware, (req, res) => {
+  console.log(res.googleInfo);
+
+  res.status(200).json({ message: 'Success!' });
 });
 
 router.post('/signup', async (req, res, next) => {
