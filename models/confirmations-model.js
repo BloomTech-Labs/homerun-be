@@ -2,7 +2,7 @@ const db = require('../db/dbConfig.js');
 
 const insert = (confirmation) => {
   return db('confirmations')
-    .insert(confirmation, 'hash')
+    .insert(confirmation, "*")
     .then((hash) => {
       return hash[0];
     });

@@ -1,19 +1,21 @@
 const db = require('../db/dbConfig.js');
 
-const getById = (id) => {
-  return db('members').where({ id }).first();
+const getById = id => {
+  return db('members').where({id}).first();
 };
 
-const getByEmail = (email) => {
-  return db('members').where({ email: email }).first();
+const getByEmail = email => {
+  return db('members').where({email}).first();
 };
+
+const getByUsername = username => {
+  return db('members').where({username}).first();
+}
 
 const insert = (newMember) => {
   return db('members')
-    .insert(newMember, 'id')
-    .then((id) => {
-      return getById(id[0]);
-    });
+    .insert(newMember, "*")
+    .then(([member]) => member);
 };
 
 const update = (id, updates) => {
@@ -65,6 +67,7 @@ const getHouseholdChildren = (householdId) => {
 module.exports = {
   getById,
   getByEmail,
+  getByUsername,
   insert,
   update,
   remove,
