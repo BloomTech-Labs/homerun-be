@@ -15,21 +15,24 @@ router.post('/signup', (req, res) => {
   const {email} = req.body;
   if (email) {
     // a user with this email needs to not exist already
-
-    const hash = crypto.randomBytes(20).toString('hex');
-    Confirmations.insert({hash,email}).then(({hash, email}) => {
-      sendMail(email, templates.confirmation(hash))
-        .then(() => {
-          res.status(200).json({message: 'A confirmation email has been sent', email});
-        })
-        .catch(e => {
-          res.status(500).json({type: 1, message: 'Email service failed to send'});
+    Members.getByEmail(email).then(result => {
+      if (result) {
+        res.status(400).json({message: 'A member with that email already exists'})
+      } else {
+        // if the email doesn't exist
+        const hash = crypto.randomBytes(20).toString('hex');
+        Confirmations.insert({hash,email}).then(({hash, email}) => {
+          sendMail(email, templates.confirmation(hash)).then(() => {
+            res.status(200).json({message: 'A confirmation email has been sent', email});
+          }).catch(e => {
+            res.status(500).json({type: 1, message: 'Email service failed to send'});
+          });
+        }).catch(e => {
+          console.log(e);
+          res.status(500).json({type: 0, message: 'Failed to store confirmation information in the database'})
         });
-    }).catch(e => {
-      console.log(e);
-      res.status(500).json({type: 0, message: 'Failed to store confirmation information in the database'})
+      }
     });
-
   } else {
     res.status(401).json({ message: 'Request body missing email' });
   }
