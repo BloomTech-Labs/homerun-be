@@ -24,6 +24,11 @@ exports.up = function(knex) {
       // this table is currently empty, so this won't cause any errors
       tbl.integer("permissions").notNullable();
     })
+    .alterTable('households', tbl => {
+      // increase the limit from 7 chars to 255 and use uuid's which are more secure
+      // also significantly reduces the risk of collisions
+      tbl.varchar('id', 255).notNullable().alter()
+    })
 };
 
 exports.down = function(knex) {

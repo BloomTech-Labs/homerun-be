@@ -10,8 +10,8 @@ const getByHash = (hash) => {
   return db('confirmations').where({ hash }).first();
 };
 
-const remove = (member_id) => {
-  return db('confirmations').where({ member_id }).del();
+const remove = (email) => {
+  return db('confirmations').where({ email }).del();
 };
 
 module.exports = {
