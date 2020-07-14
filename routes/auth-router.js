@@ -10,6 +10,15 @@ const { generateToken } = require('../middleware/token.js');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
 const uuid = require('uuid').v4;
+const axios = require('axios');
+const { token } = require('morgan');
+const googleAuthMiddleware = require('../middleware/googleAuth');
+
+router.post('/google', googleAuthMiddleware, (req, res) => {
+  console.log(res.googleInfo);
+
+  res.status(200).json({ message: 'Success!' });
+});
 
 router.post('/signup', (req, res) => {
   const {email} = req.body;
