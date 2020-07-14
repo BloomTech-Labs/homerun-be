@@ -53,14 +53,14 @@ const findMembersAssigned = (todo_id) => {
   return db('members')
     .join('todos_members', 'members.id', '=', 'todos_members.member_id')
     .where({ todo_id: todo_id })
-    .select('username', 'child', 'points', 'id');
+    .select('username', 'points', 'id');
 };
 
 const findChildrenAssigned = (todo_id) => {
   return db('children')
     .join('todos_children', 'children.id', '=', 'todos_children.child_id')
     .where({ todo_id: todo_id })
-    .select('username', 'child', 'points', 'id');
+    .select('username', 'points', 'id');
 };
 
 const insert = (newTodo) => {

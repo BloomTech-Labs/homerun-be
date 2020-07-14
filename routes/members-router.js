@@ -18,27 +18,11 @@ router.get('/', async (req, res) => {
 
 router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
-  console.log(householdId);
   try {
-    const members = await Members.findHouseholdMembers(householdId);
-    const children = await Members.childrenPerHousehold(householdId);
-    for (let member of members) {
-      member.children = children;
-    }
-
-    res.status(200).json(members);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ error: err.message, location: 'members-router.js 9' });
-  }
-});
-
-router.get('/household/assignable', async (req, res) => {
-  const householdId = req.decodedToken.current_household;
-  try {
-    const members = await Members.totalHouseholdMembers(householdId);
-    const children = await Members.totalHouseholdChildren(householdId);
+    const members = await Members.getHouseholdMembers(householdId);
+    members.forEach(m => m.child = false);
+    const children = await Members.getHouseholdChildren(householdId);
+    children.forEach(m => m.child = true);
     res.status(200).json([...members, ...children]);
   } catch (e) {
     res.status(500).json({ error: e.message });
