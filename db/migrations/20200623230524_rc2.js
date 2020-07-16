@@ -20,11 +20,11 @@ exports.up = function(knex) {
     .alterTable('households', tbl => {
       // increase the limit from 7 chars to 255 and use uuid's which are more secure
       // also significantly reduces the risk of collisions
+      // PS: can't change to .uuid() because it messes with pre-existing IDs
       tbl.varchar('id', 128).notNullable().alter()
     })
     .dropTableIfExists('confirmations')
     .createTable('confirmations', tbl => {
-      // length of uuid
       tbl
         .uuid('id')
         .primary()
