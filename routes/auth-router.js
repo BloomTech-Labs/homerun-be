@@ -5,7 +5,10 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const Members = require('../models/members-model.js');
 const Households = require('../models/households-model.js');
-const Confirmations = require('../models/confirmations-model.js');
+const {
+  account: AccountConfirmations,
+  password: PasswordConfirmations
+} = require('../models/confirmations-model.js');
 const { generateToken } = require('../middleware/token.js');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
@@ -31,8 +34,8 @@ router.post('/signup', (req, res) => {
         // if the email doesn't exist
         const hash = uuid();
         // previous confirmations are invalidated
-        Confirmations.remove(email).then(
-          () => Confirmations.insert({hash,email})
+        AccountConfirmations.remove(email).then(
+          () => AccountConfirmations.insert({hash,email})
         ).then(({hash, email}) => {
           sendMail(email, templates.confirmation(hash)).then(() => {
             res.status(200).json({message: 'A confirmation email has been sent', email});
@@ -88,7 +91,7 @@ router.post('/confirm', async (req, res) => {
   if (username && password) {
     try {
       cur_err = errors[1];
-      const confirmation = await Confirmations.getByHash(hash);
+      const confirmation = await AccountConfirmations.getByHash(hash);
       if (!confirmation) throw null;
 
       cur_err = errors[2];
@@ -106,7 +109,7 @@ router.post('/confirm', async (req, res) => {
         current_household: householdID
       });
 
-      Confirmations.remove(confirmation.email).then(() => {
+      AccountConfirmations.remove(confirmation.email).then(() => {
         const token = generateToken(member);
         res.status(200).json({
           message: `Welcome, ${member.email}`,
@@ -135,7 +138,7 @@ router.post('/forgot', (req, res) => {
         member_id: member.id,
         hash: uuid(),
       };
-      Confirmations.insert(newConfirmation)
+      PasswordConfirmations.insert(newConfirmation)
         .then(({hash}) => {
           sendMail(member.email, templates.reset(hash))
             .then(() => {
@@ -158,13 +161,13 @@ router.post('/forgot', (req, res) => {
 
 router.post('/reset', (req, res) => {
   const hash = req.body.hash;
-  Confirmations.getByHash(hash)
+  PasswordConfirmations.getByHash(hash)
     .then((confirmation) => {
       const member_id = confirmation.member_id;
       const newPassword = bcrypt.hashSync(req.body.password, 14);
       Members.update(member_id, { password: newPassword })
         .then(() => {
-          Confirmations.remove(member_id).then(() => {
+          PasswordConfirmations.remove(member_id).then(() => {
             res.status(200).json({ message: 'Your password has been reset.' });
           });
         })
