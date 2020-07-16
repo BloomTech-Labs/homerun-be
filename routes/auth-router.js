@@ -53,6 +53,22 @@ router.post('/signup', (req, res) => {
   }
 });
 
+router.post('/verify-pin', (req, res) => {
+  let {email, pin} = req.body;
+  if (email && pin) {
+    AccountConfirmations.getByEmailAndPin(email, pin)
+      .then(conf => {
+        if (conf) {
+          res.status(200).json({ id: conf.id })
+        } else {
+          res.status(404).json({ message: 'email and pin combination not found in confirmations' })
+        }
+      })
+  } else {
+    res.status(400).json({ message: 'Request body missing email or password' });
+  }
+});
+
 router.post('/login', (req, res) => {
   const credentials = req.body;
   if (credentials.email && credentials.password) {

@@ -6,8 +6,12 @@ const account_insert = (confirmation) => {
     .then(([hash]) => hash);
 };
 
-const account_getByHash = (hash) => {
-  return db('confirmations').where({ hash }).first();
+const account_getById = id => {
+  return db('confirmations').where({id}).first()
+}
+
+const account_getByEmailAndPin = (email, pin) => {
+  return db('confirmations').where({ email, pin }).first();
 };
 
 const account_remove = (email) => {
@@ -31,7 +35,8 @@ const password_remove = (email) => {
 module.exports = {
   account: {
     insert: account_insert,
-    getByHash: account_getByHash,
+    getbyId: account_getById,
+    getByEmailAndPin: account_getByEmailAndPin,
     remove: account_remove,
   },
   password: {
