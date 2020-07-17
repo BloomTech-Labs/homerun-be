@@ -179,7 +179,7 @@ router.post('/reset', (req, res) => {
   PasswordConfirmations.getByHash(hash)
     .then((confirmation) => {
       const member_id = confirmation.member_id;
-      const newPassword = bcrypt.hashSync(req.body.password, 14);
+      const newPassword = bcrypt.hashSync(req.body.password, 10);
       Members.update(member_id, { password: newPassword })
         .then(() => {
           PasswordConfirmations.remove(member_id).then(() => {
