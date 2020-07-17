@@ -1,7 +1,5 @@
 /* eslint-disable no-unused-vars */
 const router = require('express').Router();
-const purecrypt = require('purecrypt');
-const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const Members = require('../models/members-model.js');
 const Households = require('../models/households-model.js');
@@ -12,7 +10,8 @@ const {
 const { generateToken } = require('../middleware/token.js');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
-const uuid = require('uuid').v4;
+const generatePIN = require('../middleware/generatePIN');
+const { nanoid } = require('nanoid');
 const axios = require('axios');
 const { token } = require('morgan');
 const googleAuthMiddleware = require('../middleware/googleAuth');
@@ -31,13 +30,13 @@ router.post('/signup', (req, res) => {
       if (result) {
         res.status(400).json({message: 'A member with that email already exists'})
       } else {
-        // if the email doesn't exist
-        const hash = uuid();
+        const id = nanoid();
+        const pin = generatePIN();
         // previous confirmations are invalidated
         AccountConfirmations.remove(email).then(
-          () => AccountConfirmations.insert({hash,email})
-        ).then(({hash, email}) => {
-          sendMail(email, templates.confirmation(hash)).then(() => {
+          () => AccountConfirmations.insert({id,pin,email})
+        ).then(({pin, email}) => {
+          sendMail(email, templates.confirmation(pin)).then(() => {
             res.status(200).json({message: 'A confirmation email has been sent', email});
           }).catch(e => {
             res.status(500).json({type: 1, message: 'Email service failed to send'});
@@ -95,7 +94,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/confirm', async (req, res) => {
-  let { username, password, hash } = req.body;
+  let { username, password, confirmation_id } = req.body;
   const errors = [
     { status: 401, type: 0, message: 'Request body missing username or password'},
     { status: 404, type: 1, message: 'Confirmation hash not found'},
@@ -107,21 +106,21 @@ router.post('/confirm', async (req, res) => {
   if (username && password) {
     try {
       cur_err = errors[1];
-      const confirmation = await AccountConfirmations.getByHash(hash);
+      const confirmation = await AccountConfirmations.getbyId(confirmation_id);
       if (!confirmation) throw null;
 
       cur_err = errors[2];
       if (await Members.getByUsername(username)) throw null;
 
       cur_err = errors[3];
-      const householdID = uuid();
+      const householdID = nanoid();
       await Households.insert({id: householdID});
 
       cur_err = errors[4];
       let member = await Members.insert({
         username,
         email: confirmation.email,
-        password: bcrypt.hashSync(password, 14),
+        password: bcrypt.hashSync(password, 10),
         current_household: householdID
       });
 
@@ -152,7 +151,7 @@ router.post('/forgot', (req, res) => {
     .then((member) => {
       const newConfirmation = {
         member_id: member.id,
-        hash: uuid(),
+        hash: nanoid(),
       };
       PasswordConfirmations.insert(newConfirmation)
         .then(({hash}) => {

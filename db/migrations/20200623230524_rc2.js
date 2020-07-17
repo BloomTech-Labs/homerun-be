@@ -18,18 +18,19 @@ exports.up = function(knex) {
       tbl.integer('permissions').notNullable();
     })
     .alterTable('households', tbl => {
-      // increase the limit from 7 chars to 255 and use uuid's which are more secure
+      // increase the limit from 7 chars to 21 and use nanoid's which are more secure
       // also significantly reduces the risk of collisions
       // PS: can't change to .uuid() because it messes with pre-existing IDs
-      tbl.varchar('id', 128).notNullable().alter()
+      tbl.varchar('id', 21).notNullable().alter()
     })
     .dropTableIfExists('confirmations')
     .createTable('confirmations', tbl => {
       tbl
-        .uuid('id')
+        .varchar('id', 21)
         .primary()
         .unique()
         .notNullable()
+        .defaultTo();
       tbl.varchar('pin', 8).nullable();
       tbl.varchar('email', 128).notNullable();
       tbl.timestamp('created_at').defaultTo(knex.fn.now());

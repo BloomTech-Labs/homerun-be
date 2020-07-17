@@ -1,21 +1,21 @@
 const db = require('../db/dbConfig.js');
 
 const account_insert = (confirmation) => {
-  return db('confirmations')
+  return db('account_confirmations')
     .insert(confirmation, "*")
-    .then(([hash]) => hash);
+    .then(([conf]) => conf);
 };
 
 const account_getById = id => {
-  return db('confirmations').where({id}).first()
+  return db('account_confirmations').where({id}).first()
 }
 
 const account_getByEmailAndPin = (email, pin) => {
-  return db('confirmations').where({ email, pin }).first();
+  return db('account_confirmations').where({ email, pin }).first();
 };
 
 const account_remove = (email) => {
-  return db('confirmations').where({ email }).del();
+  return db('account_confirmations').where({ email }).del();
 };
 
 const password_insert = (confirmation) => {
