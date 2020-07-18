@@ -18,6 +18,7 @@ const todosRouter = require('./routes/todos-router.js');
 const authRouter = require('./routes/auth-router.js');
 const membersRouter = require('./routes/members-router.js');
 const householdRouter = require('./routes/households-router');
+const contactRouter = require('./routes/contact-router.js');
 
 const restricted = require('./middleware/restricted.js');
 
@@ -75,6 +76,7 @@ app.use('/todos', restricted, todosRouter);
 app.use('/auth', authRouter);
 app.use('/members', restricted, membersRouter);
 app.use('/household', restricted, householdRouter);
+app.use('/contact', contactRouter);
 
 // error handler
 app.use(function (err, req, res, next) {
