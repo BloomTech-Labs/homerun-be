@@ -122,4 +122,20 @@ router.put('/', (req, res, next) => {
   }
 });
 
+router.delete('/:member_id', async (req, res) => {
+  const { member_id } = req.params;
+  const { subject } = req.decodedToken;
+  if (member_id === subject) {
+    Members.remove(member_id).then(removed => {
+      if (removed) {
+        res.status(200).json({ message: "Removed the user successfully" });
+      } else {
+        res.status(404).json({ message: "Member to delete not found" });
+      }
+    })
+  } else {
+    res.status(400).json({ message: "Cannot delete other users" });
+  }
+});
+
 module.exports = router;
