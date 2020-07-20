@@ -11,14 +11,14 @@ router.post('/', (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'tidyhivelife@gmail.com', //replace with your email
-      pass: '123qwe++', //replace with your password
+      user: process.env.CONTACT_EMAIL_USER, //replace with your email
+      pass: process.env.CONTACT_EMAIL_PASS, //replace with your password
     },
   });
 
   const mailOptions = {
     email, //replace with your email
-    to: 'tidyhivelife@gmail.com', //replace with your email
+    to: process.env.CONTACT_EMAIL_USER, //replace with your email
     subject: `Contact name: ${name}`,
     html: message,
   };
