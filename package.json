@@ -58,8 +58,7 @@
     "nodemailer": "^6.4.4",
     "pg": "^7.18.1",
     "prettier": "^2.0.5",
-    "purecrypt": "^1.0.4",
-    "uuid": "^8.2.0"
+    "purecrypt": "^1.0.4"
   },
   "devDependencies": {
     "jest": "^25.1.0",

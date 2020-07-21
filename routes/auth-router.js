@@ -1,47 +1,54 @@
 /* eslint-disable no-unused-vars */
 const router = require('express').Router();
-const purecrypt = require('purecrypt');
-const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const Members = require('../models/members-model.js');
 const Households = require('../models/households-model.js');
-const Confirmations = require('../models/confirmations-model.js');
+const {
+  account: AccountConfirmations,
+  password: PasswordConfirmations,
+} = require('../models/confirmations-model.js');
 const { generateToken } = require('../middleware/token.js');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
+const generatePIN = require('../middleware/generatePIN');
 const { nanoid } = require('nanoid');
 const axios = require('axios');
 const { token } = require('morgan');
 const googleAuthMiddleware = require('../middleware/googleAuth');
-const confirmationModel = require('../models/confirmations-model');
 
 router.post('/google', googleAuthMiddleware, (req, res) => {
   const { email } = res.googleInfo;
 
   if (email) {
-    Members.getByEmail(email).then((result) => {
-      if (result) {
-        const token = generateToken(member);
-        res.status(200).json({
-          message: `Welcome, ${member.email}`,
-          token,
-          member_id: member.id,
-          username: member.username,
-        });
-      } else {
-        const googleHash = nanoid();
-        confirmationModel
-          .insert({ email: res.googleInfo.email, hash: googleHash })
-          .then((hash) => {
-            res.status(200).json({ message: 'Success!', response: hash });
+    Members.getByEmail(email)
+      .then((member) => {
+        if (member) {
+          const token = generateToken(member);
+          res.status(200).json({
+            message: `Welcome, ${member.email}`,
+            token,
+            member_id: member.id,
+            username: member.username,
           });
-      }
-    });
+        } else {
+          const googleHash = nanoid();
+          AccountConfirmations.insert({
+            email: res.googleInfo.email,
+            id: googleHash,
+          })
+            .then((hash) => {
+              res.status(200).json({ message: 'Success!', response: hash });
+            })
+            .catch((err) => console.log('error', err));
+        }
+      })
+      .catch((err) => console.log('error', err));
   }
 });
 
 router.post('/signup', (req, res) => {
   const { email } = req.body;
+  email.replace('.', '');
   if (email) {
     // a user with this email needs to not exist already
     Members.getByEmail(email).then((result) => {
@@ -50,13 +57,13 @@ router.post('/signup', (req, res) => {
           .status(400)
           .json({ message: 'A member with that email already exists' });
       } else {
-        // if the email doesn't exist
-        const hash = uuid();
+        const id = nanoid();
+        const pin = generatePIN();
         // previous confirmations are invalidated
-        Confirmations.remove(email)
-          .then(() => Confirmations.insert({ hash, email }))
-          .then(({ hash, email }) => {
-            sendMail(email, templates.confirmation(hash))
+        AccountConfirmations.remove(email)
+          .then(() => AccountConfirmations.insert({ id, pin, email }))
+          .then(({ pin, email }) => {
+            sendMail(email, templates.confirmation(pin))
               .then(() => {
                 res.status(200).json({
                   message: 'A confirmation email has been sent',
@@ -68,19 +75,28 @@ router.post('/signup', (req, res) => {
                   .status(500)
                   .json({ type: 1, message: 'Email service failed to send' });
               });
-          })
-          .catch((e) => {
-            console.log(e);
-            res.status(500).json({
-              type: 0,
-              message:
-                'Failed to store confirmation information in the database',
-            });
           });
       }
     });
   } else {
     res.status(401).json({ message: 'Request body missing email' });
+  }
+});
+
+router.post('/verify-pin', (req, res) => {
+  let { email, pin } = req.body;
+  if (email && pin) {
+    AccountConfirmations.getByEmailAndPin(email, pin).then((conf) => {
+      if (conf) {
+        res.status(200).json({ id: conf.id });
+      } else {
+        res.status(404).json({
+          message: 'email and pin combination not found in confirmations',
+        });
+      }
+    });
+  } else {
+    res.status(400).json({ message: 'Request body missing email or password' });
   }
 });
 
@@ -110,7 +126,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/confirm', async (req, res) => {
-  let { username, password, hash } = req.body;
+  let { username, password, confirmation_id } = req.body;
   const errors = [
     {
       status: 401,
@@ -127,28 +143,28 @@ router.post('/confirm', async (req, res) => {
     { status: 500, type: 4, message: 'Unable to insert member' },
   ];
   let cur_err = errors[0];
-  if (username && password) {
+  if (username && password && confirmation_id) {
     try {
       cur_err = errors[1];
-      const confirmation = await Confirmations.getByHash(hash);
+      const confirmation = await AccountConfirmations.getbyId(confirmation_id);
       if (!confirmation) throw null;
 
       cur_err = errors[2];
       if (await Members.getByUsername(username)) throw null;
 
       cur_err = errors[3];
-      const householdID = uuid();
+      const householdID = nanoid();
       await Households.insert({ id: householdID });
 
       cur_err = errors[4];
       let member = await Members.insert({
         username,
         email: confirmation.email,
-        password: bcrypt.hashSync(password, 14),
+        password: bcrypt.hashSync(password, 10),
         current_household: householdID,
       });
 
-      Confirmations.remove(confirmation.email).then(() => {
+      AccountConfirmations.remove(confirmation.email).then(() => {
         const token = generateToken(member);
         res.status(200).json({
           message: `Welcome, ${member.email}`,
@@ -175,9 +191,9 @@ router.post('/forgot', (req, res) => {
     .then((member) => {
       const newConfirmation = {
         member_id: member.id,
-        hash: uuid(),
+        hash: nanoid(),
       };
-      Confirmations.insert(newConfirmation)
+      PasswordConfirmations.insert(newConfirmation)
         .then(({ hash }) => {
           sendMail(member.email, templates.reset(hash))
             .then(() => {
@@ -208,13 +224,13 @@ router.post('/forgot', (req, res) => {
 
 router.post('/reset', (req, res) => {
   const hash = req.body.hash;
-  Confirmations.getByHash(hash)
+  PasswordConfirmations.getByHash(hash)
     .then((confirmation) => {
       const member_id = confirmation.member_id;
-      const newPassword = bcrypt.hashSync(req.body.password, 14);
+      const newPassword = bcrypt.hashSync(req.body.password, 10);
       Members.update(member_id, { password: newPassword })
         .then(() => {
-          Confirmations.remove(member_id).then(() => {
+          PasswordConfirmations.remove(member_id).then(() => {
             res.status(200).json({ message: 'Your password has been reset.' });
           });
         })
