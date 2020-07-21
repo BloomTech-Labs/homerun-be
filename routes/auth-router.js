@@ -9,15 +9,35 @@ const Confirmations = require('../models/confirmations-model.js');
 const { generateToken } = require('../middleware/token.js');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
-const uuid = require('uuid').v4;
+const { nanoid } = require('nanoid');
 const axios = require('axios');
 const { token } = require('morgan');
 const googleAuthMiddleware = require('../middleware/googleAuth');
+const confirmationModel = require('../models/confirmations-model');
 
 router.post('/google', googleAuthMiddleware, (req, res) => {
-  // console.log(res.googleInfo);
+  const { email } = res.googleInfo;
 
-  res.status(200).json({ message: 'Success!', response: res });
+  if (email) {
+    Members.getByEmail(email).then((result) => {
+      if (result) {
+        const token = generateToken(member);
+        res.status(200).json({
+          message: `Welcome, ${member.email}`,
+          token,
+          member_id: member.id,
+          username: member.username,
+        });
+      } else {
+        const googleHash = nanoid();
+        confirmationModel
+          .insert({ email: res.googleInfo.email, hash: googleHash })
+          .then((hash) => {
+            res.status(200).json({ message: 'Success!', response: hash });
+          });
+      }
+    });
+  }
 });
 
 router.post('/signup', (req, res) => {
@@ -38,12 +58,10 @@ router.post('/signup', (req, res) => {
           .then(({ hash, email }) => {
             sendMail(email, templates.confirmation(hash))
               .then(() => {
-                res
-                  .status(200)
-                  .json({
-                    message: 'A confirmation email has been sent',
-                    email,
-                  });
+                res.status(200).json({
+                  message: 'A confirmation email has been sent',
+                  email,
+                });
               })
               .catch((e) => {
                 res
@@ -53,13 +71,11 @@ router.post('/signup', (req, res) => {
           })
           .catch((e) => {
             console.log(e);
-            res
-              .status(500)
-              .json({
-                type: 0,
-                message:
-                  'Failed to store confirmation information in the database',
-              });
+            res.status(500).json({
+              type: 0,
+              message:
+                'Failed to store confirmation information in the database',
+            });
           });
       }
     });
@@ -165,12 +181,10 @@ router.post('/forgot', (req, res) => {
         .then(({ hash }) => {
           sendMail(member.email, templates.reset(hash))
             .then(() => {
-              res
-                .status(200)
-                .json({
-                  message: 'A password reset link has been sent',
-                  email: member.email,
-                });
+              res.status(200).json({
+                message: 'A password reset link has been sent',
+                email: member.email,
+              });
             })
             .catch(() => {
               res
@@ -179,13 +193,10 @@ router.post('/forgot', (req, res) => {
             });
         })
         .catch(() => {
-          res
-            .status(500)
-            .json({
-              type: 0,
-              message:
-                'Failed to store confirmation information in the database',
-            });
+          res.status(500).json({
+            type: 0,
+            message: 'Failed to store confirmation information in the database',
+          });
         });
     })
     .catch(() => {
