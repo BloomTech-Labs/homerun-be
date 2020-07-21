@@ -24,9 +24,9 @@ exports.up = function(knex) {
       tbl.varchar('id', 21).notNullable().alter()
     })
     .dropTableIfExists('confirmations')
-    .createTable('confirmations', tbl => {
+    .createTable('account_confirmations', tbl => {
       tbl
-        .varchar('id', 21)
+        .varchar('id', 21) // length of nanoid
         .primary()
         .unique()
         .notNullable()
@@ -46,9 +46,13 @@ exports.up = function(knex) {
         .onDelete('CASCADE')
         .onUpdate('CASCADE');
     })
-    .renameTable('confirmations', 'account_confirmations')
 };
 
 exports.down = function(knex) {
-  // temp  
+  // By increasing the size of the household IDs, rollback would require them to be altered or deleted
+  // Deletion is restricted by members.current_household
+  // Alteration is risky because of collision conflicts
+  // Adding back the child and active columns of members wouldn't make sense because
+  // the code is reworked to not need them
+  throw "Unable to roll back database beyond this migration"
 };

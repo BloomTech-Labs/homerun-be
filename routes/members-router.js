@@ -7,15 +7,6 @@ const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
 const { generateToken } = require('../middleware/token.js');
 
-router.get('/', async (req, res) => {
-  try {
-    const request = Members;
-    res.status(200).json(request);
-  } catch (err) {
-    res.status(500).json({ Message: 'Something went wrong.' });
-  }
-});
-
 router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   try {
@@ -119,6 +110,23 @@ router.put('/', (req, res, next) => {
       .catch((err) => {
         next(err);
       });
+  }
+});
+
+router.delete('/:member_id', async (req, res) => {
+  const { member_id } = req.params;
+  const { subject } = req.decodedToken;
+  console.log(member_id, subject);
+  if (Number(member_id) === subject) {
+    Members.remove(member_id).then(removed => {
+      if (removed) {
+        res.status(200).json({ message: "Removed the user successfully" });
+      } else {
+        res.status(404).json({ message: "Member to delete not found. This response should be unreachable" });
+      }
+    })
+  } else {
+    res.status(400).json({ message: "Cannot delete other users" });
   }
 });
 

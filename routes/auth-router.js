@@ -183,8 +183,6 @@ router.post('/confirm', async (req, res) => {
   }
 });
 
-// todo: confirmation requires email but this requires user id instead.
-// should have separate db tables for these types of things
 router.post('/forgot', (req, res) => {
   const email = req.body.email;
   Members.getByEmail(email)
@@ -241,16 +239,6 @@ router.post('/reset', (req, res) => {
     .catch(() => {
       res.status(404).json({ message: 'Invalid confirmation hash' });
     });
-});
-
-// TODO: any user is allowed to delete any other user...
-router.delete('/:member_id', async (req, res) => {
-  try {
-    const request = await Members.remove(req.params.member_id);
-    res.status(200).json(request);
-  } catch (err) {
-    res.status(500).json({ Message: 'Unable to delete user' });
-  }
 });
 
 module.exports = router;
