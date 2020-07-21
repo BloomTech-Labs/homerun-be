@@ -125,12 +125,13 @@ router.put('/', (req, res, next) => {
 router.delete('/:member_id', async (req, res) => {
   const { member_id } = req.params;
   const { subject } = req.decodedToken;
-  if (member_id === subject) {
+  console.log(member_id, subject);
+  if (Number(member_id) === subject) {
     Members.remove(member_id).then(removed => {
       if (removed) {
         res.status(200).json({ message: "Removed the user successfully" });
       } else {
-        res.status(404).json({ message: "Member to delete not found" });
+        res.status(404).json({ message: "Member to delete not found. This response should be unreachable" });
       }
     })
   } else {
