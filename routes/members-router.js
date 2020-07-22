@@ -11,9 +11,9 @@ router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   try {
     const members = await Members.getHouseholdMembers(householdId);
-    members.forEach(m => m.child = false);
+    members.forEach((m) => (m.child = false));
     const children = await Members.getHouseholdChildren(householdId);
-    children.forEach(m => m.child = true);
+    children.forEach((m) => (m.child = true));
     res.status(200).json([...members, ...children]);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -118,15 +118,18 @@ router.delete('/:member_id', async (req, res) => {
   const { subject } = req.decodedToken;
   console.log(member_id, subject);
   if (Number(member_id) === subject) {
-    Members.remove(member_id).then(removed => {
+    Members.remove(member_id).then((removed) => {
       if (removed) {
-        res.status(200).json({ message: "Removed the user successfully" });
+        res.status(200).json({ message: 'Removed the user successfully' });
       } else {
-        res.status(404).json({ message: "Member to delete not found. This response should be unreachable" });
+        res.status(404).json({
+          message:
+            'Member to delete not found. This response should be unreachable',
+        });
       }
-    })
+    });
   } else {
-    res.status(400).json({ message: "Cannot delete other users" });
+    res.status(400).json({ message: 'Cannot delete other users' });
   }
 });
 
