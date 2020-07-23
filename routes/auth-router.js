@@ -48,7 +48,6 @@ router.post('/google', googleAuthMiddleware, (req, res) => {
 
 router.post('/signup', (req, res) => {
   const { email } = req.body;
-  email.replace('.', '');
   if (email) {
     // a user with this email needs to not exist already
     Members.getByEmail(email).then((result) => {
