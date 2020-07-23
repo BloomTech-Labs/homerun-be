@@ -21,9 +21,6 @@ beforeAll((done) => {
   });
   done();
 });
-beforeAll(() => {
-  return knex.seed.run();
-});
 
 describe('categories-router testing', () => {
   describe('GET /todos/categories', () => {
