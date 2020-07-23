@@ -21,8 +21,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 25,
-        active: true,
-        child: false,
       });
       await Members.insert({
         current_household: 'a12345',
@@ -33,8 +31,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 45,
-        active: true,
-        child: false,
       });
       members = await db('members');
       expect(members).toHaveLength(2);
@@ -55,8 +51,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 25,
-        active: true,
-        child: false,
       });
       await Members.insert({
         current_household: 'a12345',
@@ -67,8 +61,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 45,
-        active: true,
-        child: false,
       });
       await Members.remove(2);
       members = await db('members');
@@ -90,8 +82,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 25,
-        active: true,
-        child: false,
       });
       await Members.insert({
         current_household: 'a12345',
@@ -102,8 +92,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 45,
-        active: true,
-        child: false,
       });
       const member = await Members.getByEmail('test2@test.com');
       expect(member.username).toMatch('test2');
@@ -124,8 +112,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 25,
-        active: true,
-        child: false,
       });
       await Members.insert({
         current_household: 'a12345',
@@ -136,8 +122,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 45,
-        active: true,
-        child: false,
       });
 
       let update = {
@@ -149,8 +133,6 @@ describe('Testing Members Model', () => {
         access_token: '',
         refresh_token: '',
         points: 45,
-        active: true,
-        child: false,
       };
       const request = await Members.update(2, update);
       const member = await Members.getById(2);

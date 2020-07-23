@@ -7,13 +7,11 @@ exports.seed = async function (knex) {
       {
         household_id: 'a12345',
         username: 'Sally',
-        child: true,
         points: 25,
       },
       {
         household_id: 'a12345',
         username: 'Bobby',
-        child: true,
         points: 60,
       },
     ]);
