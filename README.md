@@ -57,7 +57,14 @@ To get the server running locally:
    ALGO=<PURECRYPT ALGORITHM>
    ```
 
-   b) Now you will need to migrate both databases. To do so run `knex migrate:latest` and `knex migrate:latest --env=test`. Finally check to see they behave correctly by running `yarn test`.
+   b) For contact form to receive emails, have a Gmail account set up in .env file with following variables. Also, do not forget to allow third party applications from Gmail settings.
+
+   ```text
+   CONTACT_EMAIL_USER=<Email address>
+   CONTACT_EMAIL_PASS=<Email password>
+   ```
+
+b) Now you will need to migrate both databases. To do so run `knex migrate:latest` and `knex migrate:latest --env=test`. Finally check to see they behave correctly by running `yarn test`.
 
 ## Documentation
 
