@@ -22,11 +22,7 @@ jobs:
           postgresql db: test
           postgresql user: postgres
           postgresql password: postgres
-
-      # A GitHub action for checking out the current branch
       - uses: actions/checkout@v2
-
-      # A GitHub action to setup Node.js
       - uses: actions/setup-node@v1
         with:
           node-version: '12'
