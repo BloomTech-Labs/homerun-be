@@ -24,14 +24,13 @@ jobs:
           postgresql password: postgres
 
       # A GitHub action for checking out the current branch
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       # A GitHub action to setup Node.js
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v1
         with:
-          node-version:
-            '12'
-            # Run the NPM install command before proceeding
+          node-version: '12'
+        # Run the NPM install command before proceeding
       - run: npm install
       - run: |-
           npm run action-migrate
