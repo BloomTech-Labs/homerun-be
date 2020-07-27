@@ -28,8 +28,8 @@ const password_getById = (id) => {
   return db('password_confirmations').where({ id }).first();
 };
 
-const password_remove = (id) => {
-  return db('password_confirmations').where({ id }).del();
+const password_remove = (member_id) => {
+  return db('password_confirmations').where({ member_id }).del();
 };
 
 const invite_insert = (confirmation) => {
@@ -42,8 +42,8 @@ const invite_getById = (id) => {
   return db('invite_confirmations').where({ id }).first();
 };
 
-const invite_remove = (email) => {
-  return db('invite_confirmations').where({ email }).del();
+const invite_remove = (member_id) => {
+  return db('invite_confirmations').where({ member_id }).del();
 };
 
 module.exports = {

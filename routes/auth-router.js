@@ -235,8 +235,7 @@ router.post('/reset', (req, res) => {
         const newPassword = bcrypt.hashSync(password, 10);
         Members.update(member_id, { password: newPassword })
           .then(() => {
-            PasswordConfirmations.remove(hash).then((rem) => {
-              console.log(rem);
+            PasswordConfirmations.remove(hash).then((member_id) => {
               res
                 .status(200)
                 .json({ message: 'Your password has been reset.' });
