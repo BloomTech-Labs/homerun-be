@@ -28,8 +28,8 @@ const password_getById = (id) => {
   return db('password_confirmations').where({ id }).first();
 };
 
-const password_remove = (email) => {
-  return db('password_confirmations').where({ email }).del();
+const password_remove = (id) => {
+  return db('password_confirmations').where({ id }).del();
 };
 
 const invite_insert = (confirmation) => {

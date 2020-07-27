@@ -102,7 +102,7 @@ router.post('/verify-pin', (req, res) => {
       }
     });
   } else {
-    res.status(400).json({ message: 'Request body missing email or password' });
+    res.status(400).json({ message: 'Request body missing email or pin' });
   }
 });
 
@@ -184,17 +184,17 @@ router.post('/confirm', async (req, res) => {
 router.post('/forgot', (req, res) => {
   const { email } = req.body;
   if (email) {
-    Members.getByEmail(email)
-      .then((member) => {
+    Members.getByEmail(email).then((member) => {
+      if (member) {
         // remove previous attempts
-        PasswordConfirmations.remove(email).then(() => {
+        PasswordConfirmations.remove(member.id).then(() => {
           const newConfirmation = {
             member_id: member.id,
-            hash: nanoid(),
+            id: nanoid(),
           };
           PasswordConfirmations.insert(newConfirmation)
-            .then(({ hash }) => {
-              sendMail(member.email, templates.reset(hash))
+            .then(({ id }) => {
+              sendMail(member.email, templates.reset(id))
                 .then(() => {
                   res.status(200).json({
                     message: 'A password reset link has been sent',
@@ -207,34 +207,36 @@ router.post('/forgot', (req, res) => {
                     .json({ message: 'Email service failed to send' });
                 });
             })
-            .catch(() => {
+            .catch((e) => {
+              console.log(e);
               res.status(500).json({
                 message:
                   'Failed to store confirmation information in the database',
               });
             });
         });
-      })
-      .catch(() => {
+      } else {
         res
           .status(404)
           .json({ message: 'A User with that email address does not exist.' });
-      });
+      }
+    });
   } else {
     res.status(400).json({ message: 'Request body missing email' });
   }
 });
 
 router.post('/reset', (req, res) => {
-  const { hash, password } = req.body.hash;
+  const { hash, password } = req.body;
   if (hash && password) {
-    PasswordConfirmations.getById(hash)
-      .then((confirmation) => {
+    PasswordConfirmations.getById(hash).then((confirmation) => {
+      if (confirmation) {
         const member_id = confirmation.member_id;
         const newPassword = bcrypt.hashSync(password, 10);
         Members.update(member_id, { password: newPassword })
           .then(() => {
-            PasswordConfirmations.remove(member_id).then(() => {
+            PasswordConfirmations.remove(hash).then((rem) => {
+              console.log(rem);
               res
                 .status(200)
                 .json({ message: 'Your password has been reset.' });
@@ -243,10 +245,10 @@ router.post('/reset', (req, res) => {
           .catch(() => {
             res.status(500).json({ message: 'Member to update not found' });
           });
-      })
-      .catch(() => {
+      } else {
         res.status(404).json({ message: 'Invalid confirmation hash' });
-      });
+      }
+    });
   } else {
     res.status(400).json({ message: 'Request body missing hash or password' });
   }
