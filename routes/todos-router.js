@@ -16,20 +16,16 @@ const getAssignedUsers = async (todoId) => {
 router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
   // try {
-    const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
-    const allTodos = await Promise.all(
-      todosPerHousehold.map(async (todo) => {
-        // findTodoCategories should return an array with all the categories the todo belongs to
-        const todoCategories = await Categories.findTodoCategories(todo.id);
-        const assigned = await getAssignedUsers(todo.id);
-        // ! May need to fix
-        return { todo, assigned, categories: todoCategories };
-      })
-    );
-    res.status(200).json(allTodos);
-  // } catch (err) {
-  //   res.status(500).json({ error: err.message, location: 'todos-router.js 8' });
-  // }
+  const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
+  const allTodos = await Promise.all(
+    todosPerHousehold.map(async (todo) => {
+      // findTodoCategories should return an array with all the categories the todo belongs to
+      const todoCategories = await Categories.findTodoCategories(todo.id);
+      const assigned = await getAssignedUsers(todo.id);
+      return { ...todo, assigned, categories: todoCategories };
+    })
+  );
+  res.status(200).json(allTodos);
 });
 
 router.get('/member', async (req, res) => {
