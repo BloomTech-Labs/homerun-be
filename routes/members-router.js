@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 const router = require('express').Router();
 const Members = require('../models/members-model.js');
-const Confirmations = require('../models/confirmations-model.js');
+const Confirmations = require('../models/confirmations-model.js').invite;
 const crypto = require('crypto');
 const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
 const { generateToken } = require('../middleware/token.js');
+const { nanoid } = require('nanoid');
 
 router.get('/household', async (req, res) => {
   const householdId = req.decodedToken.current_household;
@@ -58,79 +59,99 @@ router.delete('/household/children/:childId', async (req, res) => {
   }
 });
 
-router.post('/household/invite', async (req, res, next) => {
+router.post('/household/invite', (req, res) => {
   const { email } = req.body;
   const householdId = req.decodedToken.current_household;
+  const invitedBy = req.member.username;
   if (email && householdId) {
-    Members.getByEmail(email)
-      .then((member) => {
+    Members.getByEmail(email).then((member) => {
+      if (member) {
         const newConfirmation = {
+          id: nanoid(),
           member_id: member.id,
-          hash: crypto.randomBytes(20).toString('hex'),
+          household_id: householdId,
         };
-        Confirmations.insert(newConfirmation).then((hash) => {
-          sendMail(member.email, templates.householdInvite(hash, householdId));
-          res.status(200).json({
-            message: `An invitation email has been sent to ${member.email}`,
+        Confirmations.insert(newConfirmation)
+          .then(({ id, household_id }) => {
+            sendMail(
+              member.email,
+              templates.householdInvite(id, household_id, invitedBy)
+            )
+              .then(() => {
+                res.status(200).json({
+                  message: `An invitation email has been sent to ${member.email}`,
+                });
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: 'Error sending mail',
+                });
+              });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: 'Error inserting invite confirmation into database',
+            });
           });
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
+      } else {
+        res.status(404).json({
           message: 'A user with that email address does not exist.',
-          err,
         });
-      });
+      }
+    });
   } else {
     res.status(400).json({ message: 'Please enter an email address.' });
   }
 });
 
-router.put('/', (req, res, next) => {
+router.post('/household/accept-invite', (req, res) => {
+  const { hash } = req.body;
   const id = req.decodedToken.subject;
-  if (req.body.hash) {
-    Confirmations.getByHash(req.body.hash).then((confirmation) => {
-      if (confirmation.member_id === id) {
-        Members.update(id, { current_household: req.body.householdId })
-          .then(async (member) => {
-            const token = await generateToken(member[0]);
-            res.status(200).json({ member, token });
-          })
-          .catch((err) => {
-            next(err);
-          });
+  if (hash && id) {
+    Confirmations.getById(hash).then((conf) => {
+      if (conf) {
+        let { member_id, household_id } = conf;
+        if (member_id === id) {
+          Members.update(id, { current_household: household_id })
+            .then((updated) => {
+              Confirmations.remove(updated[0].id, household_id).then(
+                async () => {
+                  const token = await generateToken(updated[0]);
+                  res.status(200).json({ updated, token });
+                }
+              );
+            })
+            .catch(() => {
+              res.status(500).json({ message: 'Unable to update member' });
+            });
+        } else {
+          res
+            .status(400)
+            .json({ message: 'Cannot accept invite for another member' });
+        }
+      } else {
+        res.status(400).json({ message: 'Invalid confirmation hash' });
       }
     });
   } else {
-    Members.update(id, req.body)
-      .then(async (member) => {
-        const token = await generateToken(member[0]);
-        res.status(200).json({ member, token });
-      })
-      .catch((err) => {
-        next(err);
-      });
+    res.status(400).json({
+      message: 'Request body missing invite hash, or token is missing id',
+    });
   }
 });
 
-router.delete('/:member_id', async (req, res) => {
-  const { member_id } = req.params;
+router.delete('/', async (req, res) => {
   const { subject } = req.decodedToken;
-  console.log(member_id, subject);
-  if (Number(member_id) === subject) {
-    Members.remove(member_id).then((removed) => {
-      if (removed) {
-        res.status(200).json({ message: 'Removed the user successfully' });
-      } else {
-        res.status(404).json({
-          message:
-            'Member to delete not found. This response should be unreachable',
-        });
-      }
-    });
-  } else {
-    res.status(400).json({ message: 'Cannot delete other users' });
-  }
+  Members.remove(subject).then((removed) => {
+    if (removed) {
+      res.status(200).json({ message: 'Removed the user successfully' });
+    } else {
+      res.status(404).json({
+        message:
+          'Member to delete not found. This response should be unreachable',
+      });
+    }
+  });
 });
 
 module.exports = router;

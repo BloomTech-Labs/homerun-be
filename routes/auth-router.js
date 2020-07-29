@@ -102,7 +102,7 @@ router.post('/verify-pin', (req, res) => {
       }
     });
   } else {
-    res.status(400).json({ message: 'Request body missing email or password' });
+    res.status(400).json({ message: 'Request body missing email or pin' });
   }
 });
 
@@ -182,58 +182,75 @@ router.post('/confirm', async (req, res) => {
 });
 
 router.post('/forgot', (req, res) => {
-  const email = req.body.email;
-  Members.getByEmail(email)
-    .then((member) => {
-      const newConfirmation = {
-        member_id: member.id,
-        hash: nanoid(),
-      };
-      PasswordConfirmations.insert(newConfirmation)
-        .then(({ hash }) => {
-          sendMail(member.email, templates.reset(hash))
-            .then(() => {
-              res.status(200).json({
-                message: 'A password reset link has been sent',
-                email: member.email,
-              });
+  const { email } = req.body;
+  if (email) {
+    Members.getByEmail(email).then((member) => {
+      if (member) {
+        // remove previous attempts
+        PasswordConfirmations.remove(member.id).then(() => {
+          const newConfirmation = {
+            member_id: member.id,
+            id: nanoid(),
+          };
+          PasswordConfirmations.insert(newConfirmation)
+            .then(({ id }) => {
+              sendMail(member.email, templates.reset(id))
+                .then(() => {
+                  res.status(200).json({
+                    message: 'A password reset link has been sent',
+                    email: member.email,
+                  });
+                })
+                .catch(() => {
+                  res
+                    .status(500)
+                    .json({ message: 'Email service failed to send' });
+                });
             })
-            .catch(() => {
-              res.status(500).json({ message: 'Email service failed to send' });
+            .catch((e) => {
+              console.log(e);
+              res.status(500).json({
+                message:
+                  'Failed to store confirmation information in the database',
+              });
             });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: 'Failed to store confirmation information in the database',
-          });
         });
-    })
-    .catch(() => {
-      res
-        .status(404)
-        .json({ message: 'A User with that email address does not exist.' });
+      } else {
+        res
+          .status(404)
+          .json({ message: 'A User with that email address does not exist.' });
+      }
     });
+  } else {
+    res.status(400).json({ message: 'Request body missing email' });
+  }
 });
 
 router.post('/reset', (req, res) => {
-  const hash = req.body.hash;
-  PasswordConfirmations.getByHash(hash)
-    .then((confirmation) => {
-      const member_id = confirmation.member_id;
-      const newPassword = bcrypt.hashSync(req.body.password, 10);
-      Members.update(member_id, { password: newPassword })
-        .then(() => {
-          PasswordConfirmations.remove(member_id).then(() => {
-            res.status(200).json({ message: 'Your password has been reset.' });
+  const { hash, password } = req.body;
+  if (hash && password) {
+    PasswordConfirmations.getById(hash).then((confirmation) => {
+      if (confirmation) {
+        const member_id = confirmation.member_id;
+        const newPassword = bcrypt.hashSync(password, 10);
+        Members.update(member_id, { password: newPassword })
+          .then(() => {
+            PasswordConfirmations.remove(hash).then((member_id) => {
+              res
+                .status(200)
+                .json({ message: 'Your password has been reset.' });
+            });
+          })
+          .catch(() => {
+            res.status(500).json({ message: 'Member to update not found' });
           });
-        })
-        .catch(() => {
-          res.status(500).json({ message: 'Member to update not found' });
-        });
-    })
-    .catch(() => {
-      res.status(404).json({ message: 'Invalid confirmation hash' });
+      } else {
+        res.status(404).json({ message: 'Invalid confirmation hash' });
+      }
     });
+  } else {
+    res.status(400).json({ message: 'Request body missing hash or password' });
+  }
 });
 
 module.exports = router;

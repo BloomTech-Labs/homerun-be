@@ -1,20 +1,20 @@
 const db = require('../db/dbConfig.js');
 
-const getById = id => {
-  return db('members').where({id}).first();
+const getById = (id) => {
+  return db('members').where({ id }).first();
 };
 
-const getByEmail = email => {
-  return db('members').where({email}).first();
+const getByEmail = (email) => {
+  return db('members').where({ email }).first();
 };
 
-const getByUsername = username => {
-  return db('members').where({username}).first();
-}
+const getByUsername = (username) => {
+  return db('members').where({ username }).first();
+};
 
 const insert = (newMember) => {
   return db('members')
-    .insert(newMember, "*")
+    .insert(newMember, '*')
     .then(([member]) => member);
 };
 
