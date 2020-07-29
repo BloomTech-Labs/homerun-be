@@ -42,8 +42,8 @@ const invite_getById = (id) => {
   return db('invite_confirmations').where({ id }).first();
 };
 
-const invite_remove = (member_id) => {
-  return db('invite_confirmations').where({ member_id }).del();
+const invite_remove = (member_id, household_id) => {
+  return db('invite_confirmations').where({ member_id, household_id }).del();
 };
 
 module.exports = {

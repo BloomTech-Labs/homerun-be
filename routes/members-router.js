@@ -71,30 +71,28 @@ router.post('/household/invite', (req, res) => {
           member_id: member.id,
           household_id: householdId,
         };
-        Confirmations.remove(member.id).then(() => {
-          Confirmations.insert(newConfirmation)
-            .then(({ id, household_id }) => {
-              sendMail(
-                member.email,
-                templates.householdInvite(id, household_id, invitedBy)
-              )
-                .then(() => {
-                  res.status(200).json({
-                    message: `An invitation email has been sent to ${member.email}`,
-                  });
-                })
-                .catch(() => {
-                  res.status(500).json({
-                    message: 'Error sending mail',
-                  });
+        Confirmations.insert(newConfirmation)
+          .then(({ id, household_id }) => {
+            sendMail(
+              member.email,
+              templates.householdInvite(id, household_id, invitedBy)
+            )
+              .then(() => {
+                res.status(200).json({
+                  message: `An invitation email has been sent to ${member.email}`,
                 });
-            })
-            .catch(() => {
-              res.status(500).json({
-                message: 'Error inserting invite confirmation into database',
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: 'Error sending mail',
+                });
               });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: 'Error inserting invite confirmation into database',
             });
-        });
+          });
       } else {
         res.status(404).json({
           message: 'A user with that email address does not exist.',
@@ -116,10 +114,12 @@ router.post('/household/accept-invite', (req, res) => {
         if (member_id === id) {
           Members.update(id, { current_household: household_id })
             .then((updated) => {
-              Confirmations.remove(updated[0].id).then(async () => {
-                const token = await generateToken(updated[0]);
-                res.status(200).json({ updated, token });
-              });
+              Confirmations.remove(updated[0].id, household_id).then(
+                async () => {
+                  const token = await generateToken(updated[0]);
+                  res.status(200).json({ updated, token });
+                }
+              );
             })
             .catch(() => {
               res.status(500).json({ message: 'Unable to update member' });
