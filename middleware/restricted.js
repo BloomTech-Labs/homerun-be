@@ -15,9 +15,10 @@ module.exports = (req, res, next) => {
         });
       } else {
         // valid token
-        membersModel.getById(decodedToken.subject).then(member => {
+        membersModel.getById(decodedToken.subject).then((member) => {
           if (member) {
             req.decodedToken = decodedToken;
+            req.member = member;
             next();
           } else {
             res.status(401).json({
@@ -25,7 +26,7 @@ module.exports = (req, res, next) => {
               tokenExpired: true,
             });
           }
-        })
+        });
       }
     });
   } else {

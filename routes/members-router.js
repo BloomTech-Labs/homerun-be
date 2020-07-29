@@ -62,6 +62,7 @@ router.delete('/household/children/:childId', async (req, res) => {
 router.post('/household/invite', (req, res) => {
   const { email } = req.body;
   const householdId = req.decodedToken.current_household;
+  const invitedBy = req.member.username;
   if (email && householdId) {
     Members.getByEmail(email).then((member) => {
       if (member) {
@@ -75,7 +76,7 @@ router.post('/household/invite', (req, res) => {
             .then(({ id, household_id }) => {
               sendMail(
                 member.email,
-                templates.householdInvite(id, household_id)
+                templates.householdInvite(id, household_id, invitedBy)
               )
                 .then(() => {
                   res.status(200).json({
