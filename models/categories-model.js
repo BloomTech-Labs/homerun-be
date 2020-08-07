@@ -29,17 +29,9 @@ const findTodoCategories = (todoId) => {
     });
 };
 
-const addCategory = (category_name) => {
+const addCategory = (category_name, household_id) => {
   return db('category')
-    .insert({ category_name })
-    .then(() => db('category').select('*'))
-    .catch((err) => console.error(err));
-};
-
-const updateCategory = (category_id, category_name) => {
-  return db('category')
-    .where({ category_id })
-    .update({ category_name })
+    .insert({ category_name, household_id })
     .then(() => db('category').select('*'))
     .catch((err) => console.error(err));
 };
@@ -66,7 +58,7 @@ const removeTodoCategories = (todo_id, category_name) => {
 module.exports = {
   findCategories,
   addCategory,
-  updateCategory,
+  // updateCategory,
   findTodoCategories,
   addTodoCategories,
   removeTodoCategories,

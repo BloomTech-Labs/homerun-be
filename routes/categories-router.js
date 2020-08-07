@@ -26,8 +26,8 @@ router.get('/:todoID', validateID, (req, res) => {
 });
 
 router.post('/new', (req, res) => {
-  const { category_name } = req.body;
-  Categories.addCategory(category_name)
+  const { category_name, household_id } = req.body;
+  Categories.addCategory(category_name, household_id)
     .then((categories) => {
       res.status(201).json(categories);
     })
