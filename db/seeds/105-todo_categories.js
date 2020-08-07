@@ -7,19 +7,19 @@ exports.seed = function (knex) {
       return knex('todo_categories').insert([
         {
           todo_id: 1,
-          category_name: 'bedroom',
+          category_id: 2,
         },
         {
           todo_id: 2,
-          category_name: 'kitchen',
+          category_id: 3,
         },
         {
           todo_id: 3,
-          category_name: 'living_room',
+          category_id: 1,
         },
         {
           todo_id: 4,
-          category_name: 'bathroom',
+          category_id: 4,
         },
       ]);
     });
