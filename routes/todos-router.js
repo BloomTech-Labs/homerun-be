@@ -2,8 +2,8 @@
 const router = require('express').Router();
 const Todos = require('../models/todos-model.js');
 
-const Categories = require('../models/categories-model.js');
-const categoriesRouter = require('./categories-router.js');
+const Categories = require('../models/todos_categories-model.js');
+const categoriesRouter = require('./todos_categories-router.js');
 
 const userTypeFilter = require('../middleware/userMethodFilter.js');
 

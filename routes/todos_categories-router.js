@@ -25,19 +25,8 @@ router.get('/:todoID', validateID, (req, res) => {
     });
 });
 
-router.post('/new', (req, res) => {
-  const { category_name, household_id } = req.body;
-  Categories.addCategory(category_name, household_id)
-    .then((categories) => {
-      res.status(201).json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
 // adds a new category for the todo id that is passed in
-router.post('/add', validateID, (req, res) => {
+router.post('/', validateID, (req, res) => {
   const { todo_id, category_id } = req.body;
   Categories.addTodoCategories(todo_id, category_id)
     .then((categories) => {
