@@ -1,24 +1,42 @@
 const db = require('../db/dbConfig.js');
 
-// getAllCategories
-const findCategories = () => {
-  return db('category').select('*');
+const findById = (id) => {
+  return db('category').select('*').where({ id });
 };
 
-const addCategory = (category_name, household_id) => {
+const findByHousehold = (household_id) => {
+  return db('category')
+    .select('*')
+    .where({ household_id })
+    .then((res) => res)
+    .catch((err) => err);
+};
+
+const insert = (category_name, household_id) => {
   return db('category')
     .insert({ category_name, household_id })
-    .then(() => db('category').select('*'))
+    .then(() => findByHousehold({ household_id }))
     .catch((err) => console.error(err));
 };
 
-const updateCategory = () => {};
+const update = (id, data) => {
+  return db('category')
+    .where({ id })
+    .update(data)
+    .then(() => {
+      return findById(id);
+    })
+    .catch((err) => console.error(err));
+};
 
-const removeCategory = () => {};
+const remove = (id) => {
+  return db('category').where({ id }).del();
+};
 
 module.exports = {
-  findCategories,
-  addCategory,
-  updateCategory,
-  removeCategory,
+  findById,
+  findByHousehold,
+  insert,
+  update,
+  remove,
 };

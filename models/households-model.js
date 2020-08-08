@@ -14,7 +14,6 @@ const insert = (newHousehold) => {
 
 const update = (id, updates) => {
   return db('households')
-    .where({ id })
     .update(updates)
     .then(() => {
       return findById(id);
