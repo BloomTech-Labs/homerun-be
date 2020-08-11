@@ -1,19 +1,6 @@
 const router = require('express').Router();
 const Categories = require('../models/categories-model.js');
 
-const validateHousehold = (req, res, next) => {
-  try {
-    const { household_id } = req.body;
-    Categories.findByHousehold(household_id)
-      .then(() => {
-        next();
-      })
-      .catch((err) => res.status(404).json({ error: err }));
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-};
-
 router.get('/:id', (req, res) => {
   const { id } = req.params;
 
@@ -26,8 +13,9 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', validateHousehold, (req, res) => {
-  const { category_name, household_id } = req.body;
+router.post('/', (req, res) => {
+  const household_id = req.decodedToken.current_household;
+  const { category_name } = req.body;
   try {
     if (category_name && household_id) {
       Categories.insert(category_name, household_id)

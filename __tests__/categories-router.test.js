@@ -45,10 +45,10 @@ describe('categories-router testing', () => {
         .set('Authorization', generatedToken)
         .then((res) => {
           expect(res.body).toEqual([
-            { id: 1, category_name: 'living_room' },
-            { id: 2, category_name: 'bedroom' },
-            { id: 3, category_name: 'kitchen' },
-            { id: 4, category_name: 'bathroom' },
+            { id: 1, category_name: 'living_room', household_id: 'a12345' },
+            { id: 1, category_name: 'bedroom', household_id: 'a12345' },
+            { id: 1, category_name: 'kitchen', household_id: 'a12345' },
+            { id: 1, category_name: 'bathroom', household_id: 'a12345' },
           ]);
         });
     });

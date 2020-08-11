@@ -1,34 +1,19 @@
 const router = require('express').Router();
-const Categories = require('../models/categories-model.js');
+const Categories = require('../models/todos-categories-model.js');
 const Todos = require('../models/todos-model.js');
 
-// returns all the categories that todos can be a part of
-router.get('/', (req, res) => {
-  Categories.findCategories()
-    .then((categories) => {
-      res.json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
-// return the categories that belong to the specific todo id
-router.get('/:todoID', validateID, (req, res) => {
-  const { todoID } = req.params;
-  Categories.findTodoCategories(todoID)
-    .then((categories) => {
-      res.json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
 // adds a new category for the todo id that is passed in
+
+router.get('/:id', async (req, res) => {
+  const todoCategories = await Categories.findTodoCategories(req.params.id);
+  if (todoCategories) {
+    res.status(200).json({ categories: todoCategories });
+  }
+});
+
 router.post('/', validateID, (req, res) => {
   const { todo_id, category_id } = req.body;
-  Categories.addTodoCategories(todo_id, category_id)
+  Categories.insert(todo_id, category_id)
     .then((categories) => {
       res.status(201).json(categories);
     })
@@ -38,9 +23,9 @@ router.post('/', validateID, (req, res) => {
 });
 
 // find out why this delete is erroring
-router.delete('/delete', validateID, (req, res) => {
-  const { todo_id, category_id } = req.body;
-  Categories.removeTodoCategories(todo_id, category_id)
+router.delete('/:id', validateID, (req, res) => {
+  const { id } = req.params;
+  Categories.remove({ id })
     .then((categories) => {
       res.json(categories);
     })
