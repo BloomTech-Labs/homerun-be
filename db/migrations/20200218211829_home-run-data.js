@@ -14,6 +14,7 @@ exports.up = function (knex) {
       col.text('access_token');
       col.text('refresh_token');
       col.integer('points');
+
       col.boolean('child').defaultsTo(false);
       col.boolean('active').defaultsTo(false);
       col

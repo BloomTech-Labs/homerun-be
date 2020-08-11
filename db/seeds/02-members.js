@@ -15,6 +15,7 @@ exports.seed = async function (knex) {
         access_token: '',
         refresh_token: '',
         points: 25,
+        permission_level: 4,
       },
       {
         current_household: 'a12345',
@@ -25,6 +26,7 @@ exports.seed = async function (knex) {
         access_token: '',
         refresh_token: '',
         points: 40,
+        permission_level: 4,
       },
     ]);
   });
