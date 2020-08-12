@@ -23,9 +23,10 @@ router.post('/', validateID, (req, res) => {
 });
 
 // find out why this delete is erroring
-router.delete('/:id', validateID, (req, res) => {
-  const { id } = req.params;
-  Categories.remove({ id })
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  Categories.remove(id)
     .then((categories) => {
       res.json(categories);
     })

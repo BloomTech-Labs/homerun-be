@@ -1,16 +1,14 @@
 const db = require('../db/dbConfig.js');
 
-const findTodoCategories = (todoId) => {
-  return db('todo_categories')
+const findTodoCategories = async (todoId) => {
+  const res = await db('todo_categories')
     .join('category', 'todo_categories.category_id', 'category.id')
     .select('category.category_name')
-    .where({ todo_id: todoId })
-    .then((res) => {
-      const categories = res.map((category) => {
-        return category.category_name;
-      });
-      return categories;
-    });
+    .where({ todo_id: todoId });
+  const categories = res.map((category) => {
+    return category.category_name;
+  });
+  return categories;
 };
 
 const insert = async (todo_id, category_id) => {
@@ -19,13 +17,12 @@ const insert = async (todo_id, category_id) => {
 };
 
 const remove = async (id) => {
-  return db('todo_categories')
-    .where({ id })
-    .del()
-    .then((res) => {
-      return { message: 'success' };
-    })
-    .catch((err) => console.error(err));
+  try {
+    const res = await db('todo_categories').where({ id }).del();
+    return { message: 'success', res };
+  } catch (err) {
+    return console.error(err);
+  }
 };
 
 module.exports = {

@@ -1,0 +1,12 @@
+{
+  "sqltools.connections": [
+    {
+      "name": "PGSQL",
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "connectString": "postgres://postgres:password@localhost/tidyhive",
+      "askForPassword": false,
+      "connectionTimeout": 15
+    }
+  ]
+}
