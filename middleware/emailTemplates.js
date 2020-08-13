@@ -15,11 +15,11 @@ module.exports = {
       html: `Please follow <a href="${process.env.FE_URL}/reset-password/${hash}">this link</a> to reset your password.`,
     };
   },
-  householdInvite: (hash, householdId, invitedBy) => {
+  householdInvite: (hash, householdId, permissionLevel, invitedBy) => {
     return {
       subject: 'Household Invite - Tidy Hive',
-      text: `You were invited by ${invitedBy} to a household! Please paste the following link in to your browser's URL bar in order to join: ${process.env.FE_URL}/invite/${hash}`,
-      html: `You were invited by ${invitedBy} to a household!<br/>Please follow <a href="${process.env.FE_URL}/invite/${hash}">this link</a> to join.`,
+      text: `You were invited by ${invitedBy} at level "${permissionLevel}" to a household! Please paste the following link in to your browser's URL bar in order to join: ${process.env.FE_URL}/invite/${hash}/${permissionLevel}`,
+      html: `You were invited by ${invitedBy} at level "${permissionLevel}" to a household!<br/>Please follow <a href="${process.env.FE_URL}/invite/${hash}/${permissionLevel}">this link</a> to join.`,
     };
   },
 };

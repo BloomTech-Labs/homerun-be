@@ -60,7 +60,8 @@ router.delete('/household/children/:childId', async (req, res) => {
 });
 
 router.post('/household/invite', (req, res) => {
-  const { email } = req.body;
+  console.log('body', req.body);
+  const { email, permission_level } = req.body;
   const householdId = req.decodedToken.current_household;
   const invitedBy = req.member.username;
   if (email && householdId) {
@@ -70,12 +71,18 @@ router.post('/household/invite', (req, res) => {
           id: nanoid(),
           member_id: member.id,
           household_id: householdId,
+          permission_level,
         };
         Confirmations.insert(newConfirmation)
-          .then(({ id, household_id }) => {
+          .then(({ id, permission_level, household_id }) => {
             sendMail(
               member.email,
-              templates.householdInvite(id, household_id, invitedBy)
+              templates.householdInvite(
+                id,
+                household_id,
+                permission_level,
+                invitedBy
+              )
             )
               .then(() => {
                 res.status(200).json({
@@ -106,24 +113,36 @@ router.post('/household/invite', (req, res) => {
 
 router.post('/household/accept-invite', (req, res) => {
   const { hash } = req.body;
+  const { permission_level } = req.body;
   const id = req.decodedToken.subject;
-  if (hash && id) {
+  if (hash && id && permission_level) {
     Confirmations.getById(hash).then((conf) => {
       if (conf) {
-        let { member_id, household_id } = conf;
+        let { member_id, household_id, permission_level } = conf;
         if (member_id === id) {
-          Members.update(id, { current_household: household_id })
+          // Updates member's current household
+          Members.update(
+            id,
+            { current_household: household_id },
+            { permission_level: permission_level }
+          )
             .then((updated) => {
               Confirmations.remove(updated[0].id, household_id).then(
                 async () => {
                   const token = await generateToken(updated[0]);
                   res.status(200).json({ updated, token });
+                  console.log(permission_level, 'permission_level');
                 }
               );
             })
+
             .catch(() => {
               res.status(500).json({ message: 'Unable to update member' });
+              console.log(permission_level, 'permission_level');
             });
+
+          // Create a new record in houlsehold_members table
+          // Members.update(member_id, household_id, permission_level).
         } else {
           res
             .status(400)
