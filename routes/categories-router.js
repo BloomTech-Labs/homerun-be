@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const Categories = require('../models/categories-model.js');
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
+router.get('/', (req, res) => {
+  const household_id = req.decodedToken.current_household;
 
-  Categories.findByHousehold(id)
+  Categories.findByHousehold(household_id)
     .then((categories) => {
       res.status(200).json(categories);
     })

@@ -43,7 +43,7 @@ app.use('/auth', authRouter);
 app.use('/members', restricted, membersRouter);
 app.use('/household', restricted, householdRouter);
 app.use('/contact', contactRouter);
-app.use('/categories', categoriesRouter);
+app.use('/categories', restricted, categoriesRouter);
 
 // error handler
 app.use(function (err, req, res, next) {
