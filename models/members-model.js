@@ -55,7 +55,7 @@ const removeChild = (id) => {
 const getHouseholdMembers = (householdId) => {
   return db('members')
     .where('current_household', '=', householdId)
-    .select(['id', 'username', 'email', 'points']);
+    .select(['id', 'username', 'email', 'points', 'permission_level']);
 };
 
 const getHouseholdChildren = (householdId) => {
