@@ -110,35 +110,26 @@ router.post('/household/invite', (req, res) => {
 });
 
 router.post('/household/accept-invite', (req, res) => {
-  const { hash } = req.body;
-  const { permission_level } = req.body;
+  const { hash, permissionLevel } = req.body;
   const id = req.decodedToken.subject;
-  if (hash && id && permission_level) {
+  if (hash && id && permissionLevel) {
     Confirmations.getById(hash).then((conf) => {
       if (conf) {
-        let { member_id, household_id, permission_level } = conf;
+        let { member_id, household_id } = conf;
         if (member_id === id) {
           // Updates member's current household
-          Members.update(
-            id,
-            { current_household: household_id },
-            { permission_level: permission_level }
-          )
+          Members.update(id, { current_household: household_id, permission_level: permissionLevel})
             .then((updated) => {
               Confirmations.remove(updated[0].id, household_id).then(
                 async () => {
                   const token = await generateToken(updated[0]);
                   res.status(200).json({ updated, token });
-                  console.log(permission_level, 'permission_level');
                 }
               );
             })
-
             .catch(() => {
               res.status(500).json({ message: 'Unable to update member' });
-              console.log(permission_level, 'permission_level');
             });
-
           // Create a new record in houlsehold_members table
           // Members.update(member_id, household_id, permission_level).
         } else {
