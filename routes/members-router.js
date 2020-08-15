@@ -60,27 +60,25 @@ router.delete('/household/children/:childId', async (req, res) => {
 });
 
 router.post('/household/invite', (req, res) => {
-  console.log('body', req.body);
-  const { email, permission_level } = req.body;
+  const { email, permissionLevel } = req.body;
   const householdId = req.decodedToken.current_household;
   const invitedBy = req.member.username;
-  if (email && householdId) {
+  if (email && permissionLevel && householdId) {
     Members.getByEmail(email).then((member) => {
       if (member) {
         const newConfirmation = {
           id: nanoid(),
           member_id: member.id,
           household_id: householdId,
-          permission_level,
         };
         Confirmations.insert(newConfirmation)
-          .then(({ id, permission_level, household_id }) => {
+          .then(({ id, household_id }) => {
             sendMail(
               member.email,
               templates.householdInvite(
                 id,
                 household_id,
-                permission_level,
+                permissionLevel,
                 invitedBy
               )
             )
