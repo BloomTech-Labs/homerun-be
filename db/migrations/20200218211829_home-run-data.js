@@ -133,6 +133,7 @@ exports.up = function (knex) {
         .references('members.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE');
+      col.integer('permissionLevel')
     });
 };
 
