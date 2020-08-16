@@ -70,6 +70,7 @@ router.post('/household/invite', (req, res) => {
           id: nanoid(),
           member_id: member.id,
           household_id: householdId,
+          permissionLevel: permissionLevel,
         };
         Confirmations.insert(newConfirmation)
           .then(({ id, household_id }) => {
@@ -78,7 +79,6 @@ router.post('/household/invite', (req, res) => {
               templates.householdInvite(
                 id,
                 household_id,
-                permissionLevel,
                 invitedBy
               )
             )
