@@ -70,8 +70,9 @@ router.post('/household/invite', (req, res) => {
           id: nanoid(),
           member_id: member.id,
           household_id: householdId,
-          permissionLevel: permissionLevel,
+          permissionOfLevel: permissionLevel,
         };
+        console.log(newConfirmation)
         Confirmations.insert(newConfirmation)
           .then(({ id, household_id }) => {
             sendMail(

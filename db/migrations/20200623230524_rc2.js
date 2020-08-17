@@ -56,6 +56,7 @@ exports.up = function (knex) {
         .references('households.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE');
+      tbl.integer('permissionOfLevel');
     });
 };
 
