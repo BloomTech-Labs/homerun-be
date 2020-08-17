@@ -1,14 +1,18 @@
-exports.up = function (knex) {
-  return (
-    knex.schema.alterTable('invite_confirmations'),
-    (tbl) => {
-      tbl.integer('permission_level');
-    }
-  );
+exports.up = function (knex, Promise) {
+  return knex.schema
+    .table('members', (tbl) => {
+      tbl.integer('permission_level').defaultTo(4);
+    })
+    .table('invite_confirmations', (tbl) => {
+      tbl.integer('permissionOfLevel');
+    });
 };
 
-exports.down = function (knex) {
-  return knex.schema.alterTable('invite_confirmations', (tbl) => {
+exports.down = function (knex, Promise) {
+  return knex.schema.table('members', (tbl) => {
     tbl.dropColumn('permission_level');
+    knex.schema.table('invite_confirmations', (tbl) => {
+      tbl.dropColumn('permissionOfLevel');
+    });
   });
 };
