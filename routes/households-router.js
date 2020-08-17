@@ -30,7 +30,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 router.delete('/', (req, res, next) => {
-  const id = req.decodedToken.current_household;
+  const id = req.member.current_household;
   Households.remove(id)
     .then(() => {
       res.status(200).json({ message: 'Successfully deleted household' });

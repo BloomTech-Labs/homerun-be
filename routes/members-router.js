@@ -9,7 +9,7 @@ const { generateToken } = require('../middleware/token.js');
 const { nanoid } = require('nanoid');
 
 router.get('/household', async (req, res) => {
-  const householdId = req.decodedToken.current_household;
+  const householdId = req.member.current_household;
   try {
     const members = await Members.getHouseholdMembers(householdId);
     members.forEach((m) => (m.child = false));
@@ -31,7 +31,7 @@ router.get('/household/children/:childId', async (req, res) => {
 });
 
 router.post('/household/children', async (req, res) => {
-  const householdId = req.decodedToken.current_household;
+  const householdId = req.member.current_household;
   try {
     req.body.household_id = householdId;
     const request = await Members.addChild(req.body);
@@ -61,7 +61,7 @@ router.delete('/household/children/:childId', async (req, res) => {
 
 router.post('/household/invite', (req, res) => {
   const { email, permissionLevel } = req.body;
-  const householdId = req.decodedToken.current_household;
+  const householdId = req.member.current_household;
   const invitedBy = req.member.username;
   if (email && permissionLevel && householdId) {
     Members.getByEmail(email).then((member) => {
@@ -112,7 +112,7 @@ router.post('/household/invite', (req, res) => {
 
 router.post('/household/accept-invite', (req, res) => {
   const { hash } = req.body;
-  const id = req.decodedToken.subject;
+  const id = req.member.id;
   if (hash && id) {
     Confirmations.getById(hash).then((conf) => {
       if (conf) {
@@ -150,8 +150,8 @@ router.post('/household/accept-invite', (req, res) => {
 });
 
 router.delete('/', async (req, res) => {
-  const { subject } = req.decodedToken;
-  Members.remove(subject).then((removed) => {
+  const { id } = req.member;
+  Members.remove(id).then((removed) => {
     if (removed) {
       res.status(200).json({ message: 'Removed the user successfully' });
     } else {

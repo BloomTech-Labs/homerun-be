@@ -15,9 +15,8 @@ module.exports = (req, res, next) => {
         });
       } else {
         // valid token
-        membersModel.getById(decodedToken.subject).then((member) => {
+        membersModel.getById(decodedToken.id).then((member) => {
           if (member) {
-            req.decodedToken = decodedToken;
             req.member = member;
             next();
           } else {
