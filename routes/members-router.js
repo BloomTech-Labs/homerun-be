@@ -116,12 +116,12 @@ router.post('/household/accept-invite', (req, res) => {
   if (hash && id) {
     Confirmations.getById(hash).then((conf) => {
       if (conf) {
-        let { member_id, household_id, permissionLevel } = conf;
+        let { member_id, household_id, permissionOfLevel } = conf;
         if (member_id === id) {
           // Updates member's current household
-          Members.update(id, { current_household: household_id, permission_level: permissionLevel})
+          Members.update(id, { current_household: household_id, permission_level: permissionOfLevel})
             .then((updated) => {
-              Confirmations.remove(updated[0].id, household_id, permissionLevel).then(
+              Confirmations.remove(updated[0].id, household_id, permissionOfLevel).then(
                 async () => {
                   const token = await generateToken(updated[0]);
                   res.status(200).json({ updated, token });
