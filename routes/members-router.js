@@ -72,16 +72,12 @@ router.post('/household/invite', (req, res) => {
           household_id: householdId,
           permissionOfLevel: permissionLevel,
         };
-        console.log(newConfirmation)
+        console.log(newConfirmation);
         Confirmations.insert(newConfirmation)
           .then(({ id, household_id }) => {
             sendMail(
               member.email,
-              templates.householdInvite(
-                id,
-                household_id,
-                invitedBy
-              )
+              templates.householdInvite(id, household_id, invitedBy)
             )
               .then(() => {
                 res.status(200).json({
@@ -119,14 +115,19 @@ router.post('/household/accept-invite', (req, res) => {
         let { member_id, household_id, permissionOfLevel } = conf;
         if (member_id === id) {
           // Updates member's current household
-          Members.update(id, { current_household: household_id, permission_level: permissionOfLevel})
+          Members.update(id, {
+            current_household: household_id,
+            permission_level: permissionOfLevel,
+          })
             .then((updated) => {
-              Confirmations.remove(updated[0].id, household_id, permissionOfLevel).then(
-                async () => {
-                  const token = await generateToken(updated[0]);
-                  res.status(200).json({ updated, token });
-                }
-              );
+              Confirmations.remove(
+                updated[0].id,
+                household_id,
+                permissionOfLevel
+              ).then(async () => {
+                const token = await generateToken(updated[0]);
+                res.status(200).json({ updated, token });
+              });
             })
             .catch(() => {
               res.status(500).json({ message: 'Unable to update member' });
@@ -145,6 +146,41 @@ router.post('/household/accept-invite', (req, res) => {
   } else {
     res.status(400).json({
       message: 'Request body missing invite hash, or token is missing id',
+    });
+  }
+});
+
+router.post('/household/edit-permission', (req, res) => {
+  const { email } = req.body;
+  const { permissionLevel } = req.body;
+  if (email && permissionLevel) {
+    Members.getByEmail(email).then((member) => {
+      if (member) {
+        Members.update(id, {
+          permission_level: permissionLevel,
+        }).then((res) => {
+          res
+            .status(200)
+            .json({
+              message: `The member's permission level has been updated successfully`,
+            })
+            .catch(() => {
+              res
+                .status(500)
+                .json({
+                  message: `There was an error when trying to update the member's permission level`,
+                });
+            });
+        });
+      } else {
+        res.status(400).json({
+          message: 'The member does not exist',
+        });
+      }
+    });
+  } else {
+    res.status(404).json({
+      message: 'Request body missing email or permissionLevel',
     });
   }
 });
