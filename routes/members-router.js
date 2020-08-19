@@ -60,17 +60,19 @@ router.delete('/household/children/:childId', async (req, res) => {
 });
 
 router.post('/household/invite', (req, res) => {
-  const { email } = req.body;
+  const { email, permissionLevel } = req.body;
   const householdId = req.decodedToken.current_household;
   const invitedBy = req.member.username;
-  if (email && householdId) {
+  if (email && permissionLevel && householdId) {
     Members.getByEmail(email).then((member) => {
       if (member) {
         const newConfirmation = {
           id: nanoid(),
           member_id: member.id,
           household_id: householdId,
+          permissionOfLevel: permissionLevel,
         };
+        console.log(newConfirmation);
         Confirmations.insert(newConfirmation)
           .then(({ id, household_id }) => {
             sendMail(
@@ -110,20 +112,28 @@ router.post('/household/accept-invite', (req, res) => {
   if (hash && id) {
     Confirmations.getById(hash).then((conf) => {
       if (conf) {
-        let { member_id, household_id } = conf;
+        let { member_id, household_id, permissionOfLevel } = conf;
         if (member_id === id) {
-          Members.update(id, { current_household: household_id })
+          // Updates member's current household
+          Members.update(id, {
+            current_household: household_id,
+            permission_level: permissionOfLevel,
+          })
             .then((updated) => {
-              Confirmations.remove(updated[0].id, household_id).then(
-                async () => {
-                  const token = await generateToken(updated[0]);
-                  res.status(200).json({ updated, token });
-                }
-              );
+              Confirmations.remove(
+                updated[0].id,
+                household_id,
+                permissionOfLevel
+              ).then(async () => {
+                const token = await generateToken(updated[0]);
+                res.status(200).json({ updated, token });
+              });
             })
             .catch(() => {
               res.status(500).json({ message: 'Unable to update member' });
             });
+          // Create a new record in houlsehold_members table
+          // Members.update(member_id, household_id, permission_level).
         } else {
           res
             .status(400)

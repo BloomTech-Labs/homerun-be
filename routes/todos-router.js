@@ -111,6 +111,7 @@ router.post('/add', (req, res, next) => {
         if (newTodo.category_id) {
           Categories.insert(todo.id, newTodo.category_id);
         }
+
         return todo;
       })
       .then((todo) => {

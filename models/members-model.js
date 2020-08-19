@@ -21,7 +21,7 @@ const insert = (newMember) => {
 const update = (id, updates) => {
   return db('members')
     .where({ id })
-    .update(updates, ['id', 'email', 'current_household']);
+    .update(updates, ['id', 'email', 'current_household', 'permission_level']);
 };
 
 const remove = (id) => {
@@ -55,7 +55,7 @@ const removeChild = (id) => {
 const getHouseholdMembers = (householdId) => {
   return db('members')
     .where('current_household', '=', householdId)
-    .select(['id', 'username', 'email', 'points']);
+    .select(['id', 'username', 'email', 'points', 'permission_level']);
 };
 
 const getHouseholdChildren = (householdId) => {
