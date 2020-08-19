@@ -106,8 +106,13 @@ router.post('/add', (req, res, next) => {
   const newTodo = req.body;
   newTodo.household = req.decodedToken.current_household;
   if (newTodo.title && newTodo.household) {
-    // TODO: Confirm that the household id is valid?
-    Todos.insert(newTodo)
+    Todos.insert({ title: newTodo.title, household: newTodo.household })
+      .then((todo) => {
+        if (newTodo.category_id) {
+          Categories.insert(todo.id, newTodo.category_id);
+        }
+        return todo;
+      })
       .then((todo) => {
         Categories.findTodoCategories(todo.id).then((categories) => {
           res.status(200).json({ ...todo, assigned: [], categories });
