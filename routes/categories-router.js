@@ -1,6 +1,24 @@
 const router = require('express').Router();
 const Categories = require('../models/categories-model.js');
 
+function verifyCategory(req, res, next) {
+  const household_id = req.decodedToken.current_household;
+  const { category_name } = req.body;
+
+  Categories.findByName(household_id, category_name)
+    .then((category) => {
+      console.log(category);
+      if (!category) {
+        next();
+      } else {
+        res.status(404).json({ message: 'Category Name already Exists' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+}
+
 router.get('/', (req, res) => {
   const household_id = req.decodedToken.current_household;
 
@@ -13,7 +31,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', verifyCategory, (req, res) => {
   const household_id = req.decodedToken.current_household;
   const { category_name } = req.body;
   try {

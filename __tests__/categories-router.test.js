@@ -26,7 +26,7 @@ describe('categories-router testing', () => {
   describe('GET /todos/categories', () => {
     it('should pass with 200 OK when the token is sent on the header', () => {
       return request(server)
-        .get('/categories/a12345')
+        .get('/categories/')
         .set('Authorization', generatedToken)
         .then((res) => {
           expect(res.status).toBe(200);
@@ -34,7 +34,7 @@ describe('categories-router testing', () => {
     });
     it('should return proper JSON response', () => {
       return request(server)
-        .get('/categories/a12345')
+        .get('/categories/')
         .set('Authorization', generatedToken)
         .then((res) => {
           expect(res.body).toEqual([
