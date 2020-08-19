@@ -1,0 +1,20 @@
+{
+  "sqltools.connections": [
+    {
+      "name": "Tidyhive",
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "connectString": "postgres://postgres:password@localhost/tidyhive",
+      "askForPassword": false,
+      "connectionTimeout": 15
+    },
+    {
+      "name": "Tidyhive Test",
+      "server": "localhost",
+      "driver": "PostgreSQL",
+      "connectString": "postgres://postgres:password@localhost/tidyhive-test",
+      "askForPassword": false,
+      "connectionTimeout": 15
+    }
+  ]
+}

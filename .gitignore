@@ -27,3 +27,6 @@ yarn-error.log*
 
 # env
 .env
+
+PGSQL.session.sql
+postgres.session.sql

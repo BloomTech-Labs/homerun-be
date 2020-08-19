@@ -1,4 +1,4 @@
-exports.up = function (knex, Promise) {
+exports.up = function (knex) {
   return knex.schema
     .table('members', (tbl) => {
       tbl.integer('permission_level').defaultTo(4);
@@ -8,7 +8,7 @@ exports.up = function (knex, Promise) {
     });
 };
 
-exports.down = function (knex, Promise) {
+exports.down = function (knex) {
   return knex.schema.table('members', (tbl) => {
     tbl.dropColumn('permission_level');
     knex.schema.table('invite_confirmations', (tbl) => {
