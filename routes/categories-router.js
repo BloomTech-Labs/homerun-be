@@ -1,73 +1,76 @@
 const router = require('express').Router();
 const Categories = require('../models/categories-model.js');
-const Todos = require('../models/todos-model.js');
 
-// returns all the categories that todos can be a part of
-router.get('/', (req, res) => {
-  Categories.findCategories()
-    .then((categories) => {
-      res.json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
+function verifyCategory(req, res, next) {
+  const household_id = req.decodedToken.current_household;
+  const { category_name } = req.body;
 
-// return the categories that belong to the specific todo id
-router.get('/:todoID', validateID, (req, res) => {
-  const { todoID } = req.params;
-  Categories.findTodoCategories(todoID)
-    .then((categories) => {
-      res.json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
-// adds a new category for the todo id that is passed in
-router.post('/', validateID, (req, res) => {
-  const { todo_id, category_name } = req.body;
-  Categories.addTodoCategories(todo_id, category_name)
-    .then((categories) => {
-      res.status(201).json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
-// find out why this delete is erroring
-router.delete('/delete', validateID, (req, res) => {
-  const { todo_id, category_name } = req.body;
-  Categories.removeTodoCategories(todo_id, category_name)
-    .then((categories) => {
-      res.json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
-// two todo ids here so that we can validate the different requests above without needing
-// to create a whole new validate function, this way if the first id isnt valid that is coming from params
-// then it will use the second one which is coming from the body
-function validateID(req, res, next) {
-  const { todoID } = req.params;
-  const { todo_id } = req.body;
-  Todos.findById(todoID || todo_id)
-    .then((todo) => {
-      todo
-        ? next()
-        : res.status(404).json({
-            message: `No todo with id of ${
-              todoID || todo_id
-            } found in the database.`,
-          });
+  Categories.findByName(household_id, category_name)
+    .then((category) => {
+      console.log(category);
+      if (!category) {
+        next();
+      } else {
+        res.status(404).json({ message: 'Category Name already Exists' });
+      }
     })
     .catch((err) => {
       res.status(500).json({ error: err.message });
     });
 }
+
+router.get('/', (req, res) => {
+  const household_id = req.decodedToken.current_household;
+
+  Categories.findByHousehold(household_id)
+    .then((categories) => {
+      res.status(200).json(categories);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+});
+
+router.post('/', verifyCategory, (req, res) => {
+  const household_id = req.decodedToken.current_household;
+  const { category_name } = req.body;
+  try {
+    if (category_name && household_id) {
+      Categories.insert(category_name, household_id)
+        .then((categories) => {
+          res.status(201).json(categories);
+        })
+        .catch((err) => {
+          res.status(500).json({ error: err.message });
+        });
+    } else {
+      res.status(400).json({
+        message: 'body must include household_id and category_name',
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  Categories.update(id, req.body)
+    .then((data) => res.status(200).json(data))
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+});
+
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  Categories.remove(id)
+    .then((categories) => {
+      res.status(200).json(categories);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+});
 
 module.exports = router;

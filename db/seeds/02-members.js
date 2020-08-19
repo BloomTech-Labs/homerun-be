@@ -5,6 +5,7 @@ exports.seed = async function (knex) {
   await knex.raw('TRUNCATE TABLE members RESTART IDENTITY CASCADE');
   return knex('members').then(() => {
     // Inserts seed entries
+
     return knex('members').insert([
       {
         current_household: 'a12345',

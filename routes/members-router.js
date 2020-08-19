@@ -72,16 +72,12 @@ router.post('/household/invite', (req, res) => {
           household_id: householdId,
           permissionOfLevel: permissionLevel,
         };
-        console.log(newConfirmation)
+        console.log(newConfirmation);
         Confirmations.insert(newConfirmation)
           .then(({ id, household_id }) => {
             sendMail(
               member.email,
-              templates.householdInvite(
-                id,
-                household_id,
-                invitedBy
-              )
+              templates.householdInvite(id, household_id, invitedBy)
             )
               .then(() => {
                 res.status(200).json({
@@ -119,14 +115,19 @@ router.post('/household/accept-invite', (req, res) => {
         let { member_id, household_id, permissionOfLevel } = conf;
         if (member_id === id) {
           // Updates member's current household
-          Members.update(id, { current_household: household_id, permission_level: permissionOfLevel})
+          Members.update(id, {
+            current_household: household_id,
+            permission_level: permissionOfLevel,
+          })
             .then((updated) => {
-              Confirmations.remove(updated[0].id, household_id, permissionOfLevel).then(
-                async () => {
-                  const token = await generateToken(updated[0]);
-                  res.status(200).json({ updated, token });
-                }
-              );
+              Confirmations.remove(
+                updated[0].id,
+                household_id,
+                permissionOfLevel
+              ).then(async () => {
+                const token = await generateToken(updated[0]);
+                res.status(200).json({ updated, token });
+              });
             })
             .catch(() => {
               res.status(500).json({ message: 'Unable to update member' });
