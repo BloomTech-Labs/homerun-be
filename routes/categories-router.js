@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Categories = require('../models/categories-model.js');
+const { canCreateCategory } = require('../middleware/permissions.js');
 
 function verifyCategory(req, res, next) {
   const household_id = req.member.current_household;
@@ -19,6 +20,17 @@ function verifyCategory(req, res, next) {
     });
 }
 
+function verifyPermission(req, res, next) {
+  if (canCreateCategory(req.member)) {
+    next();
+  } else {
+    res.status(401).json({
+      error:
+        'the user does not have the permissions required to edit categories',
+    });
+  }
+}
+
 router.get('/', (req, res) => {
   const household_id = req.member.current_household;
 
@@ -31,7 +43,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', verifyCategory, (req, res) => {
+router.post('/', verifyCategory, verifyPermission, (req, res) => {
   const household_id = req.member.current_household;
   const { category_name } = req.body;
   try {
@@ -53,7 +65,7 @@ router.post('/', verifyCategory, (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
   Categories.update(id, req.body)
     .then((data) => res.status(200).json(data))
@@ -62,7 +74,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
   Categories.remove(id)
     .then((categories) => {
