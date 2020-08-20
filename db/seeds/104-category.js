@@ -5,10 +5,10 @@ exports.seed = function (knex) {
     .then(function () {
       // Inserts seed entries
       return knex('category').insert([
-        { id: 1, category_name: 'living_room' },
-        { id: 2, category_name: 'bedroom' },
-        { id: 3, category_name: 'kitchen' },
-        { id: 4, category_name: 'bathroom' },
+        { id: 1, category_name: 'Living Room' },
+        { id: 2, category_name: 'Bedroom' },
+        { id: 3, category_name: 'Kitchen' },
+        { id: 4, category_name: 'Bathroom' },
       ]);
     });
 };
