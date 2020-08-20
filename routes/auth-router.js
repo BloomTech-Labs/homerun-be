@@ -27,8 +27,9 @@ router.post('/google', googleAuthMiddleware, (req, res) => {
           res.status(200).json({
             message: `Welcome, ${member.email}`,
             token,
-            member_id: member.id,
+            id: member.id,
             username: member.username,
+            permission_level: member.permission_level,
           });
         } else {
           const googleHash = nanoid();
@@ -116,8 +117,9 @@ router.post('/login', (req, res) => {
           res.status(200).json({
             message: `Welcome, ${member.email}`,
             token,
-            member_id: member.id,
+            id: member.id,
             username: member.username,
+            permission_level: member.permission_level,
           });
         } else {
           res.status(401).json({ message: 'Invalid credentials' });
@@ -167,8 +169,9 @@ router.post('/confirm', async (req, res) => {
         res.status(200).json({
           message: `Welcome, ${member.email}`,
           token,
-          member_id: member.id,
+          id: member.id,
           username: member.username,
+          permission_level: member.permission_level,
         });
       });
       // no catch statement necessary

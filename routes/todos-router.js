@@ -2,8 +2,8 @@
 const router = require('express').Router();
 const Todos = require('../models/todos-model.js');
 
-const Categories = require('../models/categories-model.js');
-const categoriesRouter = require('./categories-router.js');
+const Categories = require('../models/todos-categories-model.js');
+const categoriesRouter = require('./todos-categories-router.js');
 
 const userTypeFilter = require('../middleware/userMethodFilter.js');
 
@@ -14,7 +14,7 @@ const getAssignedUsers = async (todoId) => {
 };
 
 router.get('/household', async (req, res) => {
-  const householdId = req.decodedToken.current_household;
+  const householdId = req.member.current_household;
   // try {
   const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
   const allTodos = await Promise.all(
@@ -29,8 +29,8 @@ router.get('/household', async (req, res) => {
 });
 
 router.get('/member', async (req, res) => {
-  const householdId = req.decodedToken.current_household;
-  const memberId = req.decodedToken.subject;
+  const householdId = req.member.current_household;
+  const memberId = req.member.id;
   try {
     const todosByMember = await Todos.findTodosByMember(householdId, memberId);
     const allTodos = await Promise.all(
@@ -49,7 +49,7 @@ router.get('/member', async (req, res) => {
 });
 
 router.get('/child/:id', async (req, res) => {
-  const householdId = req.decodedToken.current_household;
+  const householdId = req.member.current_household;
   const childId = req.params.id;
   if (childId) {
     try {
@@ -104,10 +104,16 @@ router.get('/assigned/:id', async (req, res, next) => {
 
 router.post('/add', (req, res, next) => {
   const newTodo = req.body;
-  newTodo.household = req.decodedToken.current_household;
+  newTodo.household = req.member.current_household;
   if (newTodo.title && newTodo.household) {
-    // TODO: Confirm that the household id is valid?
-    Todos.insert(newTodo)
+    Todos.insert({ title: newTodo.title, household: newTodo.household })
+      .then((todo) => {
+        if (newTodo.category_id) {
+          Categories.insert(todo.id, newTodo.category_id);
+        }
+
+        return todo;
+      })
       .then((todo) => {
         Categories.findTodoCategories(todo.id).then((categories) => {
           res.status(200).json({ ...todo, assigned: [], categories });
@@ -138,7 +144,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 router.delete('/:id', (req, res, next) => {
-  const householdId = req.decodedToken.current_household;
+  const householdId = req.member.current_household;
   Todos.remove(req.params.id, householdId)
     .then(async (householdTodos) => {
       const allTodos = await Promise.all(
