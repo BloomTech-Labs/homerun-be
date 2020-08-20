@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Categories = require('../models/categories-model.js');
 
 function verifyCategory(req, res, next) {
-  const household_id = req.decodedToken.current_household;
+  const household_id = req.member.current_household;
   const { category_name } = req.body;
 
   Categories.findByName(household_id, category_name)
@@ -20,7 +20,7 @@ function verifyCategory(req, res, next) {
 }
 
 router.get('/', (req, res) => {
-  const household_id = req.decodedToken.current_household;
+  const household_id = req.member.current_household;
 
   Categories.findByHousehold(household_id)
     .then((categories) => {
@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', verifyCategory, (req, res) => {
-  const household_id = req.decodedToken.current_household;
+  const household_id = req.member.current_household;
   const { category_name } = req.body;
   try {
     if (category_name && household_id) {
