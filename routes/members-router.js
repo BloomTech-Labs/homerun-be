@@ -150,28 +150,30 @@ router.post('/household/accept-invite', (req, res) => {
   }
 });
 
-router.post('/household/edit-permission', (req, res) => {
-  const { email } = req.body;
-  const { permissionLevel } = req.body;
-  if (email && permissionLevel) {
-    Members.getByEmail(email).then((member) => {
+router.post('/edit-permission', (req, res) => {
+  const { id, permission_level } = req.body;
+  if (id && permission_level) {
+    Members.getById(id).then((member) => {
       if (member) {
-        Members.update(id, {
-          permission_level: permissionLevel,
-        }).then((res) => {
-          res
-            .status(200)
-            .json({
-              message: `The member's permission level has been updated successfully`,
-            })
-            .catch(() => {
-              res
-                .status(500)
-                .json({
+        if (member.current_household === req.member.current_household) {
+          // TODO: we also want to do permission checks
+          Members.update(id, { permission_level }).then(() => {
+            res
+              .status(200)
+              .json({
+                message: `The member's permission level has been updated successfully`,
+              })
+              .catch(() => {
+                res.status(500).json({
                   message: `There was an error when trying to update the member's permission level`,
                 });
-            });
-        });
+              });
+          });
+        } else {
+          res.status(400).json({
+            message: 'The member is not a part of the current household',
+          });
+        }
       } else {
         res.status(400).json({
           message: 'The member does not exist',
@@ -180,7 +182,8 @@ router.post('/household/edit-permission', (req, res) => {
     });
   } else {
     res.status(404).json({
-      message: 'Request body missing email or permissionLevel',
+      message:
+        "Request body missing 'id' or 'permission_level' of user to update",
     });
   }
 });
