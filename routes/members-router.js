@@ -125,18 +125,17 @@ router.post('/edit-permission', (req, res) => {
   if (id && permission_level) {
     canChangePermission(req.member, id, permission_level).then((can) => {
       if (can) {
-        Members.update(id, { permission_level }).then(() => {
-          res
-            .status(200)
-            .json({
+        Members.update(id, { permission_level })
+          .then(() => {
+            res.status(200).json({
               message: `The member's permission level has been updated successfully`,
-            })
-            .catch(() => {
-              res.status(500).json({
-                message: `There was an error when trying to update the member's permission level`,
-              });
             });
-        });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: `There was an error when trying to update the member's permission level`,
+            });
+          });
       } else {
         res.status(401).json({
           error:
