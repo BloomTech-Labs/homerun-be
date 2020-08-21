@@ -3,10 +3,10 @@ exports.seed = async function (knex) {
 
   return knex('category').then(function () {
     return knex('category').insert([
-      { category_name: 'living_room', household_id: 'a12345' },
-      { category_name: 'bedroom', household_id: 'a12345' },
-      { category_name: 'kitchen', household_id: 'a12345' },
-      { category_name: 'bathroom', household_id: 'a12345' },
+      { category_name: 'Living Room', household_id: 'a12345' },
+      { category_name: 'Bedroom', household_id: 'a12345' },
+      { category_name: 'Kitchen', household_id: 'a12345' },
+      { category_name: 'Bathroom', household_id: 'a12345' },
     ]);
   });
 };
