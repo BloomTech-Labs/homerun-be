@@ -67,9 +67,10 @@ router.post('/', verifyCategory, verifyPermission, (req, res) => {
 
 router.put('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
+  const { household_id } = req.member;
   Categories.findById(id).then((cat) => {
     if (cat.length > 0 && cat[0].household_id === req.member.household_id) {
-      Categories.update(id, req.body)
+      Categories.update(id, req.body, household_id)
         .then((data) => res.status(200).json(data))
         .catch((err) => {
           res.status(500).json({ error: err.message });
@@ -84,9 +85,10 @@ router.put('/:id', verifyPermission, (req, res) => {
 
 router.delete('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
+  const { household_id } = req.member;
   Categories.findById(id).then((cat) => {
     if (cat.length > 0 && cat[0].household_id === req.member.household_id) {
-      Categories.remove(id)
+      Categories.remove(id, household_id)
         .then((categories) => {
           res.status(200).json(categories);
         })

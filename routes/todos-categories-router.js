@@ -14,12 +14,13 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', validateID, validatePermissions, (req, res) => {
   const { todo_id, category_id } = req.body;
+  console.log(category_id);
   Categories.insert(todo_id, category_id)
     .then((categories) => {
       res.status(201).json(categories);
     })
     .catch((err) => {
-      res.status(500).json({ error: err.message });
+      res.status(500).json(err);
     });
 });
 
