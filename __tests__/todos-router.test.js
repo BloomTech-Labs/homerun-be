@@ -1,9 +1,5 @@
 const request = require('supertest');
-
 const server = require('../app.js');
-
-const db = require('../db/dbConfig.js');
-
 const token = require('../middleware/token.js');
 
 let generatedToken;
