@@ -8,7 +8,6 @@ const TodosMembers = require('../models/todos-members-model.js');
 
 router.get('/household', async (req, res) => {
   const householdId = req.member.current_household;
-  // try {
   const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
   const allTodos = await Promise.all(
     todosPerHousehold.map(async (todo) => {

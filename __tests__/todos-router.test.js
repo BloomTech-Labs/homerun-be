@@ -10,8 +10,6 @@ let generatedToken;
 beforeAll(async (done) => {
   generatedToken = token.generateToken({
     id: 1,
-    email: 'mom@test.com',
-    current_household: 'a12345',
   });
   done();
 });

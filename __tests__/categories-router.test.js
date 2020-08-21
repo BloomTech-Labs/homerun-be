@@ -16,8 +16,6 @@ let generatedToken;
 beforeAll((done) => {
   generatedToken = token.generateToken({
     id: 1,
-    email: 'mom@test.com',
-    current_household: 'a12345',
   });
   done();
 });
@@ -95,8 +93,7 @@ describe('categories-router testing', () => {
   describe('DELETE todos/categories/', () => {
     it('returns 200 status upon successful delete', () => {
       return request(server)
-        .delete('/todos/categories/delete')
-        .send({ todo_id: 1, category_name: 'bedroom' })
+        .delete('/todos/categories/1')
         .set('Authorization', generatedToken)
         .then((res) => {
           expect(res.status).toBe(200);

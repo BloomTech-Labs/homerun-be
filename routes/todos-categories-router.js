@@ -27,7 +27,6 @@ router.post('/', validateID, validatePermissions, (req, res) => {
 // find out why this delete is erroring
 router.delete('/:id', validatePermissions, (req, res) => {
   const id = req.params.id;
-  console.log(id);
   Categories.remove(id)
     .then((categories) => {
       res.json(categories);
@@ -41,7 +40,7 @@ router.delete('/:id', validatePermissions, (req, res) => {
 // to create a whole new validate function, this way if the first id isnt valid that is coming from params
 // then it will use the second one which is coming from the body
 function getTodoID(req) {
-  return req.params.todoID || req.body.todo_id;
+  return req.params.id || req.body.todo_id;
 }
 
 function validateID(req, res, next) {
@@ -60,7 +59,8 @@ function validateID(req, res, next) {
 }
 
 async function validatePermissions(req, res, next) {
-  if (await canEdit(req.member, getTodoID(req))) {
+  const todoID = getTodoID(req);
+  if (await canEdit(req.member, todoID)) {
     next();
   } else {
     res.status(401).json({
