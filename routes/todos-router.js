@@ -96,11 +96,11 @@ router.get('/assigned/:id', async (req, res, next) => {
   }
 });
 
-router.post('/add', (req, res, next) => {
+router.post('/add', (req, res) => {
   const { title, category_id } = req.body;
-  const household = req.member.current_household;
+  const { current_household, id } = req.member;
   if (title) {
-    Todos.insert({ title: title, household: household })
+    Todos.insert({ title, household: current_household, created_by: id })
       .then(async (todo) => {
         if (category_id) {
           try {

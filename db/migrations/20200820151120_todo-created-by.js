@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  knex.schema.alterTable('todos', (tbl) => {
+  return knex.schema.alterTable('todos', (tbl) => {
     tbl
       .integer('created_by')
       .unsigned()
@@ -11,7 +11,7 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-  knex.schema.alterTable('todos', (tbl) => {
+  return knex.schema.alterTable('todos', (tbl) => {
     tbl.dropColumn('created_by');
   });
 };

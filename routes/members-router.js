@@ -96,7 +96,7 @@ router.post('/household/accept-invite', (req, res) => {
                 permissionOfLevel
               ).then(() => {
                 const token = generateToken(updated[0]);
-                res.status(200).json({ updated, token });
+                res.status(200).json({ updated: updated[0], token });
               });
             })
             .catch(() => {
