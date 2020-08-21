@@ -9,3 +9,4 @@ exports.seed = async function (knex) {
       { category_name: 'Bathroom', household_id: 'a12345' },
     ]);
   });
+};
