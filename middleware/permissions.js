@@ -1,4 +1,5 @@
 const todosModel = require('../models/todos-model');
+const membersModel = require('../models/members-model');
 
 const PERMISSIONS = {
   // read todos, complete todos assigned to them
@@ -11,50 +12,78 @@ const PERMISSIONS = {
   OWNER: 4,
 };
 
-function canComplete(user, todo_id) {
+async function canComplete(user, todo_id) {
   if (user.permission_level >= PERMISSIONS.ADMIN) {
-    return Promise.resolve(true);
+    return true;
   }
-  return todosModel.findMembersAssigned(todo_id).then((members) => {
-    return members.find((mem) => mem.id === user.id);
-  });
+  let members = await todosModel.findMembersAssigned(todo_id);
+  return members.find((mem) => mem.id === user.id);
 }
 
 // same logic applies to deleting todos
-function canEdit(user, todo_id) {
-  if (user.permission_level >= PERMISSIONS.ADMIN) {
-    return Promise.resolve(true);
+async function canEdit(user, todo_id) {
+  let todo = await todosModel.findById(todo_id);
+  if (todo && todo.household === user.current_household) {
+    if (user.permission_level >= PERMISSIONS.ADMIN) {
+      return true;
+    }
+    return (
+      user.permission_level === PERMISSIONS.REGULAR &&
+      todo.created_by === user.id
+    );
   }
-  return todosModel.findById(todo_id).then((todo) => {
-    return todo.created_by === user.id;
-  });
+  return false;
 }
 
 // same logic for unassigning
-function canAssign(user, member_to_assign) {
-  if (user.permission_level >= PERMISSIONS.ADMIN) {
-    return Promise.resolve(true);
+async function canAssign(user, member_id) {
+  let member = await membersModel.getById(member_id);
+  if (member && member.current_household === user.current_household) {
+    return (
+      user.permission_level >= PERMISSIONS.ADMIN ||
+      (user.permission_level === PERMISSIONS.REGULAR && user.id === member_id)
+    );
   }
-  return (
-    user.permission_level === PERMISSIONS.REGULAR &&
-    user.id === member_to_assign.id
-  );
+  return false;
 }
 
-function canChangePermission(user, member, permission_level) {
+async function canChangePermission(user, member_id, permission_level) {
   // level 1 or 2 can't change another member's level
   // a level 3 or 4 can only change levels below them
   // to permission levels *still* below them
+  let member = await membersModel.getById(member_id);
+  if (member && member.current_household === user.current_household) {
+    return (
+      user.permission_level >= PERMISSIONS.ADMIN &&
+      user.permission_level > member.permission_level &&
+      user.permission_level > permission_level
+    );
+  }
+  return false;
+}
+
+// The following don't have to be async because
+// the parameters that users can enter are restrictive enough to not need checking
+// i.e. the household ID is determined by the tokens
+
+function canInvite(user, permission_level) {
   return (
     user.permission_level >= PERMISSIONS.ADMIN &&
-    member.permission_level < user.permission &&
-    permission_level < user.permission_level
+    user.permission_level > permission_level
   );
+}
+
+function canCreateTodo(user) {
+  return user.permission_level >= PERMISSIONS.REGULAR;
 }
 
 // also can work for removing categories
 function canCreateCategory(user) {
   return user.permission_level >= PERMISSIONS.ADMIN;
+}
+
+function canEditHousehold(user) {
+  return user.permission_level === PERMISSIONS.OWNER;
 }
 
 module.exports = {
@@ -64,4 +93,7 @@ module.exports = {
   canAssign,
   canChangePermission,
   canCreateCategory,
+  canEditHousehold,
+  canInvite,
+  canCreateTodo,
 };

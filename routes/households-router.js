@@ -1,8 +1,20 @@
 const router = require('express').Router();
 const Households = require('../models/households-model.js');
+const { canEditHousehold } = require('../middleware/permissions.js');
 
-router.put('/:id', (req, res, next) => {
-  const { id } = req.params;
+function verifyPermission(req, res, next) {
+  if (canEditHousehold(req.member)) {
+    next();
+  } else {
+    res.status(401).json({
+      error:
+        'the user does not have the permissions required to edit households',
+    });
+  }
+}
+
+router.put('/', verifyPermission, (req, res, next) => {
+  const id = req.member.current_household;
   Households.update(id, req.body)
     .then((household) => {
       res.status(200).json({ household });
@@ -12,7 +24,7 @@ router.put('/:id', (req, res, next) => {
     });
 });
 
-router.delete('/', (req, res, next) => {
+router.delete('/', verifyPermission, (req, res, next) => {
   const id = req.member.current_household;
   Households.remove(id)
     .then(() => {

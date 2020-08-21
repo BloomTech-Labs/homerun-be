@@ -67,22 +67,38 @@ router.post('/', verifyCategory, verifyPermission, (req, res) => {
 
 router.put('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
-  Categories.update(id, req.body)
-    .then((data) => res.status(200).json(data))
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
+  Categories.findById(id).then((cat) => {
+    if (cat.length > 0 && cat[0].household_id === req.member.household_id) {
+      Categories.update(id, req.body)
+        .then((data) => res.status(200).json(data))
+        .catch((err) => {
+          res.status(500).json({ error: err.message });
+        });
+    } else {
+      res
+        .status(400)
+        .json({ error: 'Cannot edit categories from other households' });
+    }
+  });
 });
 
 router.delete('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
-  Categories.remove(id)
-    .then((categories) => {
-      res.status(200).json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
+  Categories.findById(id).then((cat) => {
+    if (cat.length > 0 && cat[0].household_id === req.member.household_id) {
+      Categories.remove(id)
+        .then((categories) => {
+          res.status(200).json(categories);
+        })
+        .catch((err) => {
+          res.status(500).json({ error: err.message });
+        });
+    } else {
+      res
+        .status(400)
+        .json({ error: 'Cannot edit categories from other households' });
+    }
+  });
 });
 
 module.exports = router;
