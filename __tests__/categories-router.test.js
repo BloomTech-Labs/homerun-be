@@ -41,22 +41,22 @@ describe('categories-router testing', () => {
             {
               id: 1,
               household_id: 'a12345',
-              category_name: 'living_room',
+              category_name: 'Living Room',
             },
             {
               id: 2,
               household_id: 'a12345',
-              category_name: 'bedroom',
+              category_name: 'Bedroom',
             },
             {
               id: 3,
               household_id: 'a12345',
-              category_name: 'kitchen',
+              category_name: 'Kitchen',
             },
             {
               id: 4,
               household_id: 'a12345',
-              category_name: 'bathroom',
+              category_name: 'Bathroom',
             },
           ]);
         });
