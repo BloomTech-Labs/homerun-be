@@ -7,12 +7,6 @@ const categoriesRouter = require('./todos-categories-router.js');
 
 const userTypeFilter = require('../middleware/userMethodFilter.js');
 
-const getAssignedUsers = async (todoId) => {
-  const membersAssigned = await Todos.findMembersAssigned(todoId);
-  const childrenAssigned = await Todos.findChildrenAssigned(todoId);
-  return membersAssigned.concat(childrenAssigned);
-};
-
 router.get('/household', async (req, res) => {
   const householdId = req.member.current_household;
   // try {
@@ -21,7 +15,7 @@ router.get('/household', async (req, res) => {
     todosPerHousehold.map(async (todo) => {
       // findTodoCategories should return an array with all the categories the todo belongs to
       const todoCategories = await Categories.findTodoCategories(todo.id);
-      const assigned = await getAssignedUsers(todo.id);
+      const assigned = await Todos.findMembersAssigned(todo.id);
       return { ...todo, assigned, categories: todoCategories };
     })
   );
@@ -36,7 +30,7 @@ router.get('/member', async (req, res) => {
     const allTodos = await Promise.all(
       todosByMember.map(async (todo) => {
         const todoCategories = await Categories.findTodoCategories(todo.id);
-        const assigned = await getAssignedUsers(todo.id);
+        const assigned = await Todos.findMembersAssigned(todo.id);
         return { ...todo, assigned, categories: todoCategories };
       })
     );
@@ -48,54 +42,21 @@ router.get('/member', async (req, res) => {
   }
 });
 
-router.get('/child/:id', async (req, res) => {
-  const householdId = req.member.current_household;
-  const childId = req.params.id;
-  if (childId) {
-    try {
-      const todosByChild = await Todos.findTodosByChild(householdId, childId);
-      const allTodos = await Promise.all(
-        todosByChild.map(async (todo) => {
-          const todoCategories = await Categories.findTodoCategories(todo.id);
-          const assigned = await getAssignedUsers(todo.id);
-
-          return {
-            ...todo,
-            assigned,
-            categories: todoCategories,
-          };
-        })
-      );
-      res.status(200).json(allTodos);
-    } catch (err) {
-      res
-        .status(500)
-        .json({ error: err.message, location: 'todos-router.js 18' });
-    }
-  } else {
-    res.status(400).json({ message: 'Missing Child ID' });
-  }
-});
-
 router.post('/assign/:id', userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
-  const assigned = await getAssignedUsers(id);
+  const assigned = await Todos.findMembersAssigned(id);
   res.status(200).json(assigned);
 });
 
 router.post('/unassign/:id', userTypeFilter, async (req, res, next) => {
   const id = req.params.id;
-  const assigned = await getAssignedUsers(id);
+  const assigned = await Todos.findMembersAssigned(id);
   res.status(200).json(assigned);
 });
 
-// Do we use this anywhere?
 router.get('/assigned/:id', async (req, res, next) => {
   try {
-    const membersAssigned = await Todos.findMembersAssigned(req.params.id);
-    const childrenAssigned = await Todos.findChildrenAssigned(req.params.id);
-    const assigned = Object.assign(membersAssigned, childrenAssigned);
-    console.log(assigned);
+    const assigned = await Todos.findMembersAssigned(req.params.id);
     res.status(200).json(assigned);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -133,7 +94,7 @@ router.put('/:id', (req, res, next) => {
   const updates = req.body;
   Todos.update(req.params.id, updates)
     .then(async (todo) => {
-      const assigned = await getAssignedUsers(todo.id);
+      const assigned = await Todos.findMembersAssigned(todo.id);
       const todoCategories = await Categories.findTodoCategories(todo.id);
 
       res.status(200).json({ ...todo, assigned, categories: todoCategories });
@@ -149,7 +110,7 @@ router.delete('/:id', (req, res, next) => {
     .then(async (householdTodos) => {
       const allTodos = await Promise.all(
         householdTodos.map(async (todo) => {
-          const assigned = await getAssignedUsers(todo.id);
+          const assigned = await Todos.findMembersAssigned(todo.id);
           const todoCategories = await Categories.findTodoCategories(todo.id);
           return {
             ...todo,

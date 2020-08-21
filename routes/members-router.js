@@ -8,55 +8,15 @@ const templates = require('../middleware/emailTemplates.js');
 const { generateToken } = require('../middleware/token.js');
 const { nanoid } = require('nanoid');
 
-router.get('/household', async (req, res) => {
+router.get('/household', (req, res) => {
   const householdId = req.member.current_household;
-  try {
-    const members = await Members.getHouseholdMembers(householdId);
-    members.forEach((m) => (m.child = false));
-    const children = await Members.getHouseholdChildren(householdId);
-    children.forEach((m) => (m.child = true));
-    res.status(200).json([...members, ...children]);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-router.get('/household/children/:childId', async (req, res) => {
-  try {
-    const request = await Members.getChildById(req.params.childId);
-    res.status(200).json(request);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-router.post('/household/children', async (req, res) => {
-  const householdId = req.member.current_household;
-  try {
-    req.body.household_id = householdId;
-    const request = await Members.addChild(req.body);
-    res.status(200).json(request);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-router.put('/household/children/:childId', async (req, res) => {
-  try {
-    const request = await Members.updateChild(req.params.childId, req.body);
-    res.status(200).json(request);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-router.delete('/household/children/:childId', async (req, res) => {
-  try {
-    const request = await Members.removeChild(req.params.childId);
-    res.status(200).json(request);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  Members.getHouseholdMembers(householdId)
+    .then((members) => {
+      res.status(200).json(members);
+    })
+    .catch(() => {
+      res.status(500).json({ error: 'Failed to retrieve household members' });
+    });
 });
 
 router.post('/household/invite', (req, res) => {
@@ -72,7 +32,6 @@ router.post('/household/invite', (req, res) => {
           household_id: householdId,
           permissionOfLevel: permissionLevel,
         };
-        console.log(newConfirmation);
         Confirmations.insert(newConfirmation)
           .then(({ id, household_id }) => {
             sendMail(
@@ -124,8 +83,8 @@ router.post('/household/accept-invite', (req, res) => {
                 updated[0].id,
                 household_id,
                 permissionOfLevel
-              ).then(async () => {
-                const token = await generateToken(updated[0]);
+              ).then(() => {
+                const token = generateToken(updated[0]);
                 res.status(200).json({ updated, token });
               });
             })
@@ -146,6 +105,44 @@ router.post('/household/accept-invite', (req, res) => {
   } else {
     res.status(400).json({
       message: 'Request body missing invite hash, or token is missing id',
+    });
+  }
+});
+
+router.post('/edit-permission', (req, res) => {
+  const { id, permission_level } = req.body;
+  if (id && permission_level) {
+    Members.getById(id).then((member) => {
+      if (member) {
+        if (member.current_household === req.member.current_household) {
+          // TODO: we also want to do permission checks
+          Members.update(id, { permission_level }).then(() => {
+            res
+              .status(200)
+              .json({
+                message: `The member's permission level has been updated successfully`,
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: `There was an error when trying to update the member's permission level`,
+                });
+              });
+          });
+        } else {
+          res.status(400).json({
+            message: 'The member is not a part of the current household',
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: 'The member does not exist',
+        });
+      }
+    });
+  } else {
+    res.status(404).json({
+      message:
+        "Request body missing 'id' or 'permission_level' of user to update",
     });
   }
 });
