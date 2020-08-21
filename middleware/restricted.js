@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/secrets.js');
+const membersModel = require('../models/members-model.js');
 
 module.exports = (req, res, next) => {
   const token = req.headers.authorization;
@@ -14,8 +15,17 @@ module.exports = (req, res, next) => {
         });
       } else {
         // valid token
-        req.decodedToken = decodedToken;
-        next();
+        membersModel.getById(decodedToken.id).then((member) => {
+          if (member) {
+            req.member = member;
+            next();
+          } else {
+            res.status(401).json({
+              message: 'Please log in',
+              tokenExpired: true,
+            });
+          }
+        });
       }
     });
   } else {

@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 module.exports = {
-  confirmation: (hash) => {
+  confirmation: (pin) => {
     return {
       subject: 'Email Confirmation - Tidy Hive',
-      text: `Please paste the following link in to your browser's URL bar in order to complete your registration: ${process.env.FE_URL}/confirm-account/${hash}`,
-      html: `Please follow <a href="${process.env.FE_URL}/confirm-account/${hash}">this link</a> to complete your registration.`,
+      text: `Enter the following PIN on the signup page to confirm this email address: ${pin}`,
+      html: `Enter the following PIN on the signup page to confirm this email address:<br/><p style="font-weight: 700; font-size: 1.5em;">${pin}</p>`,
     };
   },
   reset: (hash) => {
@@ -15,11 +15,11 @@ module.exports = {
       html: `Please follow <a href="${process.env.FE_URL}/reset-password/${hash}">this link</a> to reset your password.`,
     };
   },
-  householdInvite: (hash, householdId) => {
+  householdInvite: (hash, householdId, invitedBy) => {
     return {
       subject: 'Household Invite - Tidy Hive',
-      text: `Please paste the following link in to your browser's URL bar in order to join this household: ${process.env.FE_URL}/invite/${hash}/${householdId}`,
-      html: `Please follow <a href="${process.env.FE_URL}/invite/${hash}/${householdId}">this link</a> to join this household.`,
+      text: `You were invited by ${invitedBy} to a household! Please paste the following link in to your browser's URL bar in order to join: ${process.env.FE_URL}/invite/${hash}`,
+      html: `You were invited by ${invitedBy} to a household!<br/>Please follow <a href="${process.env.FE_URL}/invite/${hash}">this link</a> to join.`,
     };
   },
 };

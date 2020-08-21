@@ -1,23 +1,66 @@
 const db = require('../db/dbConfig.js');
 
-const insert = (confirmation) => {
-  return db('confirmations')
-    .insert(confirmation, 'hash')
-    .then((hash) => {
-      return hash[0];
-    });
+const account_insert = (confirmation) => {
+  return db('account_confirmations')
+    .insert(confirmation, '*')
+    .then(([conf]) => conf);
 };
 
-const getByHash = (hash) => {
-  return db('confirmations').where({ hash }).first();
+const account_getById = (id) => {
+  return db('account_confirmations').where({ id }).first();
 };
 
-const remove = (member_id) => {
-  return db('confirmations').where({ member_id }).del();
+const account_getByEmailAndPin = (email, pin) => {
+  return db('account_confirmations').where({ email, pin }).first();
+};
+
+const account_remove = (email) => {
+  return db('account_confirmations').where({ email }).del();
+};
+
+const password_insert = (confirmation) => {
+  return db('password_confirmations')
+    .insert(confirmation, '*')
+    .then(([conf]) => conf);
+};
+
+const password_getById = (id) => {
+  return db('password_confirmations').where({ id }).first();
+};
+
+const password_remove = (member_id) => {
+  return db('password_confirmations').where({ member_id }).del();
+};
+
+const invite_insert = (confirmation) => {
+  return db('invite_confirmations')
+    .insert(confirmation, '*')
+    .then(([conf]) => conf);
+};
+
+const invite_getById = (id) => {
+  return db('invite_confirmations').where({ id }).first();
+};
+
+const invite_remove = (member_id, household_id) => {
+  return db('invite_confirmations').where({ member_id, household_id }).del();
 };
 
 module.exports = {
-  insert,
-  getByHash,
-  remove,
+  account: {
+    insert: account_insert,
+    getbyId: account_getById,
+    getByEmailAndPin: account_getByEmailAndPin,
+    remove: account_remove,
+  },
+  password: {
+    insert: password_insert,
+    getById: password_getById,
+    remove: password_remove,
+  },
+  invite: {
+    insert: invite_insert,
+    getById: invite_getById,
+    remove: invite_remove,
+  },
 };

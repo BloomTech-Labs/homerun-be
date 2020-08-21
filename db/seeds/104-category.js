@@ -1,14 +1,11 @@
-exports.seed = function (knex) {
-  // Deletes ALL existing entries
-  return knex('category')
-    .del()
-    .then(function () {
-      // Inserts seed entries
-      return knex('category').insert([
-        { id: 1, category_name: 'Living Room' },
-        { id: 2, category_name: 'Bedroom' },
-        { id: 3, category_name: 'Kitchen' },
-        { id: 4, category_name: 'Bathroom' },
-      ]);
-    });
-};
+exports.seed = async function (knex) {
+  await knex.raw('TRUNCATE TABLE category RESTART IDENTITY CASCADE');
+
+  return knex('category').then(function () {
+    return knex('category').insert([
+      { category_name: 'Living Room', household_id: 'a12345' },
+      { category_name: 'Bedroom', household_id: 'a12345' },
+      { category_name: 'Kitchen', household_id: 'a12345' },
+      { category_name: 'Bathroom', household_id: 'a12345' },
+    ]);
+  });

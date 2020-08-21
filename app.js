@@ -1,9 +1,5 @@
 /* eslint-disable no-unused-vars */
 require('dotenv').config();
-// if (envvars.error) {
-//   console.log("Problem loading environment variables.");
-//   // throw envvars.error;
-// }
 
 const express = require('express');
 const path = require('path');
@@ -19,6 +15,7 @@ const authRouter = require('./routes/auth-router.js');
 const membersRouter = require('./routes/members-router.js');
 const householdRouter = require('./routes/households-router');
 const contactRouter = require('./routes/contact-router.js');
+const categoriesRouter = require('./routes/categories-router.js');
 
 const restricted = require('./middleware/restricted.js');
 
@@ -39,37 +36,6 @@ app.use(
     resave: true,
   })
 );
-app.use(
-  grant({
-    defaults: {
-      protocol: process.env.OAUTH_PROTOCOL,
-      host: process.env.OAUTH_URL,
-      transport: 'session',
-      state: true,
-    },
-    google: {
-      key: process.env.G_CLIENT_ID,
-      secret: process.env.G_CLIENT_SECRET,
-      scope: [
-        'profile',
-        'email',
-        'openid',
-        'https://www.googleapis.com/auth/calendar',
-      ],
-      nonce: true,
-      custom_params: { access_type: 'offline' },
-      callback: '/auth/hello',
-    },
-    facebook: {
-      key: process.env.F_CLIENT_ID,
-      secret: process.env.F_CLIENT_SECRET,
-      scope: ['profile'],
-      nonce: true,
-      custom_params: { access_type: 'offline' },
-      callback: '/auth/hello',
-    },
-  })
-);
 
 app.use('/', indexRouter);
 app.use('/todos', restricted, todosRouter);
@@ -77,6 +43,7 @@ app.use('/auth', authRouter);
 app.use('/members', restricted, membersRouter);
 app.use('/household', restricted, householdRouter);
 app.use('/contact', contactRouter);
+app.use('/categories', restricted, categoriesRouter);
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -84,7 +51,7 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  console.log(err);
+  console.error(err);
   // render the error page
   res.status(err.status || 500);
   res.send('error');

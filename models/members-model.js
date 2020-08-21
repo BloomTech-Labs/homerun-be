@@ -5,54 +5,27 @@ const getById = (id) => {
 };
 
 const getByEmail = (email) => {
-  return db('members').where({ email: email }).first();
+  return db('members').where({ email }).first();
+};
+
+const getByUsername = (username) => {
+  return db('members').where({ username }).first();
 };
 
 const insert = (newMember) => {
   return db('members')
-    .insert(newMember, 'id')
-    .then((id) => {
-      return getById(id[0]);
-    });
+    .insert(newMember, '*')
+    .then(([member]) => member);
 };
 
 const update = (id, updates) => {
   return db('members')
     .where({ id })
-    .update(updates, ['id', 'email', 'current_household']);
+    .update(updates, ['id', 'email', 'current_household', 'permission_level']);
 };
 
 const remove = (id) => {
   return db('members').where({ id }).del();
-};
-
-// Grabs all houshold memebrs when passed a specific household
-
-// select members.*  from households
-// inner join household_members on households.id = household_members.household_id and households.id = 'a12345'
-// inner join members on household_members.member_id = members.id
-
-// ! Looks too complicated, might be able to slim down.
-
-const findHouseholdMembers = (householdId) => {
-  return db('households')
-    .select(
-      'members.id',
-      'members.username',
-      'members.email',
-      'members.provider',
-      'members.access_token',
-      'members.points',
-      'members.active',
-      'members.current_household'
-    )
-    .innerJoin('household_members', function () {
-      this.on('households.id', '=', 'household_members.household_id');
-    })
-    .where('household_id', '=', householdId)
-    .innerJoin('members', function () {
-      this.on('household_members.member_id', '=', 'members.id');
-    });
 };
 
 const childrenPerHousehold = (householdId) => {
@@ -79,28 +52,28 @@ const removeChild = (id) => {
   return db('children').where({ id }).del();
 };
 
-const totalHouseholdMembers = (householdId) => {
+const getHouseholdMembers = (householdId) => {
   return db('members')
     .where('current_household', '=', householdId)
-    .select(['id', 'username', 'email', 'points']);
+    .select(['id', 'username', 'email', 'points', 'permission_level']);
 };
 
-const totalHouseholdChildren = (householdId) => {
+const getHouseholdChildren = (householdId) => {
   return db('children')
     .where('household_id', '=', householdId)
-    .select(['id', 'username', 'points', 'child']);
+    .select(['id', 'username', 'points']);
 };
 
 module.exports = {
   getById,
   getByEmail,
+  getByUsername,
   insert,
   update,
   remove,
-  findHouseholdMembers,
   childrenPerHousehold,
-  totalHouseholdMembers,
-  totalHouseholdChildren,
+  getHouseholdMembers,
+  getHouseholdChildren,
   getChildById,
   addChild,
   updateChild,

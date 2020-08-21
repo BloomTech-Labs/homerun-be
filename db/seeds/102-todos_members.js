@@ -1,9 +1,9 @@
-exports.seed = function (knex) {
-  // Deletes ALL existing entries
+exports.seed = async function (knex) {
+  await knex.raw('TRUNCATE TABLE todos_members RESTART IDENTITY CASCADE');
+
   return knex('todos_members')
-    .del()
+    .truncate()
     .then(() => {
-      // Inserts seed entries
       return knex('todos_members').insert([
         {
           member_id: 1,
