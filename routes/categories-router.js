@@ -55,7 +55,8 @@ router.post('/', verifyCategory, (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  Categories.update(id, req.body)
+  const household_id = req.member.current_household;
+  Categories.update(id, req.body, household_id)
     .then((data) => res.status(200).json(data))
     .catch((err) => {
       res.status(500).json({ error: err.message });
@@ -64,7 +65,8 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  Categories.remove(id)
+  const household_id = req.member.current_household;
+  Categories.remove(id, household_id)
     .then((categories) => {
       res.status(200).json(categories);
     })

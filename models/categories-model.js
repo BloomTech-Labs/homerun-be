@@ -29,17 +29,18 @@ const insert = async (category_name, household_id) => {
   }
 };
 
-const update = async (id, data) => {
+const update = async (id, data, household_id) => {
   try {
     await db('category').where({ id }).update(data);
-    return findById(id);
+    return findByHousehold(household_id);
   } catch (err) {
     return console.error(err);
   }
 };
 
-const remove = (id) => {
-  return db('category').where({ id }).del();
+const remove = async (id, household_id) => {
+  await db('category').where({ id }).del();
+  return findByHousehold(household_id);
 };
 
 module.exports = {
