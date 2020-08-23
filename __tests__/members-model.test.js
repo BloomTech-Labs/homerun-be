@@ -1,6 +1,14 @@
 const db = require('../db/dbConfig.js');
 const Members = require('../models/members-model.js');
 
+beforeAll(() => {
+  return db.raw('START TRANSACTION');
+})
+
+afterAll(() => {
+  return db.raw('ROLLBACK');
+})
+
 describe('Testing Members Model', () => {
   beforeEach(() => {
     return db.raw('TRUNCATE members, members RESTART IDENTITY CASCADE');

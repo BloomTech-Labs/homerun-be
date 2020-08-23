@@ -89,6 +89,7 @@ describe('categories-router testing', () => {
         .delete('/todos/categories/1')
         .set('Authorization', generatedToken)
         .then((res) => {
+          console.log(res.body);
           expect(res.status).toBe(200);
         });
     });
