@@ -12,12 +12,7 @@ const findByName = (household_id, category_name) => {
 };
 
 const findByHousehold = async (household_id) => {
-  try {
-    const res = await db('category').select('*').where({ household_id });
-    return res;
-  } catch (err) {
-    return err;
-  }
+  return db('category').select('*').where({ household_id });
 };
 
 const insert = async (category_name, household_id) => {

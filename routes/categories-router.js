@@ -8,7 +8,6 @@ function verifyCategory(req, res, next) {
 
   Categories.findByName(household_id, category_name)
     .then((category) => {
-      console.log(category);
       if (!category) {
         next();
       } else {
@@ -33,44 +32,39 @@ function verifyPermission(req, res, next) {
 
 router.get('/', (req, res) => {
   const household_id = req.member.current_household;
-
-  Categories.findByHousehold(household_id)
-    .then((categories) => {
-      res.status(200).json(categories);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
+  // no catch statement needed on a get request
+  Categories.findByHousehold(household_id).then((categories) => {
+    res.status(200).json(categories);
+  });
 });
 
 router.post('/', verifyCategory, verifyPermission, (req, res) => {
-  const household_id = req.member.current_household;
+  const { current_household } = req.member;
   const { category_name } = req.body;
-  try {
-    if (category_name && household_id) {
-      Categories.insert(category_name, household_id)
-        .then((categories) => {
-          res.status(201).json(categories);
-        })
-        .catch((err) => {
-          res.status(500).json({ error: err.message });
-        });
-    } else {
-      res.status(400).json({
-        message: 'body must include household_id and category_name',
+  if (category_name && current_household) {
+    Categories.insert(category_name, current_household)
+      .then((categories) => {
+        res.status(201).json(categories);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
       });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } else {
+    res.status(400).json({
+      message: 'body must include household_id and category_name',
+    });
   }
 });
 
 router.put('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
-  const { household_id } = req.member;
+  const { current_household } = req.member;
   Categories.findById(id).then((cat) => {
-    if (cat.length > 0 && cat[0].household_id === req.member.household_id) {
-      Categories.update(id, req.body, household_id)
+    if (
+      cat.length > 0 &&
+      cat[0].household_id === req.member.current_household
+    ) {
+      Categories.update(id, req.body, current_household)
         .then((data) => res.status(200).json(data))
         .catch((err) => {
           res.status(500).json({ error: err.message });
@@ -85,10 +79,13 @@ router.put('/:id', verifyPermission, (req, res) => {
 
 router.delete('/:id', verifyPermission, (req, res) => {
   const { id } = req.params;
-  const { household_id } = req.member;
+  const { current_household } = req.member;
   Categories.findById(id).then((cat) => {
-    if (cat.length > 0 && cat[0].household_id === req.member.household_id) {
-      Categories.remove(id, household_id)
+    if (
+      cat.length > 0 &&
+      cat[0].household_id === req.member.current_household
+    ) {
+      Categories.remove(id, current_household)
         .then((categories) => {
           res.status(200).json(categories);
         })
