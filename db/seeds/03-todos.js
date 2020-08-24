@@ -41,6 +41,7 @@ exports.seed = async function (knex) {
           .unix(),
         completed: false,
         completed_by: 'Sample',
+        created_by: 3,
       },
       {
         household: 'a12345',

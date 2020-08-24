@@ -5,17 +5,18 @@ exports.seed = async function (knex) {
     .truncate()
     .then(() => {
       return knex('todos_members').insert([
+        // sequentially assigned for testing purposes
         {
           member_id: 1,
+          todo_id: 1,
+        },
+        {
+          member_id: 2,
           todo_id: 2,
         },
         {
-          member_id: 2,
+          member_id: 3,
           todo_id: 3,
-        },
-        {
-          member_id: 2,
-          todo_id: 5,
         },
       ]);
     });

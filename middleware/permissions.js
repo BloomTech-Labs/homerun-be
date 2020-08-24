@@ -13,11 +13,15 @@ const PERMISSIONS = {
 };
 
 async function canComplete(user, todo_id) {
-  if (user.permission_level >= PERMISSIONS.ADMIN) {
-    return true;
+  let todo = await todosModel.findById(todo_id);
+  if (todo && todo.household === user.current_household) {
+    if (user.permission_level >= PERMISSIONS.ADMIN) {
+      return true;
+    }
+    let members = await todosModel.findMembersAssigned(todo_id);
+    return members.find((mem) => mem.id === user.id);
   }
-  let members = await todosModel.findMembersAssigned(todo_id);
-  return members.find((mem) => mem.id === user.id);
+  return false;
 }
 
 // same logic applies to deleting todos
