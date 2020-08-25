@@ -1,15 +1,13 @@
 /* eslint-disable no-unused-vars */
 const router = require('express').Router();
 const Todos = require('../models/todos-model.js');
-
 const Categories = require('../models/todos-categories-model.js');
 const categoriesRouter = require('./todos-categories-router.js');
-
-const userTypeFilter = require('../middleware/userMethodFilter.js');
+const { canAssign, canEdit } = require('../middleware/permissions.js');
+const TodosMembers = require('../models/todos-members-model.js');
 
 router.get('/household', async (req, res) => {
   const householdId = req.member.current_household;
-  // try {
   const todosPerHousehold = await Todos.findTodosPerHousehold(householdId);
   const allTodos = await Promise.all(
     todosPerHousehold.map(async (todo) => {
@@ -42,16 +40,50 @@ router.get('/member', async (req, res) => {
   }
 });
 
-router.post('/assign/:id', userTypeFilter, async (req, res, next) => {
-  const id = req.params.id;
-  const assigned = await Todos.findMembersAssigned(id);
-  res.status(200).json(assigned);
+router.post('/assign/:id', (req, res, next) => {
+  let member_id = req.body.id;
+  let todo_id = req.params.id;
+  canAssign(req.member, member_id).then((can) => {
+    if (can) {
+      TodosMembers.insert({ member_id, todo_id })
+        .then(() => {
+          Todos.findMembersAssigned(todo_id).then((assigned) => {
+            res.status(200).json(assigned);
+          });
+        })
+        .catch(() => {
+          res.status(500).json({ error: 'Could not assign member to todo' });
+        });
+    } else {
+      res.status(401).json({
+        error:
+          'the user does not have the permissions required to assign this member',
+      });
+    }
+  });
 });
 
-router.post('/unassign/:id', userTypeFilter, async (req, res, next) => {
-  const id = req.params.id;
-  const assigned = await Todos.findMembersAssigned(id);
-  res.status(200).json(assigned);
+router.post('/unassign/:id', (req, res, next) => {
+  let member_id = req.body.id;
+  let todo_id = req.params.id;
+  canAssign(req.member, member_id).then((can) => {
+    if (can) {
+      TodosMembers.remove({ member_id, todo_id })
+        .then(() => {
+          Todos.findMembersAssigned(todo_id).then((assigned) => {
+            res.status(200).json(assigned);
+          });
+        })
+        .catch(() => {
+          res.status(500).json({ error: 'Could not unassign member to todo' });
+        });
+    } else {
+      res.status(401).json({
+        error:
+          'the user does not have the permissions required to unassign this member',
+      });
+    }
+  });
 });
 
 router.get('/assigned/:id', async (req, res, next) => {
@@ -63,67 +95,91 @@ router.get('/assigned/:id', async (req, res, next) => {
   }
 });
 
-router.post('/add', (req, res, next) => {
-  const newTodo = req.body;
-  newTodo.household = req.member.current_household;
-  if (newTodo.title && newTodo.household) {
-    Todos.insert({ title: newTodo.title, household: newTodo.household })
-      .then((todo) => {
-        if (newTodo.category_id) {
-          Categories.insert(todo.id, newTodo.category_id);
+router.post('/add', (req, res) => {
+  const { title, category_id } = req.body;
+  const { current_household, id } = req.member;
+  if (title) {
+    Todos.insert({ title, household: current_household, created_by: id })
+      .then(async (todo) => {
+        if (category_id) {
+          try {
+            await Categories.insert(todo.id, category_id);
+          } catch (e) {
+            console.log(e);
+          }
         }
 
-        return todo;
-      })
-      .then((todo) => {
-        Categories.findTodoCategories(todo.id).then((categories) => {
-          res.status(200).json({ ...todo, assigned: [], categories });
-        });
+        let categories = await Categories.findTodoCategories(todo.id);
+        res.status(200).json({ ...todo, assigned: [], categories });
       })
       .catch((err) => {
-        next(err);
+        console.log(err);
       });
   } else {
-    res
-      .status(400)
-      .json({ message: 'Required properties missing from new todo.' });
+    res.status(400).json({
+      message:
+        "Required properties 'title', 'category_id' missing from new todo.",
+    });
   }
 });
 
 router.put('/:id', (req, res, next) => {
+  const id = req.params.id;
   const updates = req.body;
-  Todos.update(req.params.id, updates)
-    .then(async (todo) => {
-      const assigned = await Todos.findMembersAssigned(todo.id);
-      const todoCategories = await Categories.findTodoCategories(todo.id);
+  canEdit(req.member, id).then((can) => {
+    if (can) {
+      Todos.update(id, updates)
+        .then(async (todo) => {
+          const assigned = await Todos.findMembersAssigned(todo.id);
+          const todoCategories = await Categories.findTodoCategories(todo.id);
 
-      res.status(200).json({ ...todo, assigned, categories: todoCategories });
-    })
-    .catch((err) => {
-      next(err);
-    });
+          res
+            .status(200)
+            .json({ ...todo, assigned, categories: todoCategories });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    } else {
+      res.status(401).json({
+        error: 'the user does not have the permissions required to edit todos',
+      });
+    }
+  });
 });
 
 router.delete('/:id', (req, res, next) => {
+  const id = req.params.id;
   const householdId = req.member.current_household;
-  Todos.remove(req.params.id, householdId)
-    .then(async (householdTodos) => {
-      const allTodos = await Promise.all(
-        householdTodos.map(async (todo) => {
-          const assigned = await Todos.findMembersAssigned(todo.id);
-          const todoCategories = await Categories.findTodoCategories(todo.id);
-          return {
-            ...todo,
-            assigned,
-            categories: todoCategories,
-          };
+  canEdit(req.member, id).then((can) => {
+    if (can) {
+      Todos.remove(req.params.id, householdId)
+        .then(async (householdTodos) => {
+          const allTodos = await Promise.all(
+            householdTodos.map(async (todo) => {
+              const assigned = await Todos.findMembersAssigned(todo.id);
+              const todoCategories = await Categories.findTodoCategories(
+                todo.id
+              );
+              return {
+                ...todo,
+                assigned,
+                categories: todoCategories,
+              };
+            })
+          );
+          res.status(200).json(allTodos);
         })
-      );
-      res.status(200).json(allTodos);
-    })
-    .catch((err) => {
-      next(err);
-    });
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      res.status(401).json({
+        error:
+          'the user does not have the permissions required to delete todos',
+      });
+    }
+  });
 });
 
 // sub routers - rather than pile even more code in todos-router i just decided

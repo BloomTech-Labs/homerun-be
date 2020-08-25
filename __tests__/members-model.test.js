@@ -1,6 +1,18 @@
 const db = require('../db/dbConfig.js');
 const Members = require('../models/members-model.js');
 
+// Wrap these tests in a transaction
+// this allows us to modify/interact with the database seeds, without affecting other test files
+// without this change, tests may fail somewhat randomly because if members-model runs first
+// the truncation of data causes data to be removed that other tests rely on
+beforeAll(() => {
+  return db.raw('START TRANSACTION');
+})
+
+afterAll(() => {
+  return db.raw('ROLLBACK');
+})
+
 describe('Testing Members Model', () => {
   beforeEach(() => {
     return db.raw('TRUNCATE members, members RESTART IDENTITY CASCADE');

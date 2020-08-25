@@ -1,23 +1,13 @@
 const request = require('supertest');
-
 const server = require('../app.js');
-
-const db = require('../db/dbConfig.js');
-
 const token = require('../middleware/token.js');
-
-const knex = require('../db/dbConfig');
-
-const Category = require('../models/categories-model');
 
 // some of the routes that need to be tested require a token sent in the header - to get that i will generate a token with the mom account
 // before any of the tests happen and store the token in a variable
 let generatedToken;
-beforeAll((done) => {
+beforeAll(async (done) => {
   generatedToken = token.generateToken({
     id: 1,
-    email: 'mom@test.com',
-    current_household: 'a12345',
   });
   done();
 });
@@ -79,6 +69,7 @@ describe('categories-router testing', () => {
         .send({ todo_id: 1, category_id: '2' })
         .set('Authorization', generatedToken)
         .then((res) => {
+          console.log(res.body);
           expect(res.status).toBe(201);
         });
     });
@@ -95,10 +86,10 @@ describe('categories-router testing', () => {
   describe('DELETE todos/categories/', () => {
     it('returns 200 status upon successful delete', () => {
       return request(server)
-        .delete('/todos/categories/delete')
-        .send({ todo_id: 1, category_name: 'bedroom' })
+        .delete('/todos/categories/1')
         .set('Authorization', generatedToken)
         .then((res) => {
+          console.log(res.body);
           expect(res.status).toBe(200);
         });
     });

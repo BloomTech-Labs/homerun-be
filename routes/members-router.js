@@ -7,6 +7,10 @@ const sendMail = require('../middleware/sendMail.js');
 const templates = require('../middleware/emailTemplates.js');
 const { generateToken } = require('../middleware/token.js');
 const { nanoid } = require('nanoid');
+const {
+  canInvite,
+  canChangePermission,
+} = require('../middleware/permissions.js');
 
 router.get('/household', (req, res) => {
   const householdId = req.member.current_household;
@@ -23,6 +27,13 @@ router.post('/household/invite', (req, res) => {
   const { email, permissionLevel } = req.body;
   const householdId = req.member.current_household;
   const invitedBy = req.member.username;
+  if (!canInvite(req.member, permissionLevel)) {
+    res.status(401).json({
+      error:
+        'the user does not have the permissions required to invite members',
+    });
+    return;
+  }
   if (email && permissionLevel && householdId) {
     Members.getByEmail(email).then((member) => {
       if (member) {
@@ -85,7 +96,7 @@ router.post('/household/accept-invite', (req, res) => {
                 permissionOfLevel
               ).then(() => {
                 const token = generateToken(updated[0]);
-                res.status(200).json({ updated, token });
+                res.status(200).json({ updated: updated[0], token });
               });
             })
             .catch(() => {
@@ -112,30 +123,23 @@ router.post('/household/accept-invite', (req, res) => {
 router.post('/edit-permission', (req, res) => {
   const { id, permission_level } = req.body;
   if (id && permission_level) {
-    Members.getById(id).then((member) => {
-      if (member) {
-        if (member.current_household === req.member.current_household) {
-          // TODO: we also want to do permission checks
-          Members.update(id, { permission_level }).then(() => {
-            res
-              .status(200)
-              .json({
-                message: `The member's permission level has been updated successfully`,
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: `There was an error when trying to update the member's permission level`,
-                });
-              });
+    canChangePermission(req.member, id, permission_level).then((can) => {
+      if (can) {
+        Members.update(id, { permission_level })
+          .then(() => {
+            res.status(200).json({
+              message: `The member's permission level has been updated successfully`,
+            });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: `There was an error when trying to update the member's permission level`,
+            });
           });
-        } else {
-          res.status(400).json({
-            message: 'The member is not a part of the current household',
-          });
-        }
       } else {
-        res.status(400).json({
-          message: 'The member does not exist',
+        res.status(401).json({
+          error:
+            'the permissions rules for editing member permissions were violated',
         });
       }
     });
