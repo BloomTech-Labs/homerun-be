@@ -21,7 +21,7 @@ const insert = (newMember) => {
 const update = (id, updates) => {
   return db('members')
     .where({ id })
-    .update(updates, ['id', 'email', 'current_household', 'permission_level']);
+    .update(updates, ['id', 'email', 'username', 'current_household', 'permission_level']);
 };
 
 const remove = (id) => {
