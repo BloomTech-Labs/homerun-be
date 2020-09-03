@@ -96,10 +96,10 @@ router.get('/assigned/:id', async (req, res, next) => {
 });
 
 router.post('/add', (req, res) => {
-  const { title, category_id } = req.body;
+  const { title, category_id, due } = req.body;
   const { current_household, id } = req.member;
   if (title) {
-    Todos.insert({ title, household: current_household, created_by: id })
+    Todos.insert({ title, due, household: current_household, created_by: id })
       .then(async (todo) => {
         if (category_id) {
           try {
@@ -114,11 +114,11 @@ router.post('/add', (req, res) => {
       })
       .catch((err) => {
         console.log(err);
+        res.status(500).json({ message: 'Error inserting todo into database' });
       });
   } else {
     res.status(400).json({
-      message:
-        "Required properties 'title', 'category_id' missing from new todo.",
+      message: "Required property 'title' missing from new todo.",
     });
   }
 });
